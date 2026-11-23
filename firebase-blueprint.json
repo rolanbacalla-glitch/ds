@@ -1,0 +1,339 @@
+{
+  "entities": {
+    "PortfolioSettings": {
+      "title": "PortfolioSettings",
+      "description": "Global portfolio protection settings and default theme configuration managed exclusively by the portfolio admin.",
+      "type": "object",
+      "properties": {
+        "exportLockEnabled": {
+          "type": "boolean",
+          "description": "Whether file downloads and compiled token exports are locked for unapproved viewers."
+        },
+        "copyLockEnabled": {
+          "type": "boolean",
+          "description": "Whether source code and token copy buttons are locked for unapproved viewers."
+        },
+        "allowAccessRequests": {
+          "type": "boolean",
+          "description": "Whether signed-in visitors may submit export access requests."
+        },
+        "ownerDisplayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Display name of the portfolio owner shown in protection notices."
+        },
+        "lockMessage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "description": "Custom notice displayed to visitors on locked export panels."
+        },
+        "defaultPresetName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Published default colour theme preset name."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the last settings update."
+        },
+        "updatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the admin who updated the settings."
+        }
+      },
+      "required": [
+        "exportLockEnabled",
+        "copyLockEnabled",
+        "allowAccessRequests",
+        "ownerDisplayName",
+        "lockMessage",
+        "defaultPresetName",
+        "updatedAt",
+        "updatedBy"
+      ]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Trusted administrator directory record conferring admin privileges.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the administrator."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Verified administrator email address."
+        },
+        "grantedBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the admin who granted access."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when admin status was recorded."
+        }
+      },
+      "required": ["uid", "email", "grantedBy", "createdAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private authenticated visitor profile containing PII, strictly readable only by the owner or portfolio admin.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID matching the document ID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Verified user email address."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "User display name."
+        },
+        "provider": {
+          "type": "string",
+          "enum": ["google.com", "apple.com", "password"],
+          "description": "Primary authentication provider."
+        },
+        "emailVerified": {
+          "type": "boolean",
+          "description": "Whether the user's email address has been verified."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server timestamp of first sign-in."
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the most recent sign-in."
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "provider",
+        "emailVerified",
+        "createdAt",
+        "lastLoginAt"
+      ]
+    },
+    "ExportApproval": {
+      "title": "ExportApproval",
+      "description": "Admin-managed allowlist record granting a specific authenticated user permission to download and copy design tokens.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Approved user UID matching the document ID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Approved user email address."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Approved user display name."
+        },
+        "approvedBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the admin who approved export access."
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 240,
+          "description": "Optional admin note describing the approval context."
+        },
+        "grantedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when export permission was granted."
+        }
+      },
+      "required": ["uid", "email", "displayName", "approvedBy", "note", "grantedAt"]
+    },
+    "AccessRequest": {
+      "title": "AccessRequest",
+      "description": "Export access request submitted by a verified signed-in portfolio visitor awaiting admin review.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Requester UID matching the document ID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Requester verified email address."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Requester full name."
+        },
+        "organisation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Requester company, agency, or organisation."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 400,
+          "description": "Reason for requesting export or download access."
+        },
+        "provider": {
+          "type": "string",
+          "enum": ["google.com", "apple.com", "password"],
+          "description": "Authentication provider used by the requester."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "approved", "rejected"],
+          "description": "Review status of the export request."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server timestamp when the request was submitted."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the last status or detail update."
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "organisation",
+        "reason",
+        "provider",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Append-only security and export activity log readable exclusively by the portfolio admin.",
+      "type": "object",
+      "properties": {
+        "actorUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the authenticated user triggering the event."
+        },
+        "actorEmail": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Email of the user triggering the event."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "export_download",
+            "export_copy",
+            "blocked_export_attempt",
+            "access_requested",
+            "access_approved",
+            "access_revoked",
+            "settings_updated"
+          ],
+          "description": "Categorised audit action type."
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "Export target, file name, or affected user."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server timestamp of the event."
+        }
+      },
+      "required": ["actorUid", "actorEmail", "action", "target", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/PortfolioSettings" },
+      "description": "Stores the global portfolio lock configuration at /settings/portfolio."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminRecord" },
+      "description": "Trusted administrator lookup documents keyed by UID."
+    },
+    "/users/{uid}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private user profile documents containing PII, restricted to owner and admin."
+    },
+    "/exportApprovals/{uid}": {
+      "schema": { "$ref": "#/entities/ExportApproval" },
+      "description": "Admin-managed export allowlist keyed by user UID."
+    },
+    "/accessRequests/{uid}": {
+      "schema": { "$ref": "#/entities/AccessRequest" },
+      "description": "Export access requests submitted by verified visitors, keyed by requester UID."
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Append-only export and security audit logs readable only by admin."
+    }
+  }
+}

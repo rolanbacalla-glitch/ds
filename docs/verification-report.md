@@ -30,7 +30,7 @@
 | `tokens/components.json` | Compiled Design System Deliverable | **VERIFIED** |
 | `src/styles/tokens.generated.css` | Compiled Design System Deliverable | **VERIFIED** |
 | `src/lib/tokens.generated.ts` | Compiled Design System Deliverable | **VERIFIED** |
-| `public/exports/figma-variables.tokens.json` | Compiled Design System Deliverable | **VERIFIED** |
+| `exports/figma-variables.tokens.json` | Compiled Design System Deliverable | **VERIFIED** |
 | `DESIGN.md` | Compiled Design System Deliverable | **VERIFIED** |
 | `.cursor/rules/design-system.mdc` | Compiled Design System Deliverable | **VERIFIED** |
 | `src/app/components/[componentName]/page.tsx` | Compiled Design System Deliverable | **VERIFIED** |

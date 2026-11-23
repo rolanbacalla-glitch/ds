@@ -22,14 +22,21 @@ import {
   Sparkle,
   FigmaLogo,
   TerminalWindow,
+  Lock,
 } from "phosphor-react";
-import { ToastProvider } from "@/components/ui/toast-provider";
+import { useAuth } from "@/components/auth/auth-provider";
 
 export default function Home() {
+  const { canExport, isAdmin, portfolioSettings, openAdminConsole } = useAuth();
   const [theme, setTheme] = useState<"dark" | "light">("light");
-  const [seed, setSeed] = useState<SeedConfig>(SEED_PRESETS[0]);
+  const [customSeed, setCustomSeed] = useState<SeedConfig | null>(null);
   const [activeSection, setActiveSection] = useState<string>("tokens");
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const seed =
+    customSeed ??
+    SEED_PRESETS.find((p) => p.name === portfolioSettings.defaultPresetName) ??
+    SEED_PRESETS[0];
 
   // Robust Scroll-Spy to track active section during scroll
   useEffect(() => {
@@ -116,8 +123,7 @@ export default function Home() {
   };
 
   return (
-    <ToastProvider>
-      <div className="min-h-screen bg-[var(--sys-surface-canvas)] text-[var(--sys-on-surface)] selection:bg-[var(--sys-primary)]/25">
+    <div className="min-h-screen bg-[var(--sys-surface-canvas)] text-[var(--sys-on-surface)] selection:bg-[var(--sys-primary)]/25">
         {/* Z-Level 2: Floating Liquid Glass Navigation & Command Bar */}
         <FloatingCommandBar
           activeSection={activeSection}
@@ -125,7 +131,7 @@ export default function Home() {
           theme={theme}
           onToggleTheme={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
           seed={seed}
-          onSelectPreset={(preset) => setSeed(preset)}
+          onSelectPreset={(preset) => setCustomSeed(preset)}
         />
 
         {/* Floating Back to Top Button */}
@@ -149,21 +155,21 @@ export default function Home() {
         {/* Hero Section */}
         <section className="tonal-card p-6 sm:p-12 relative overflow-hidden swiss-grid-bg">
           <div className="relative z-10 max-w-4xl space-y-6">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-medium">
-              <span className="px-3 py-1 rounded-full bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] font-semibold flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[var(--sys-on-surface-secondary)]">
+              <span className="font-semibold text-[var(--sys-primary)] flex items-center gap-1.5">
                 <Sparkle size={13} weight="fill" />
                 Antigravity Design System v{TOKEN_BUILD_METADATA.version}
               </span>
-              <span className="px-3 py-1 rounded-full bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)]">
-                Figma + Code Synced
-              </span>
-              <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold flex items-center gap-1">
+              <span aria-hidden="true">·</span>
+              <span>Portfolio Showcase by {portfolioSettings.ownerDisplayName}</span>
+              <span aria-hidden="true">·</span>
+              <span className="text-emerald-500 font-semibold flex items-center gap-1">
                 <ShieldCheck size={14} weight="fill" />
                 WCAG AAA Accessible
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[var(--sys-on-surface)] leading-[1.06]">
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[var(--sys-on-surface)] leading-[1.06] text-balance">
               A Design System Built for{" "}
               <span className="font-serif italic font-normal text-[var(--sys-primary)]">
                 Clarity, Depth,
@@ -172,12 +178,10 @@ export default function Home() {
             </h1>
 
             <p className="text-base sm:text-lg text-[var(--sys-on-surface-secondary)] max-w-3xl leading-relaxed">
-              Customise your brand colours, preview accessible UI components in dark and light mode,
-              and export ready-to-use tokens for{" "}
-              <strong className="text-[var(--sys-on-surface)]">Figma</strong>,{" "}
-              <strong className="text-[var(--sys-on-surface)]">Next.js + Tailwind CSS</strong>,{" "}
-              <strong className="text-[var(--sys-on-surface)]">Google Stitch</strong>, and{" "}
-              <strong className="text-[var(--sys-on-surface)]">Cursor</strong>.
+              Explore live perceptual OKLCH brand palettes, optically scaled{" "}
+              <strong className="text-[var(--sys-on-surface)]">Manrope &amp; Fraunces</strong>{" "}
+              typography, and accessible UI primitives in dark and light mode. Full viewing is open
+              to visitors whilst token exports remain protected.
             </p>
 
             {/* Primary Hero Actions */}
@@ -187,9 +191,24 @@ export default function Home() {
                 onClick={() => handleSelectSection("export")}
                 className="min-h-[44px] px-6 py-3 rounded-[var(--sys-radius-md)] active:rounded-full bg-[var(--sys-primary)] text-[var(--sys-on-primary)] text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-lg cursor-pointer transition-all hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
               >
-                <DownloadSimple size={18} weight="bold" />
-                <span>Get Design Tokens</span>
+                {canExport ? (
+                  <DownloadSimple size={18} weight="bold" />
+                ) : (
+                  <Lock size={17} weight="bold" />
+                )}
+                <span>{canExport ? "Export Design Tokens" : "Protected Token Export"}</span>
               </button>
+
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={openAdminConsole}
+                  className="min-h-[44px] px-5 py-3 rounded-[var(--sys-radius-md)] bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] border border-[var(--sys-primary)]/40 text-xs sm:text-sm font-semibold inline-flex items-center gap-2 cursor-pointer transition-all hover:opacity-95"
+                >
+                  <ShieldCheck size={17} weight="fill" />
+                  <span>Admin Console</span>
+                </button>
+              )}
 
               <Link
                 href="/components/form-field"
@@ -266,7 +285,7 @@ export default function Home() {
         </section>
 
         {/* 01 // 3-Tier OKLCH Token Engine */}
-        <TokenEngineSection seed={seed} onChangeSeed={setSeed} theme={theme} />
+        <TokenEngineSection seed={seed} onChangeSeed={setCustomSeed} theme={theme} />
 
         {/* 02 // Z-Axis Spatial Discipline: Tonal Surfaces vs. Liquid Glass */}
         <SurfacesGlassSection theme={theme} />
@@ -287,6 +306,5 @@ export default function Home() {
         <ExportCompilerSection seed={seed} />
       </main>
     </div>
-  </ToastProvider>
   );
 }

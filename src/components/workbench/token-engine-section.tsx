@@ -15,8 +15,10 @@ import {
   ArrowRight,
   ArrowsClockwise,
   Info,
+  Lock,
 } from "phosphor-react";
 import { useToast } from "@/components/ui/toast-provider";
+import { useAuth } from "@/components/auth/auth-provider";
 
 interface TokenEngineSectionProps {
   seed: SeedConfig;
@@ -32,6 +34,7 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [selectedTier, setSelectedTier] = useState<"all" | "reference" | "system" | "component">("all");
   const { showToast } = useToast();
+  const { canCopySnippets, user, openAuthModal, logAuditEvent } = useAuth();
 
   const primaryScale = useMemo(
     () => computeTonalScale(seed.hue, seed.chroma),
@@ -51,8 +54,16 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
   );
 
   const copyValue = (key: string, val: string) => {
+    if (!canCopySnippets) {
+      if (user?.emailVerified) {
+        void logAuditEvent("blocked_export_attempt", `Token copy: ${key}`);
+      }
+      openAuthModal("Copying raw colour tokens is restricted on this portfolio showcase.");
+      return;
+    }
     navigator.clipboard.writeText(val);
     setCopiedToken(key);
+    void logAuditEvent("export_copy", `Token: ${key}`);
     showToast(`Copied ${val} to clipboard`);
     setTimeout(() => setCopiedToken(null), 1600);
   };
@@ -470,6 +481,8 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
                     <span>{row.tier2}</span>
                     {copiedToken === row.tier2 ? (
                       <Check size={12} className="text-emerald-400" />
+                    ) : !canCopySnippets ? (
+                      <Lock size={12} className="opacity-60 text-[var(--sys-primary)]" />
                     ) : (
                       <Copy size={12} className="opacity-40" />
                     )}
@@ -514,7 +527,9 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
           <div>
             <h3 className="text-sm font-semibold text-[var(--sys-on-surface)] flex items-center gap-2">
               <Swatches size={18} className="text-[var(--sys-primary)]" />
-              Full Colour Shades (Click Any Swatch to Copy)
+              {canCopySnippets
+                ? "Full Colour Shades (Click Any Swatch to Copy)"
+                : "Full Colour Shades (Portfolio Preview — Copy Protected)"}
             </h3>
             <p className="text-xs text-[var(--sys-on-surface-tertiary)] mt-0.5">
               Every column shares the same perceived brightness, making it easy to swap colours without breaking text readability.

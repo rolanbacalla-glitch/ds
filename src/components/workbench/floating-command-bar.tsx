@@ -18,7 +18,11 @@ import {
   ArrowRight,
   List,
   X,
+  ShieldCheck,
+  SignOut,
+  LockKey,
 } from "phosphor-react";
+import { useAuth } from "@/components/auth/auth-provider";
 
 export interface WorkbenchNavProps {
   activeSection: string;
@@ -50,6 +54,8 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
   const [commandOpen, setCommandOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const { user, isAdmin, isApprovedForExport, openAuthModal, openAdminConsole, signOutUser } =
+    useAuth();
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -194,6 +200,57 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
                 </>
               )}
             </button>
+
+            {/* Admin Console Button (Visible Exclusively to Admin) */}
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={openAdminConsole}
+                title="Open Portfolio Admin Console"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] shadow-sm hover:opacity-95 active:scale-95 transition-all cursor-pointer whitespace-nowrap shrink-0"
+              >
+                <ShieldCheck size={14} weight="fill" />
+                <span className="hidden sm:inline text-[11px]">Admin</span>
+              </button>
+            )}
+
+            {/* Authentication Trigger or Signed-In Account Chip */}
+            {!user ? (
+              <button
+                type="button"
+                onClick={() => openAuthModal()}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] transition-all cursor-pointer whitespace-nowrap shrink-0"
+              >
+                <LockKey size={14} weight="bold" className="text-[var(--sys-primary)]" />
+                <span className="text-[11px]">Sign In</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => (isAdmin ? openAdminConsole() : onSelectSection("export"))}
+                  title={`${user.email} — ${
+                    isAdmin
+                      ? "Portfolio Admin"
+                      : isApprovedForExport
+                      ? "Export Approved"
+                      : "Portfolio Viewer"
+                  }`}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] cursor-pointer max-w-[140px]"
+                >
+                  <span className="truncate">{user.displayName || user.email?.split("@")[0]}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void signOutUser()}
+                  aria-label="Sign out"
+                  title={`Sign out (${user.email})`}
+                  className="p-2 rounded-full bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
+                >
+                  <SignOut size={14} weight="bold" />
+                </button>
+              </div>
+            )}
 
             {/* Mobile Navigation Drawer Toggle */}
             <button

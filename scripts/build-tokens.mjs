@@ -4,7 +4,7 @@
  * Compiles /tokens/*.json (W3C DTCG format) into:
  *   1. src/styles/tokens.generated.css       (CSS Custom Properties + Tailwind v4 @theme inline)
  *   2. src/lib/tokens.generated.ts           (Strongly-typed TS token lineage & WCAG metadata)
- *   3. public/exports/figma-variables.tokens.json (Figma Variables / Tokens Studio bundle)
+ *   3. exports/figma-variables.tokens.json        (Protected Figma Variables / Tokens Studio bundle)
  *   4. DESIGN.md                             (Google Stitch semantic design system spec)
  *   5. .cursor/rules/design-system.mdc       (Cursor & Antigravity AI coding guardrails)
  */
@@ -277,7 +277,7 @@ const figmaBundle = {
   },
 };
 
-const figmaOutPath = path.join(ROOT, "public/exports/figma-variables.tokens.json");
+const figmaOutPath = path.join(ROOT, "exports/figma-variables.tokens.json");
 ensureDir(figmaOutPath);
 fs.writeFileSync(figmaOutPath, JSON.stringify(figmaBundle, null, 2), "utf8");
 
@@ -324,16 +324,16 @@ colors:
 \`\`\`yaml
 typography:
   display:
-    fontFamily: Instrument Serif
-    fontWeight: 400
+    fontFamily: Fraunces
+    fontWeight: 400..700 (Variable Optical Size opsz)
     lineHeight: 1.08
   sans:
-    fontFamily: Plus Jakarta Sans
-    fontWeight: 600
-    lineHeight: 1.5
+    fontFamily: Manrope
+    fontWeight: 400..800
+    lineHeight: 1.55
   mono:
-    fontFamily: JetBrains Mono
-    fontWeight: 500
+    fontFamily: IBM Plex Mono
+    fontWeight: 400..600
     fontVariantNumeric: tabular-nums
 \`\`\`
 

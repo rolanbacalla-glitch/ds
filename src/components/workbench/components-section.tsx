@@ -15,8 +15,10 @@ import {
   ArrowUpRight,
   Lightning,
   Sliders,
+  Lock,
 } from "phosphor-react";
 import { useToast } from "@/components/ui/toast-provider";
+import { useAuth } from "@/components/auth/auth-provider";
 
 export const ComponentsSection: React.FC = () => {
   // Interactive Specimen State
@@ -28,10 +30,19 @@ export const ComponentsSection: React.FC = () => {
   const [inputVal, setInputVal] = useState("oklch(0.77 0.152 258)");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const { showToast } = useToast();
+  const { canCopySnippets, user, openAuthModal, logAuditEvent } = useAuth();
 
   const copySnippet = (id: string, text: string) => {
+    if (!canCopySnippets) {
+      if (user?.emailVerified) {
+        void logAuditEvent("blocked_export_attempt", `Component snippet: ${id}`);
+      }
+      openAuthModal("Copying component TSX source code is protected for portfolio viewing.");
+      return;
+    }
     navigator.clipboard.writeText(text);
     setCopiedCode(id);
+    void logAuditEvent("export_copy", `Component snippet: ${id}`);
     showToast("Copied button TSX code to clipboard");
     setTimeout(() => setCopiedCode(null), 1500);
   };
@@ -117,8 +128,22 @@ export const ComponentsSection: React.FC = () => {
               }
               className="text-xs font-medium text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-primary)] flex items-center gap-1 cursor-pointer"
             >
-              {copiedCode === "btn" ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
-              <span>Copy Code</span>
+              {!canCopySnippets ? (
+                <>
+                  <Lock size={13} className="text-[var(--sys-primary)]" />
+                  <span>Code Locked</span>
+                </>
+              ) : copiedCode === "btn" ? (
+                <>
+                  <Check size={13} className="text-emerald-400" />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={13} />
+                  <span>Copy Code</span>
+                </>
+              )}
             </button>
           </div>
 

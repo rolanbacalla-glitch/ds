@@ -118,6 +118,12 @@ export function generateTailwindV4Export(seed: SeedConfig): string {
    Preset: ${seed.name} | Seed Hue: ${seed.hue}° | Chroma: ${seed.chroma}
    ========================================================================== */
 
+@theme {
+  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
 :root {
   --seed-hue: ${seed.hue};
   --seed-chroma: ${seed.chroma};
@@ -250,7 +256,12 @@ colors:
 - **Z-Level 1 (Content Layer)**: 5-step tonal surface containers with 1px specular top hairlines. **Never apply Liquid Glass blur in the content layer.**
 - **Z-Level 2 (Floating Control Layer)**: Optical Liquid Glass (\`backdrop-filter: blur(24px) saturate(190%)\`) reserved strictly for navigation docks, command palettes, and transient interactive thumbs.
 
-## 4. Concentric Geometry
+## 4. Typography Stack
+- **Interface & Body**: \`Manrope\` (400–800, semi-condensed precision with native tabular figures)
+- **Editorial Display**: \`Fraunces\` (Variable optical sizing \`opsz\` 9..144, italic & sculpted serifs)
+- **Tokens & Code**: \`IBM Plex Mono\` (400–600, Swiss monospace geometry with clear 0/O & 1/l distinction)
+
+## 5. Concentric Geometry
 All nested containers obey $R_{\\text{outer}} = R_{\\text{inner}} + P$ with a global radius multiplier of \`${seed.radiusScale}x\`.
 `;
 }

@@ -38,16 +38,16 @@ colors:
 ```yaml
 typography:
   display:
-    fontFamily: Instrument Serif
-    fontWeight: 400
+    fontFamily: Fraunces
+    fontWeight: 400..700 (Variable Optical Size opsz)
     lineHeight: 1.08
   sans:
-    fontFamily: Plus Jakarta Sans
-    fontWeight: 600
-    lineHeight: 1.5
+    fontFamily: Manrope
+    fontWeight: 400..800
+    lineHeight: 1.55
   mono:
-    fontFamily: JetBrains Mono
-    fontWeight: 500
+    fontFamily: IBM Plex Mono
+    fontWeight: 400..600
     fontVariantNumeric: tabular-nums
 ```
 

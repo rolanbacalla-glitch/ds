@@ -451,15 +451,15 @@
       "typography": {
         "family": {
           "sans": {
-            "$value": "var(--font-sans-loaded), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+            "$value": "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             "$type": "fontFamily"
           },
           "serif": {
-            "$value": "var(--font-serif-loaded), 'Instrument Serif', Georgia, serif",
+            "$value": "'Fraunces', Georgia, serif",
             "$type": "fontFamily"
           },
           "mono": {
-            "$value": "var(--font-mono-loaded), 'JetBrains Mono', ui-monospace, monospace",
+            "$value": "'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace",
             "$type": "fontFamily"
           }
         },

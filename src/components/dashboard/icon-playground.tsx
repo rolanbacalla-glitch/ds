@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import * as Icons from "phosphor-react";
 import materialIconsData from "@/data/material-icons.json";
 import { useToast } from "@/components/ui/toast-provider";
+import { useAuth } from "@/components/auth/auth-provider";
 
 type IconWeight = "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
 type PhosphorIconComponent = React.ComponentType<Icons.IconProps>;
@@ -35,6 +36,7 @@ export const IconPlayground: React.FC = () => {
   const [showKeylines, setShowKeylines] = useState(true);
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const { showToast } = useToast();
+  const { canCopySnippets, user, openAuthModal, logAuditEvent } = useAuth();
 
   const CATEGORIES = [
     { id: "all", label: "All" },
@@ -123,8 +125,16 @@ export const IconPlayground: React.FC = () => {
   }, [searchQuery, selectedCategory, ALL_ICONS]);
 
   const handleCopy = (type: string, content: string) => {
+    if (!canCopySnippets) {
+      if (user?.emailVerified) {
+        void logAuditEvent("blocked_export_attempt", `Icon snippet: ${selectedIcon.name}`);
+      }
+      openAuthModal("Exporting icon code snippets requires portfolio authorisation.");
+      return;
+    }
     navigator.clipboard.writeText(content);
     setCopiedType(type);
+    void logAuditEvent("export_copy", `Icon: ${selectedIcon.name}`);
     showToast(`Copied ${selectedIcon.name} icon code to clipboard`);
     setTimeout(() => setCopiedType(null), 1600);
   };
@@ -298,11 +308,18 @@ export const IconPlayground: React.FC = () => {
           {/* Export Button */}
           <div className="space-y-2 pt-2 border-t border-[var(--sys-outline-variant)]">
             <button
+              type="button"
               onClick={() => handleCopy("export", exports.code)}
               className="w-full py-2.5 px-3.5 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-between text-xs font-mono text-[var(--sys-on-surface)] transition-colors cursor-pointer"
             >
-              <span className="truncate pr-2">{exports.code.replace(/\n\s*/g, " ")}</span>
-              {copiedType === "export" ? (
+              <span className="truncate pr-2">
+                {canCopySnippets
+                  ? exports.code.replace(/\n\s*/g, " ")
+                  : `Code export locked — ${selectedIcon.name} (Sign in to unlock)`}
+              </span>
+              {!canCopySnippets ? (
+                <Icons.Lock size={14} className="text-[var(--sys-primary)] shrink-0" />
+              ) : copiedType === "export" ? (
                 <Icons.Check size={14} className="text-emerald-400 shrink-0" />
               ) : (
                 <Icons.Copy size={14} className="text-[var(--sys-on-surface-tertiary)] shrink-0" />

@@ -158,7 +158,7 @@ const requiredArtifacts = [
   "tokens/components.json",
   "src/styles/tokens.generated.css",
   "src/lib/tokens.generated.ts",
-  "public/exports/figma-variables.tokens.json",
+  "exports/figma-variables.tokens.json",
   "DESIGN.md",
   ".cursor/rules/design-system.mdc",
   "src/app/components/[componentName]/page.tsx",
