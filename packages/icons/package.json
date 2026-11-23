@@ -1,0 +1,36 @@
+{
+  "name": "@antigravity/icons",
+  "version": "2.4.0",
+  "description": "Multi-library tree-shakeable icon adapter for Antigravity Design System (Lucide, Phosphor, Material Icons).",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "lucide-react": ">=0.400.0",
+    "phosphor-react": ">=1.4.0"
+  },
+  "peerDependenciesMeta": {
+    "lucide-react": {
+      "optional": true
+    },
+    "phosphor-react": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.tsx --format esm,cjs --dts --clean --external react --external lucide-react --external phosphor-react"
+  }
+}

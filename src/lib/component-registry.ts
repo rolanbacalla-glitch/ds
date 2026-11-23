@@ -71,7 +71,7 @@ export const COMPONENT_REGISTRY: Record<ComponentSlug, ComponentSpec> = {
       {
         slot: "01. Label Header",
         element: "<label htmlFor={id}> + Required Indicator",
-        geometry: "Font: 13px Plus Jakarta Sans 600 • Margin-bottom: 6px",
+        geometry: "Font: 13px Manrope 600 • Margin-bottom: 6px",
         tokenBinding: "--comp-form-field-text-label -> var(--text-secondary)",
       },
       {

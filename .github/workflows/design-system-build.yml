@@ -1,14 +1,14 @@
-name: Design System Token Compiler & Type Verification
+name: Design System Token Compiler, Packages & Production Verification
 
 on:
   pull_request:
     branches: [main, master]
   push:
-    branches: [main, feature/**]
+    branches: [main, master, feature/**, feat/**]
 
 jobs:
   verify-design-system:
-    name: Build 3-Tier Tokens, Verify WCAG 2.2 & Compile Next.js 16
+    name: Build Packages, Verify WCAG 2.2, Run Unit Tests & Compile Next.js 16
     runs-on: ubuntu-latest
 
     steps:
@@ -24,11 +24,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Compile 3-Tier Design Tokens (CSS, TS, Figma DTCG, Stitch DESIGN.md, Cursor)
-        run: npm run build:tokens
+      - name: Build 3-Tier Tokens & Publishable Packages (@antigravity/tokens, ui, icons)
+        run: npm run build:packages
 
-      - name: Run Automated WCAG 2.2 AA Contrast & Artifact Verification
+      - name: Run Automated WCAG 2.2 AA Contrast & Artefact Verification
         run: npm run verify:wcag
+
+      - name: Run Unit & Accessibility Primitives Test Suite
+        run: npm test
 
       - name: Run Strict TypeScript Compiler Check
         run: npx tsc --noEmit
@@ -36,5 +39,5 @@ jobs:
       - name: Run ESLint Check
         run: npm run lint
 
-      - name: Run Production Next.js 16 Build
+      - name: Run Production Next.js 16 Standalone Build
         run: npm run build

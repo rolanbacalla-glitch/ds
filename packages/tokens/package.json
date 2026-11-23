@@ -1,0 +1,29 @@
+{
+  "name": "@antigravity/tokens",
+  "version": "2.4.0",
+  "description": "Perceptual OKLCH 3-tier W3C DTCG design tokens for Antigravity Design System (CSS, TypeScript, Figma Variables).",
+  "license": "MIT",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.js",
+      "default": "./dist/tokens.js"
+    },
+    "./css": "./dist/tokens.css",
+    "./figma": "./dist/figma-variables.tokens.json",
+    "./raw/primitives": "./dist/raw/primitives.json",
+    "./raw/semantic.light": "./dist/raw/semantic.light.json",
+    "./raw/semantic.dark": "./dist/raw/semantic.dark.json",
+    "./raw/components": "./dist/raw/components.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/sync-dist.mjs"
+  }
+}
