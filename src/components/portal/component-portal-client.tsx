@@ -36,6 +36,7 @@ import {
   SignOut,
 } from "phosphor-react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { useTheme } from "@/components/providers/theme-provider";
 
 interface ComponentPortalClientProps {
   initialSlug: ComponentSlug;
@@ -57,7 +58,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
   const semanticTokens = getComponentSemanticTokens(spec.slug);
   const tier3Tokens = getComponentTier3Tokens(spec.slug);
 
-  const [theme, setTheme] = useState<"dark" | "light">("light");
+  const { theme, toggleTheme } = useTheme();
   const [simulatedState, setSimulatedState] = useState<InteractiveStateMode>("default");
   const [viewMode, setViewMode] = useState<"preview" | "code">("preview");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -89,20 +90,6 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
   const [tableFilter, setTableFilter] = useState("");
   const [sortAsc, setSortAsc] = useState(false);
   const [selectedRows, setSelectedRows] = useState<string[]>(["--bg-action-primary"]);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    root.setAttribute("data-theme", theme);
-    root.classList.toggle("dark", theme === "dark");
-  }, [theme]);
-
-  const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    const root = document.documentElement;
-    root.setAttribute("data-theme", next);
-    root.classList.toggle("dark", next === "dark");
-  };
 
   // FocusScope keyboard trap when ModalDialog specimen is active & open
   useEffect(() => {
