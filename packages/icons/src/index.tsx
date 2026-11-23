@@ -86,3 +86,15 @@ export function MaterialSymbol({
     </span>
   );
 }
+
+export {
+  SpotifyIcon,
+  AirplayIcon,
+  AirplayAudioIcon,
+  SpotifyAirplayIcon,
+  CastIcon,
+  CastConnectedIcon,
+  BluetoothAudioIcon,
+  LosslessAudioIcon,
+  type MediaIconProps,
+} from "./brand-media";

@@ -3,21 +3,34 @@
 import React, { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import * as Icons from "phosphor-react";
+import {
+  SpotifyIcon,
+  AirplayIcon,
+  AirplayAudioIcon,
+  SpotifyAirplayIcon,
+  CastIcon,
+  CastConnectedIcon,
+  BluetoothAudioIcon,
+  LosslessAudioIcon,
+  type MediaIconProps,
+} from "@antigravity/icons";
 import materialIconsData from "@/data/material-icons.json";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/auth-provider";
 
 type IconWeight = "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
 type PhosphorIconComponent = React.ComponentType<Icons.IconProps>;
-type IconSetType = "all" | "material" | "phosphor";
+type CustomMediaIconComponent = React.ComponentType<MediaIconProps>;
+type IconSetType = "all" | "material" | "phosphor" | "media";
 
 interface UnifiedIconItem {
   id: string;
   name: string;
-  source: "material" | "phosphor";
+  source: "material" | "phosphor" | "media";
   category?: string;
   tags?: string[];
   phosphorIcon?: PhosphorIconComponent;
+  customIcon?: CustomMediaIconComponent;
   materialName?: string;
 }
 
@@ -83,12 +96,84 @@ export const IconPlayground: React.FC = () => {
     );
   }, []);
 
+  // Antigravity Media & Brand Icons (Spotify, AirPlay, Cast, Bluetooth, Lossless)
+  const MEDIA_ICONS: UnifiedIconItem[] = useMemo(
+    () => [
+      {
+        id: "media-spotify",
+        name: "SpotifyIcon",
+        source: "media",
+        category: "av",
+        tags: ["spotify", "music", "audio", "streaming", "brand", "sound"],
+        customIcon: SpotifyIcon,
+      },
+      {
+        id: "media-airplay",
+        name: "AirplayIcon",
+        source: "media",
+        category: "av",
+        tags: ["airplay", "apple", "cast", "screen", "mirror", "streaming", "video"],
+        customIcon: AirplayIcon,
+      },
+      {
+        id: "media-airplay-audio",
+        name: "AirplayAudioIcon",
+        source: "media",
+        category: "av",
+        tags: ["airplay", "audio", "apple", "speaker", "music", "wireless", "sound"],
+        customIcon: AirplayAudioIcon,
+      },
+      {
+        id: "media-spotify-airplay",
+        name: "SpotifyAirplayIcon",
+        source: "media",
+        category: "av",
+        tags: ["spotify", "airplay", "connect", "speaker", "cast", "audio", "device"],
+        customIcon: SpotifyAirplayIcon,
+      },
+      {
+        id: "media-cast",
+        name: "CastIcon",
+        source: "media",
+        category: "av",
+        tags: ["cast", "chromecast", "google", "tv", "stream", "mirror", "airplay"],
+        customIcon: CastIcon,
+      },
+      {
+        id: "media-cast-connected",
+        name: "CastConnectedIcon",
+        source: "media",
+        category: "av",
+        tags: ["cast", "chromecast", "connected", "active", "stream", "tv"],
+        customIcon: CastConnectedIcon,
+      },
+      {
+        id: "media-bluetooth-audio",
+        name: "BluetoothAudioIcon",
+        source: "media",
+        category: "av",
+        tags: ["bluetooth", "audio", "wireless", "headphones", "speaker", "connect"],
+        customIcon: BluetoothAudioIcon,
+      },
+      {
+        id: "media-lossless-audio",
+        name: "LosslessAudioIcon",
+        source: "media",
+        category: "av",
+        tags: ["lossless", "hires", "audio", "waveform", "sound", "music", "studio"],
+        customIcon: LosslessAudioIcon,
+      },
+    ],
+    []
+  );
+
   // Combined pool
   const ALL_ICONS = useMemo(() => {
+    if (activeSet === "media") return MEDIA_ICONS;
     if (activeSet === "material") return MATERIAL_ICONS;
     if (activeSet === "phosphor") return PHOSPHOR_ICONS;
-    return [...MATERIAL_ICONS, ...PHOSPHOR_ICONS];
-  }, [activeSet, MATERIAL_ICONS, PHOSPHOR_ICONS]);
+    return [...MEDIA_ICONS, ...MATERIAL_ICONS, ...PHOSPHOR_ICONS];
+  }, [activeSet, MEDIA_ICONS, MATERIAL_ICONS, PHOSPHOR_ICONS]);
 
   const filteredIcons = useMemo(() => {
     let pool = ALL_ICONS;
@@ -210,7 +295,11 @@ export const IconPlayground: React.FC = () => {
               <span className="font-mono uppercase text-[var(--sys-primary)] flex items-center gap-1.5">
                 <span>Icon Preview</span>
                 <span className="text-[10px] px-1.5 py-0.2 rounded bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)]">
-                  {selectedIcon.source === "material" ? "Material Design" : "Phosphor"}
+                  {selectedIcon.source === "material"
+                    ? "Material Design"
+                    : selectedIcon.source === "media"
+                      ? "@antigravity/icons"
+                      : "Phosphor"}
                 </span>
               </span>
               <button
@@ -246,6 +335,12 @@ export const IconPlayground: React.FC = () => {
                 >
                   {selectedIcon.materialName}
                 </span>
+              ) : selectedIcon.customIcon ? (
+                <selectedIcon.customIcon
+                  size={size}
+                  strokeWidth={weight === "thin" ? 1.2 : weight === "bold" ? 2.4 : 1.8}
+                  className="text-[var(--sys-primary)] relative z-10 transition-all duration-150"
+                />
               ) : selectedIcon.phosphorIcon ? (
                 <selectedIcon.phosphorIcon
                   size={size}
@@ -444,6 +539,8 @@ export const IconPlayground: React.FC = () => {
                       >
                         {item.materialName}
                       </span>
+                    ) : item.customIcon ? (
+                      <item.customIcon size={22} />
                     ) : item.phosphorIcon ? (
                       <item.phosphorIcon size={22} weight={active ? weight : "regular"} />
                     ) : null}
