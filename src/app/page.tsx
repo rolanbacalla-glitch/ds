@@ -11,6 +11,7 @@ import { TypographySection } from "@/components/workbench/typography-section";
 import { ComponentsSection } from "@/components/workbench/components-section";
 import { MotionGeometrySection } from "@/components/workbench/motion-geometry-section";
 import { ExportCompilerSection } from "@/components/workbench/export-compiler-section";
+import { UsabilityChecksSection } from "@/components/workbench/usability-checks-section";
 import { IconPlayground } from "@/components/dashboard/icon-playground";
 import {
   DownloadSimple,
@@ -47,6 +48,7 @@ export default function Home() {
       "components",
       "motion",
       "icons",
+      "usability",
       "export",
     ];
 
@@ -302,7 +304,10 @@ export default function Home() {
         {/* 06 // Optical Iconography Studio */}
         <IconPlayground />
 
-        {/* 07 // Live Multi-Platform Exporter (Tailwind v4, Figma DTCG, Stitch DESIGN.md, Cursor) */}
+        {/* 07 // Usability Guidelines, Browser Compatibility & Live Checks */}
+        <UsabilityChecksSection theme={theme} />
+
+        {/* 08 // Live Multi-Platform Exporter (Tailwind v4, Figma DTCG, Stitch DESIGN.md, Cursor) */}
         <ExportCompilerSection seed={seed} />
       </main>
     </div>

@@ -40,7 +40,8 @@ export const WORKBENCH_SECTIONS = [
   { id: "components", index: "04", label: "Components", title: "Interactive UI Building Blocks", icon: Cube },
   { id: "motion", index: "05", label: "Motion", title: "Smooth Animation & Rounded Corners", icon: Waves },
   { id: "icons", index: "06", label: "Icons", title: "Icon Library & Customiser", icon: Sparkle },
-  { id: "export", index: "07", label: "Export", title: "Export for Code, Figma & AI", icon: Code },
+  { id: "usability", index: "07", label: "Usability", title: "Usability Guidelines, Compatibility & Checks", icon: ShieldCheck },
+  { id: "export", index: "08", label: "Export", title: "Export for Code, Figma & AI", icon: Code },
 ] as const;
 
 export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({

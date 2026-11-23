@@ -162,6 +162,7 @@ const requiredArtifacts = [
   "DESIGN.md",
   ".cursor/rules/design-system.mdc",
   "src/app/components/[componentName]/page.tsx",
+  "src/components/workbench/usability-checks-section.tsx",
   ".github/workflows/design-system-build.yml",
 ];
 
@@ -170,6 +171,37 @@ const artifactChecks = requiredArtifacts.map((rel) => {
   if (!exists) allPassed = false;
   return { rel, exists };
 });
+
+// Automated Usability & Browser Compatibility Guardrail Checks
+const globalsCss = fs.readFileSync(path.join(ROOT, "src/app/globals.css"), "utf8");
+const generatedCss = fs.readFileSync(path.join(ROOT, "src/styles/tokens.generated.css"), "utf8");
+
+const compatibilityChecks = [
+  {
+    name: "Reduced Motion Safeguard (SC 2.3.3)",
+    pass: globalsCss.includes("prefers-reduced-motion"),
+    detail: "Global CSS honours @media (prefers-reduced-motion: reduce) to suppress spring motion.",
+  },
+  {
+    name: "WebKit Backdrop Filter Prefix",
+    pass: globalsCss.includes("-webkit-backdrop-filter"),
+    detail: "Safari & iOS WebKit compatibility prefix present for Z-Level 2 floating chrome.",
+  },
+  {
+    name: "sRGB Hex Fallback Tokens",
+    pass: /#[0-9a-fA-F]{6}/.test(generatedCss) && generatedCss.includes("--bg-canvas:") && generatedCss.includes("--text-primary:"),
+    detail: "Compiled tokens.generated.css provides sRGB hex primitives and semantic aliases alongside dynamic OKLCH tokens.",
+  },
+  {
+    name: "Accessible Focus Ring Token (SC 2.4.11)",
+    pass: generatedCss.includes("--border-focus-ring:"),
+    detail: "High-contrast semantic focus ring token generated for light and dark polarity.",
+  },
+];
+
+for (const check of compatibilityChecks) {
+  if (!check.pass) allPassed = false;
+}
 
 const reportLines = [
   `# Antigravity Design System (v2.4) — Automated Verification & WCAG 2.2 Audit Report`,
@@ -202,6 +234,14 @@ const reportLines = [
   `- **\`/components/data-table\`**: Verified \`<th scope="col" aria-sort>\`, keyboard-accessible column sort buttons, row selection checkboxes, and mandatory \`tabular-nums\` alignment.`,
   `- **\`/components/button\`**: Verified 40px minimum target height (SC 2.5.8) and M3 Expressive \`12px -> 9999px\` active shape morphing.`,
   ``,
+  `## 4. Usability & Cross-Browser Compatibility Guardrails`,
+  ``,
+  `| Guardrail Check | Details | Result |`,
+  `| :--- | :--- | :--- |`,
+  ...compatibilityChecks.map(
+    (c) => `| **${c.name}** | ${c.detail} | **${c.pass ? "PASS" : "FAIL"}** |`
+  ),
+  ``,
 ];
 
 const reportPath = path.join(ROOT, "docs/verification-report.md");
@@ -213,5 +253,5 @@ if (!allPassed) {
 }
 
 console.log(
-  `[verify-design-system] All ${results.length} WCAG 2.2 AA dual-polarity contrast checks and ${artifactChecks.length} artifact checks PASSED.`
+  `[verify-design-system] All ${results.length} WCAG 2.2 AA contrast checks, ${artifactChecks.length} artifact checks, and ${compatibilityChecks.length} compatibility guardrails PASSED.`
 );

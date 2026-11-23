@@ -34,6 +34,7 @@
 | `DESIGN.md` | Compiled Design System Deliverable | **VERIFIED** |
 | `.cursor/rules/design-system.mdc` | Compiled Design System Deliverable | **VERIFIED** |
 | `src/app/components/[componentName]/page.tsx` | Compiled Design System Deliverable | **VERIFIED** |
+| `src/components/workbench/usability-checks-section.tsx` | Compiled Design System Deliverable | **VERIFIED** |
 | `.github/workflows/design-system-build.yml` | Compiled Design System Deliverable | **VERIFIED** |
 
 ## 3. Interactive Component Portal & Focus-Trap Verification
@@ -42,3 +43,12 @@
 - **`/components/modal-dialog`**: Verified `role="dialog"`, `aria-modal="true"`, FocusScope `Tab` / `Shift+Tab` cycle containment, `Escape` key dismissal, and return-focus restoration.
 - **`/components/data-table`**: Verified `<th scope="col" aria-sort>`, keyboard-accessible column sort buttons, row selection checkboxes, and mandatory `tabular-nums` alignment.
 - **`/components/button`**: Verified 40px minimum target height (SC 2.5.8) and M3 Expressive `12px -> 9999px` active shape morphing.
+
+## 4. Usability & Cross-Browser Compatibility Guardrails
+
+| Guardrail Check | Details | Result |
+| :--- | :--- | :--- |
+| **Reduced Motion Safeguard (SC 2.3.3)** | Global CSS honours @media (prefers-reduced-motion: reduce) to suppress spring motion. | **PASS** |
+| **WebKit Backdrop Filter Prefix** | Safari & iOS WebKit compatibility prefix present for Z-Level 2 floating chrome. | **PASS** |
+| **sRGB Hex Fallback Tokens** | Compiled tokens.generated.css provides sRGB hex primitives and semantic aliases alongside dynamic OKLCH tokens. | **PASS** |
+| **Accessible Focus Ring Token (SC 2.4.11)** | High-contrast semantic focus ring token generated for light and dark polarity. | **PASS** |

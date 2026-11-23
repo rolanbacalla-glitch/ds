@@ -1,9 +1,18 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import {
   onAuthStateChanged,
   signInWithPopup,
+  browserPopupRedirectResolver,
   GoogleAuthProvider,
   OAuthProvider,
   signInWithEmailAndPassword,
@@ -145,43 +154,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
-  // Sync user profile record in Firestore when a verified user signs in
+  const syncInFlightRef = useRef<Map<string, Promise<void>>>(new Map());
+
+  // Sync user profile record in Firestore when a verified user signs in (deduplicated per UID)
   const syncUserProfile = useCallback(async (firebaseUser: User) => {
     if (!firebaseUser.emailVerified || !firebaseUser.email) return;
-    const userPath = `users/${firebaseUser.uid}`;
-    const userRef = doc(db, "users", firebaseUser.uid);
-    const primaryProvider = normaliseProviderId(firebaseUser.providerData[0]?.providerId);
-    const displayName = clampString(
-      firebaseUser.displayName || firebaseUser.email.split("@")[0] || "Portfolio Visitor",
-      100,
-      "Portfolio Visitor"
-    );
-    const email = clampString(firebaseUser.email, 160);
 
-    try {
-      const existingSnap = await getDoc(userRef);
-      if (existingSnap.exists()) {
-        await updateDoc(userRef, {
-          displayName,
-          email,
-          provider: primaryProvider,
-          emailVerified: firebaseUser.emailVerified,
-          lastLoginAt: serverTimestamp(),
-        });
-      } else {
-        await setDoc(userRef, {
-          uid: firebaseUser.uid,
-          email,
-          displayName,
-          provider: primaryProvider,
-          emailVerified: firebaseUser.emailVerified,
-          createdAt: serverTimestamp(),
-          lastLoginAt: serverTimestamp(),
-        });
-      }
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, userPath);
+    const existingPromise = syncInFlightRef.current.get(firebaseUser.uid);
+    if (existingPromise) {
+      return existingPromise;
     }
+
+    const runSync = (async () => {
+      const userPath = `users/${firebaseUser.uid}`;
+      const userRef = doc(db, "users", firebaseUser.uid);
+      const primaryProvider = normaliseProviderId(firebaseUser.providerData[0]?.providerId);
+      const displayName = clampString(
+        firebaseUser.displayName || firebaseUser.email!.split("@")[0] || "Portfolio Visitor",
+        100,
+        "Portfolio Visitor"
+      );
+      const email = clampString(firebaseUser.email!, 160);
+
+      try {
+        const existingSnap = await getDoc(userRef);
+        if (existingSnap.exists()) {
+          await updateDoc(userRef, {
+            displayName,
+            email,
+            provider: primaryProvider,
+            emailVerified: firebaseUser.emailVerified,
+            lastLoginAt: serverTimestamp(),
+          });
+        } else {
+          await setDoc(userRef, {
+            uid: firebaseUser.uid,
+            email,
+            displayName,
+            provider: primaryProvider,
+            emailVerified: firebaseUser.emailVerified,
+            createdAt: serverTimestamp(),
+            lastLoginAt: serverTimestamp(),
+          });
+        }
+      } catch (error) {
+        console.error("Firestore profile sync warning:", userPath, error);
+      } finally {
+        syncInFlightRef.current.delete(firebaseUser.uid);
+      }
+    })();
+
+    syncInFlightRef.current.set(firebaseUser.uid, runSync);
+    return runSync;
   }, []);
 
   // Firebase Auth state observer
@@ -309,10 +333,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // ============================================================================
   const signInWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
+    provider.addScope("email");
+    provider.addScope("profile");
     provider.setCustomParameters({ prompt: "select_account" });
-    const cred = await signInWithPopup(auth, provider);
+    const cred = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
     if (cred.user.emailVerified) {
-      await syncUserProfile(cred.user);
+      void syncUserProfile(cred.user);
     }
     const adminSignIn = isBootstrappedAdminEmail(cred.user.email) && cred.user.emailVerified;
     showToast(
@@ -327,9 +353,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const provider = new OAuthProvider("apple.com");
     provider.addScope("email");
     provider.addScope("name");
-    const cred = await signInWithPopup(auth, provider);
+    const cred = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
     if (cred.user.emailVerified) {
-      await syncUserProfile(cred.user);
+      void syncUserProfile(cred.user);
     }
     const adminSignIn = isBootstrappedAdminEmail(cred.user.email) && cred.user.emailVerified;
     showToast(
@@ -344,7 +370,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     async (email: string, password: string) => {
       const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
       if (cred.user.emailVerified) {
-        await syncUserProfile(cred.user);
+        void syncUserProfile(cred.user);
         const adminSignIn = isBootstrappedAdminEmail(cred.user.email);
         showToast(
           adminSignIn
