@@ -26,10 +26,11 @@ import {
   Lock,
 } from "phosphor-react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { useTheme } from "@/components/providers/theme-provider";
 
 export default function Home() {
   const { canExport, isAdmin, portfolioSettings, openAdminConsole } = useAuth();
-  const [theme, setTheme] = useState<"dark" | "light">("light");
+  const { theme, toggleTheme } = useTheme();
   const [customSeed, setCustomSeed] = useState<SeedConfig | null>(null);
   const [activeSection, setActiveSection] = useState<string>("tokens");
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -99,18 +100,16 @@ export default function Home() {
     };
   }, []);
 
-  // Sync live seed parameters and theme polarity to root CSS variables
+  // Sync live seed parameters to root CSS variables
   useEffect(() => {
     const root = document.documentElement;
-    root.setAttribute("data-theme", theme);
-    root.classList.toggle("dark", theme === "dark");
     root.style.setProperty("--seed-hue", String(seed.hue));
     root.style.setProperty("--seed-chroma", String(seed.chroma));
     root.style.setProperty("--seed-secondary-hue", String(seed.secondaryHue));
     root.style.setProperty("--seed-tertiary-hue", String(seed.tertiaryHue));
     root.style.setProperty("--seed-neutral-chroma", String(seed.neutralChroma));
     root.style.setProperty("--seed-radius-scale", String(seed.radiusScale));
-  }, [theme, seed]);
+  }, [seed]);
 
   const handleSelectSection = (id: string) => {
     setActiveSection(id);
@@ -131,7 +130,7 @@ export default function Home() {
           activeSection={activeSection}
           onSelectSection={handleSelectSection}
           theme={theme}
-          onToggleTheme={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+          onToggleTheme={toggleTheme}
           seed={seed}
           onSelectPreset={(preset) => setCustomSeed(preset)}
         />
