@@ -120,7 +120,7 @@ export function generateTailwindV4Export(seed: SeedConfig): string {
 
 @theme {
   --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: "Fraunces", Georgia, serif;
+  --font-serif: "Newsreader", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -258,7 +258,7 @@ colors:
 
 ## 4. Typography Stack
 - **Interface & Body**: \`Manrope\` (400–800, semi-condensed precision with native tabular figures)
-- **Editorial Display**: \`Fraunces\` (Variable optical sizing \`opsz\` 9..144, italic & sculpted serifs)
+- **Editorial Display**: \`Newsreader\` (Variable optical sizing \`opsz\` 6..72, crisp modern digital serifs & italics)
 - **Tokens & Code**: \`IBM Plex Mono\` (400–600, Swiss monospace geometry with clear 0/O & 1/l distinction)
 
 ## 5. Concentric Geometry

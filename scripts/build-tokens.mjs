@@ -324,8 +324,8 @@ colors:
 \`\`\`yaml
 typography:
   display:
-    fontFamily: Fraunces
-    fontWeight: 400..700 (Variable Optical Size opsz)
+    fontFamily: Newsreader
+    fontWeight: 400..700 (Variable Optical Size opsz 6..72)
     lineHeight: 1.08
   sans:
     fontFamily: Manrope

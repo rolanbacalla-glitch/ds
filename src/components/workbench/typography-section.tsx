@@ -97,11 +97,11 @@ export const TypographySection: React.FC = () => {
         "Tighter semi-condensed metrics fit dense Swiss tables cleanly, with open apertures and balanced stem weight on dark canvases.",
     },
     {
-      role: "Editorial Display Serif",
-      previous: "Instrument Serif (400 only)",
-      upgraded: "Fraunces Variable (opsz 9..144)",
+      role: "Modern Editorial Display",
+      previous: "Instrument Serif / Fraunces",
+      upgraded: "Newsreader Variable (opsz 6..72)",
       rationale:
-        "True optical sizing automatically thickens hairlines at subheading scales and sharpens strokes at hero sizes—eliminating spindly dark-mode rendering.",
+        "Razor-sharp contemporary digital serif designed specifically for modern UI screens—clean geometric stress and tailored italics without vintage bulk.",
     },
     {
       role: "Data & Code Monospace",
@@ -131,7 +131,7 @@ export const TypographySection: React.FC = () => {
           <p className="text-sm text-[var(--sys-on-surface-secondary)] max-w-3xl leading-relaxed">
             Pairs architectural <strong className="text-[var(--sys-on-surface)]">Manrope</strong>{" "}
             for everyday interface copy with optically sized{" "}
-            <strong className="text-[var(--sys-on-surface)]">Fraunces</strong> for sculptural
+            <strong className="text-[var(--sys-on-surface)]">Newsreader</strong> for crisp, modern
             editorial accents and{" "}
             <strong className="text-[var(--sys-on-surface)]">IBM Plex Mono</strong> for token
             coordinates and tabular figures.
@@ -226,10 +226,10 @@ export const TypographySection: React.FC = () => {
                   Editorial Headings &amp; Optical Highlights
                 </div>
                 <div className="font-serif italic text-2xl text-[var(--sys-primary)] mt-0.5">
-                  Fraunces Variable
+                  Newsreader Variable
                 </div>
                 <div className="text-xs text-[var(--sys-on-surface-secondary)] mt-1">
-                  Variable optical size (9–144pt) with expressive soft serifs.
+                  Sharp contemporary optical sizing (6–72pt) engineered for high-DPI screens.
                 </div>
               </div>
 
@@ -322,7 +322,7 @@ export const TypographySection: React.FC = () => {
             </p>
           </div>
           <span className="text-xs font-mono text-[var(--sys-primary)]">
-            Manrope · Fraunces · IBM Plex Mono
+            Manrope · Newsreader · IBM Plex Mono
           </span>
         </div>
 

@@ -17,6 +17,8 @@ import {
   Smartphone,
   ChevronDown,
   ExternalLink,
+  Copy,
+  Check,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { ADMIN_EMAIL } from "@/lib/firebase";
@@ -26,10 +28,12 @@ import firebaseConfig from "../../../firebase-applet-config.json";
 type AuthMode = "signin" | "register" | "reset";
 
 const FIREBASE_PROVIDERS_URL = `https://console.firebase.google.com/project/${firebaseConfig.projectId}/authentication/providers`;
+const FIREBASE_SETTINGS_URL = `https://console.firebase.google.com/project/${firebaseConfig.projectId}/authentication/settings`;
 
 interface ParsedAuthError {
   message: string;
   isProviderDisabled?: boolean;
+  isUnauthorizedDomain?: boolean;
 }
 
 function parseFirebaseAuthError(error: unknown): ParsedAuthError {
@@ -53,8 +57,8 @@ function parseFirebaseAuthError(error: unknown): ParsedAuthError {
     case "auth/unauthorized-domain":
       return {
         message:
-          "This preview domain is not yet authorised in Firebase Authentication. Add the domain under Firebase Console → Authentication → Settings → Authorised domains.",
-        isProviderDisabled: true,
+          "This domain is not yet on your Firebase Authorised Domains allowlist. Copy the domain below and add it under Authentication → Settings → Authorised domains.",
+        isUnauthorizedDomain: true,
       };
     case "auth/operation-not-allowed":
       return {
@@ -123,6 +127,9 @@ const AuthModalDialog: React.FC = () => {
   );
   const [authError, setAuthError] = useState<ParsedAuthError | null>(null);
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
+  const [copiedDomain, setCopiedDomain] = useState(false);
+
+  const currentHostname = typeof window !== "undefined" ? window.location.hostname : "";
 
   const modalRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
@@ -365,6 +372,49 @@ const AuthModalDialog: React.FC = () => {
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>{authError.message}</span>
                   </div>
+                  {authError.isUnauthorizedDomain && (
+                    <div className="space-y-2 pt-1 pl-6">
+                      {currentHostname && (
+                        <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline)] text-[var(--sys-on-surface)]">
+                          <code className="font-mono text-[11px] truncate">{currentHostname}</code>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                await navigator.clipboard.writeText(currentHostname);
+                                setCopiedDomain(true);
+                                setTimeout(() => setCopiedDomain(false), 1800);
+                              } catch {
+                                // ignore clipboard restrictions
+                              }
+                            }}
+                            className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[11px] font-semibold cursor-pointer"
+                          >
+                            {copiedDomain ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-500" />
+                                <span>Copied</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
+                      <a
+                        href={FIREBASE_SETTINGS_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="min-h-[34px] px-3 py-1.5 rounded-lg bg-[var(--sys-primary)] text-[var(--sys-on-primary)] text-[11px] font-semibold inline-flex items-center gap-1.5 hover:opacity-95"
+                      >
+                        <span>Open Firebase Authorised Domains</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  )}
                   {authError.isProviderDisabled && (
                     <div className="flex flex-wrap items-center gap-2 pt-1 pl-6">
                       <button

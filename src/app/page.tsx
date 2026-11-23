@@ -181,7 +181,7 @@ export default function Home() {
 
             <p className="text-base sm:text-lg text-[var(--sys-on-surface-secondary)] max-w-3xl leading-relaxed">
               Explore live perceptual OKLCH brand palettes, optically scaled{" "}
-              <strong className="text-[var(--sys-on-surface)]">Manrope &amp; Fraunces</strong>{" "}
+              <strong className="text-[var(--sys-on-surface)]">Manrope &amp; Newsreader</strong>{" "}
               typography, and accessible UI primitives in dark and light mode. Full viewing is open
               to visitors whilst token exports remain protected.
             </p>

@@ -109,7 +109,7 @@
   "typography": {
     "family": {
       "sans": { "$value": "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "$type": "fontFamily" },
-      "serif": { "$value": "'Fraunces', Georgia, serif", "$type": "fontFamily" },
+      "serif": { "$value": "'Newsreader', Georgia, serif", "$type": "fontFamily" },
       "mono": { "$value": "'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace", "$type": "fontFamily" }
     },
     "size": {

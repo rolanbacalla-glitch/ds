@@ -61,7 +61,7 @@ alwaysApply: true
 
 # Antigravity Multi-Platform Agent Rules (Cursor & Google Antigravity)
 - Active Preset: ${seed.name} (Hue: ${seed.hue}°, Chroma: ${seed.chroma}, Radius Scale: ${seed.radiusScale}x)
-- Typography Stack: Manrope (Sans), Fraunces Variable (Display Serif), IBM Plex Mono (Mono)
+- Typography Stack: Manrope (Sans), Newsreader Variable (Modern Display Serif), IBM Plex Mono (Mono)
 - Next.js 16.2+ App Router: dynamic route params are Promises and must be awaited.
 - Tailwind CSS v4: bind strictly to Tier-2 Semantic Tokens (--bg-action-primary, --sys-primary, --text-primary, --text-feedback-error).
 - Z-Axis Spatial Discipline:
@@ -81,7 +81,7 @@ alwaysApply: true
         filename: "src/styles/tokens.generated.css",
         platform: "Next.js 16 + Tailwind CSS v4",
         code: generateTailwindV4Export(seed),
-        safeSummary: `/* Antigravity Design System — ${seed.name} */\n/* Target: Tailwind CSS v4 + OKLCH Variables (Manrope · Fraunces · IBM Plex Mono) */\n/* [Full compiled stylesheet protected for portfolio viewing] */`,
+        safeSummary: `/* Antigravity Design System — ${seed.name} */\n/* Target: Tailwind CSS v4 + OKLCH Variables (Manrope · Newsreader · IBM Plex Mono) */\n/* [Full compiled stylesheet protected for portfolio viewing] */`,
       },
       figma: {
         label: "Figma Variables (DTCG)",

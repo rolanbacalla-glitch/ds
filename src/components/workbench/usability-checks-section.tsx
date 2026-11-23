@@ -224,7 +224,7 @@ const PLATFORM_MATRIX: PlatformSupportRow[] = [
     baseline: "v111+ (Blink)",
     category: "Desktop",
     status: "Full Support",
-    notes: "Native OKLCH gamut, variable Fraunces optical sizing, backdrop-filter, and CSS :has().",
+    notes: "Native OKLCH gamut, variable Newsreader optical sizing, backdrop-filter, and CSS :has().",
   },
   {
     platform: "Safari (macOS)",
@@ -425,7 +425,7 @@ function collectLiveDomChecks(): LiveCheckResult[] {
       status: bodyFontSize >= 14 ? "pass" : "advisory",
       metric: `${activeFont} · ${bodyFontSize}px base`,
       detail:
-        "Confirms readable base font scaling (>= 14px) with Manrope UI sans, Fraunces optical display serif, and IBM Plex Mono.",
+        "Confirms readable base font scaling (>= 14px) with Manrope UI sans, Newsreader optical display serif, and IBM Plex Mono.",
     },
     {
       id: "focus-ring-audit",

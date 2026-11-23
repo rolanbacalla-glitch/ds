@@ -182,44 +182,128 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
 
   return (
     <div className="min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] pb-24">
-      {/* Z-Level 2: Unified Floating Liquid Glass Top Portal Chrome (Travel-Kin Pattern) */}
-      <header className="sticky top-0 z-50 px-4 sm:px-6 pt-3 sm:pt-4">
+      {/* Z-Level 2: Unified Floating Liquid Glass Top Portal Chrome */}
+      <header className="sticky top-0 z-50 px-3 sm:px-6 pt-3 sm:pt-4">
         <div
           style={{
             backdropFilter: "blur(40px) saturate(190%)",
             WebkitBackdropFilter: "blur(40px) saturate(190%)",
           }}
-          className="max-w-[1400px] mx-auto rounded-2xl liquid-glass-regular backdrop-blur-2xl px-4 sm:px-6 py-3 shadow-xl flex items-center justify-between gap-4"
+          className="max-w-[1400px] mx-auto rounded-2xl liquid-glass-regular backdrop-blur-2xl px-3 sm:px-5 py-2.5 sm:py-3 shadow-xl space-y-2.5"
         >
-          {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)] transition-colors"
-            >
-              <ArrowLeft size={14} />
-              <span>Back to Design System</span>
-            </Link>
-            <span className="text-[var(--text-muted)]" aria-hidden="true">
-              /
-            </span>
-            <span className="text-[var(--text-secondary)] hidden sm:inline">Components</span>
-            <span className="text-[var(--text-muted)] hidden sm:inline" aria-hidden="true">
-              /
-            </span>
-            <span
-              aria-current="page"
-              className="font-semibold text-[var(--bg-action-primary)] px-2 py-0.5 rounded bg-[var(--bg-action-primary-subtle)]"
-            >
-              {spec.name}
-            </span>
-          </nav>
+          <div className="flex items-center justify-between gap-2 sm:gap-4 min-w-0">
+            {/* Breadcrumbs */}
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 sm:gap-2 text-xs min-w-0">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)] transition-colors shrink-0"
+              >
+                <ArrowLeft size={14} />
+                <span className="hidden sm:inline">Back to Design System</span>
+                <span className="sm:hidden">Back</span>
+              </Link>
+              <span className="text-[var(--text-muted)] shrink-0" aria-hidden="true">
+                /
+              </span>
+              <span className="text-[var(--text-secondary)] hidden md:inline shrink-0">Components</span>
+              <span className="text-[var(--text-muted)] hidden md:inline shrink-0" aria-hidden="true">
+                /
+              </span>
+              <span
+                aria-current="page"
+                className="font-semibold text-[var(--bg-action-primary)] px-2 py-0.5 rounded bg-[var(--bg-action-primary-subtle)] truncate"
+              >
+                {spec.name}
+              </span>
+            </nav>
 
-          {/* Component Route Switcher */}
+            {/* Component Route Switcher — Wide Desktop (xl+) */}
+            <div
+              role="navigation"
+              aria-label="Component Switcher"
+              className="hidden xl:flex items-center gap-1 p-1 rounded-full bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] shrink-0"
+            >
+              {COMPONENT_SLUGS.map((slug) => {
+                const item = COMPONENT_REGISTRY[slug];
+                const active = slug === spec.slug;
+                return (
+                  <Link
+                    key={slug}
+                    href={`/components/${slug}`}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap",
+                      active
+                        ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold shadow-sm"
+                        : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Polarity & Auth Switchers */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                aria-label={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
+                className="min-h-[36px] px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] border border-[var(--border-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)] cursor-pointer transition-all whitespace-nowrap"
+              >
+                {theme === "dark" ? (
+                  <>
+                    <Moon size={15} weight="fill" className="text-[var(--bg-action-primary)]" />
+                    <span className="hidden md:inline">Dark Mode</span>
+                  </>
+                ) : (
+                  <>
+                    <Sun size={15} weight="fill" className="text-[var(--bg-action-primary)]" />
+                    <span className="hidden md:inline">Light Mode</span>
+                  </>
+                )}
+              </button>
+
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={openAdminConsole}
+                  className="min-h-[36px] px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--bg-action-primary)] text-[var(--text-on-action)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                <ShieldCheck size={14} weight="fill" />
+                <span className="hidden sm:inline">Admin</span>
+              </button>
+              )}
+
+              {!user ? (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal()}
+                  className="min-h-[36px] px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] border border-[var(--border-default)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                  <LockKey size={14} weight="bold" className="text-[var(--bg-action-primary)]" />
+                  <span>Sign In</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void signOutUser()}
+                  aria-label="Sign out"
+                  title={`Sign out (${user.email})`}
+                  className="min-h-[36px] min-w-[36px] rounded-full bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] border border-[var(--border-default)] flex items-center justify-center cursor-pointer"
+                >
+                  <SignOut size={14} weight="bold" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Responsive Component Switcher — Mobile, Tablet & Minimised Desktop (< 1280px) */}
           <div
             role="navigation"
-            aria-label="Component Switcher"
-            className="hidden lg:flex items-center gap-1 p-1 rounded-full bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)]"
+            aria-label="Mobile Component Switcher"
+            className="flex xl:hidden items-center gap-1.5 pt-2 border-t border-[var(--border-subtle)] overflow-x-auto"
           >
             {COMPONENT_SLUGS.map((slug) => {
               const item = COMPONENT_REGISTRY[slug];
@@ -230,70 +314,16 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   href={`/components/${slug}`}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "px-3 py-1 rounded-full text-xs font-medium transition-all",
+                    "min-h-[34px] px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap shrink-0 inline-flex items-center",
                     active
                       ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold shadow-sm"
-                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      : "bg-[var(--bg-surface-recessed)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)]"
                   )}
                 >
                   {item.name}
                 </Link>
               );
             })}
-          </div>
-
-          {/* Polarity & Auth Switchers */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
-              className="min-h-[38px] px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] border border-[var(--border-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)] cursor-pointer transition-all"
-            >
-              {theme === "dark" ? (
-                <>
-                  <Moon size={15} weight="fill" className="text-[var(--bg-action-primary)]" />
-                  <span className="hidden sm:inline">Dark Mode</span>
-                </>
-              ) : (
-                <>
-                  <Sun size={15} weight="fill" className="text-[var(--bg-action-primary)]" />
-                  <span className="hidden sm:inline">Light Mode</span>
-                </>
-              )}
-            </button>
-
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={openAdminConsole}
-                className="min-h-[38px] px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--bg-action-primary)] text-[var(--text-on-action)] inline-flex items-center gap-1.5 cursor-pointer"
-              >
-                <ShieldCheck size={14} weight="fill" />
-                <span className="hidden sm:inline">Admin</span>
-              </button>
-            )}
-
-            {!user ? (
-              <button
-                type="button"
-                onClick={() => openAuthModal()}
-                className="min-h-[38px] px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] border border-[var(--border-default)] inline-flex items-center gap-1.5 cursor-pointer"
-              >
-                <LockKey size={14} weight="bold" className="text-[var(--bg-action-primary)]" />
-                <span>Sign In</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void signOutUser()}
-                aria-label="Sign out"
-                title={`Sign out (${user.email})`}
-                className="min-h-[38px] min-w-[38px] rounded-full bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] border border-[var(--border-default)] flex items-center justify-center cursor-pointer"
-              >
-                <SignOut size={14} weight="bold" />
-              </button>
-            )}
           </div>
         </div>
       </header>

@@ -91,6 +91,9 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
     p.name.toLowerCase().includes(query.toLowerCase())
   );
 
+  const activeSectionMeta =
+    WORKBENCH_SECTIONS.find((sec) => sec.id === activeSection) ?? WORKBENCH_SECTIONS[0];
+
   return (
     <>
       {/* Subtle top viewport mask so scrolling content fades smoothly above the floating glass bar */}
@@ -99,38 +102,41 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
         className="fixed top-0 inset-x-0 h-6 bg-gradient-to-b from-[var(--sys-surface-canvas)]/90 to-transparent pointer-events-none z-40"
       />
 
-      {/* Z-Level 2: Unified Floating Frosted Glass Top Navbar (Travel-Kin Pattern) */}
+      {/* Z-Level 2: Unified Floating Frosted Glass Top Navbar */}
       <nav
         aria-label="Main navigation"
         style={{
           backdropFilter: "blur(40px) saturate(190%)",
           WebkitBackdropFilter: "blur(40px) saturate(190%)",
         }}
-        className="fixed top-0 left-0 right-0 z-50 mx-4 sm:mx-6 mt-3 sm:mt-4 rounded-2xl liquid-glass-regular backdrop-blur-2xl px-4 sm:px-6 py-3 shadow-xl"
+        className="fixed top-0 left-0 right-0 z-50 mx-3 sm:mx-6 mt-3 sm:mt-4 rounded-2xl liquid-glass-regular backdrop-blur-2xl px-3 sm:px-5 py-2.5 sm:py-3 shadow-xl"
       >
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-3">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-2 sm:gap-3 min-w-0">
           {/* Brand + Version Badge */}
           <button
             type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setMobileMenuOpen(false);
+            }}
             aria-label="Antigravity Design System — back to top"
-            className="flex items-center gap-3 text-left group cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)] rounded-lg"
+            className="flex items-center gap-2 sm:gap-2.5 text-left group cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)] rounded-lg shrink-0"
           >
-            <div className="w-7 h-7 rounded-full bg-[var(--sys-primary)] flex items-center justify-center text-[var(--sys-on-primary)] font-mono text-xs font-bold shadow-sm group-hover:scale-105 transition-transform">
+            <div className="w-7 h-7 rounded-full bg-[var(--sys-primary)] flex items-center justify-center text-[var(--sys-on-primary)] font-mono text-xs font-bold shadow-sm group-hover:scale-105 transition-transform shrink-0">
               A
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm tracking-tight text-[var(--sys-on-surface)]">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="font-semibold text-sm tracking-tight text-[var(--sys-on-surface)] whitespace-nowrap">
                 Antigravity
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--sys-surface-high)]/80 text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)]">
+              <span className="hidden xs:inline-block sm:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-[var(--sys-surface-high)]/80 text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)]">
                 v2.4
               </span>
             </div>
           </button>
 
-          {/* Center Navigation Links inside the Unified Glass Bar */}
-          <div className="hidden lg:flex items-center gap-1">
+          {/* Center Navigation Links — Wide Desktop (xl: 1280px+) so all 8 sections fit with zero clipping */}
+          <div className="hidden xl:flex items-center gap-0.5 2xl:gap-1 min-w-0">
             {WORKBENCH_SECTIONS.map((sec) => {
               const isActive = activeSection === sec.id;
               return (
@@ -139,7 +145,7 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
                   type="button"
                   onClick={() => onSelectSection(sec.id)}
                   className={cn(
-                    "px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)]",
+                    "px-2.5 2xl:px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1 cursor-pointer whitespace-nowrap focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)]",
                     isActive
                       ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
                       : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-high)]/60"
@@ -151,14 +157,14 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
             })}
           </div>
 
-          {/* Right Utility Controls: Theme Color + Search + Light/Dark Switch + Mobile Toggle */}
-          <div className="flex items-center gap-2">
-            {/* Active Theme Colour Indicator */}
+          {/* Right Utility Controls */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Active Theme Colour Indicator (Wide desktop only to prevent crowding on minimised screens) */}
             <button
               type="button"
               onClick={() => onSelectSection("tokens")}
               title="Customise Theme Colour"
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs bg-[var(--sys-surface-high)]/60 hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
+              className="hidden 2xl:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs bg-[var(--sys-surface-high)]/60 hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer whitespace-nowrap"
             >
               <span
                 className="w-2.5 h-2.5 rounded-full border border-white/30"
@@ -171,12 +177,12 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
             <button
               type="button"
               onClick={() => setCommandOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
+              className="min-h-[36px] min-w-[36px] flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
               aria-label="Open Quick Search"
             >
-              <MagnifyingGlass size={13} weight="bold" />
+              <MagnifyingGlass size={14} weight="bold" />
               <span className="hidden md:inline text-[11px]">Search</span>
-              <kbd className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[var(--sys-surface-lowest)]/70 text-[var(--sys-on-surface-tertiary)]">
+              <kbd className="hidden lg:inline font-mono text-[10px] px-1.5 py-0.5 rounded bg-[var(--sys-surface-lowest)]/70 text-[var(--sys-on-surface-tertiary)]">
                 ⌘K
               </kbd>
             </button>
@@ -187,17 +193,17 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
               onClick={onToggleTheme}
               aria-label={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
               title="Switch between Dark and Light mode (Shortcut: T)"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] border border-[var(--sys-outline-variant)] shadow-sm hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+              className="min-h-[36px] min-w-[36px] flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] border border-[var(--sys-outline-variant)] shadow-sm hover:opacity-90 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
             >
               {theme === "dark" ? (
                 <>
                   <Moon size={14} weight="fill" />
-                  <span className="hidden sm:inline text-[11px]">Dark</span>
+                  <span className="hidden md:inline text-[11px]">Dark</span>
                 </>
               ) : (
                 <>
                   <Sun size={14} weight="fill" />
-                  <span className="hidden sm:inline text-[11px]">Light</span>
+                  <span className="hidden md:inline text-[11px]">Light</span>
                 </>
               )}
             </button>
@@ -208,25 +214,25 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
                 type="button"
                 onClick={openAdminConsole}
                 title="Open Portfolio Admin Console"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] shadow-sm hover:opacity-95 active:scale-95 transition-all cursor-pointer whitespace-nowrap shrink-0"
+                className="min-h-[36px] flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] shadow-sm hover:opacity-95 active:scale-95 transition-all cursor-pointer whitespace-nowrap shrink-0"
               >
                 <ShieldCheck size={14} weight="fill" />
                 <span className="hidden sm:inline text-[11px]">Admin</span>
               </button>
             )}
 
-            {/* Authentication Trigger or Signed-In Account Chip */}
+            {/* Authentication Trigger or Signed-In Account Controls */}
             {!user ? (
               <button
                 type="button"
                 onClick={() => openAuthModal()}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] transition-all cursor-pointer whitespace-nowrap shrink-0"
+                className="min-h-[36px] flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] transition-all cursor-pointer whitespace-nowrap shrink-0"
               >
                 <LockKey size={14} weight="bold" className="text-[var(--sys-primary)]" />
                 <span className="text-[11px]">Sign In</span>
               </button>
             ) : (
-              <div className="flex items-center gap-1.5">
+              <div className="hidden sm:flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => (isAdmin ? openAdminConsole() : onSelectSection("export"))}
@@ -237,7 +243,7 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
                       ? "Export Approved"
                       : "Portfolio Viewer"
                   }`}
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] cursor-pointer max-w-[140px]"
+                  className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] cursor-pointer max-w-[130px]"
                 >
                   <span className="truncate">{user.displayName || user.email?.split("@")[0]}</span>
                 </button>
@@ -246,52 +252,119 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
                   onClick={() => void signOutUser()}
                   aria-label="Sign out"
                   title={`Sign out (${user.email})`}
-                  className="p-2 rounded-full bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
+                  className="min-h-[36px] min-w-[36px] flex items-center justify-center rounded-full bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
                 >
                   <SignOut size={14} weight="bold" />
                 </button>
               </div>
             )}
 
-            {/* Mobile Navigation Drawer Toggle */}
+            {/* Responsive Drawer Toggle for Mobile, Tablet & Minimised Desktop (< 1280px) */}
             <button
               type="button"
               aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={mobileMenuOpen}
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="lg:hidden p-2 rounded-xl text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-high)]/60 border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
+              className="xl:hidden min-h-[36px] px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium text-[var(--sys-on-surface)] bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap"
             >
-              {mobileMenuOpen ? <X size={18} /> : <List size={18} />}
+              {mobileMenuOpen ? <X size={16} /> : <List size={16} />}
+              <span className="hidden sm:inline text-[11px] font-semibold">
+                {mobileMenuOpen ? "Close" : activeSectionMeta.label}
+              </span>
             </button>
           </div>
         </div>
 
-        {/* Mobile Expandable Glass Menu */}
+        {/* Responsive Expandable Glass Drawer (< 1280px) — Shows ALL Sections, Preset & Account Controls */}
         {mobileMenuOpen && (
-          <div className="max-w-[1400px] mx-auto lg:hidden mt-3 pt-3 border-t border-[var(--sys-outline-variant)] grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-            {WORKBENCH_SECTIONS.map((sec) => {
-              const isActive = activeSection === sec.id;
-              const Icon = sec.icon;
-              return (
+          <div className="max-w-[1400px] mx-auto xl:hidden mt-3 pt-3 border-t border-[var(--sys-outline-variant)] space-y-3 max-h-[75vh] overflow-y-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              {WORKBENCH_SECTIONS.map((sec) => {
+                const isActive = activeSection === sec.id;
+                const Icon = sec.icon;
+                return (
+                  <button
+                    key={sec.id}
+                    type="button"
+                    onClick={() => {
+                      onSelectSection(sec.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={cn(
+                      "min-h-[40px] px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-2 text-left transition-all cursor-pointer",
+                      isActive
+                        ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
+                        : "bg-[var(--sys-surface-lowest)]/60 text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-high)]/70 border border-[var(--sys-outline-variant)]"
+                    )}
+                  >
+                    <Icon size={15} className="shrink-0" />
+                    <span className="truncate">{sec.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Compact Utilities & Account Footer inside Drawer */}
+            <div className="pt-2.5 border-t border-[var(--sys-outline-variant)] flex flex-wrap items-center justify-between gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  onSelectSection("tokens");
+                  setMobileMenuOpen(false);
+                }}
+                className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[var(--sys-surface-lowest)]/70 hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)] inline-flex items-center gap-2 cursor-pointer"
+              >
+                <span
+                  className="w-2.5 h-2.5 rounded-full border border-white/30"
+                  style={{ backgroundColor: "var(--sys-primary)" }}
+                />
+                <span>Theme: {seed.name}</span>
+              </button>
+
+              {user ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[11px] text-[var(--sys-on-surface-secondary)] truncate max-w-[200px]">
+                    {user.email}
+                  </span>
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        openAdminConsole();
+                      }}
+                      className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold inline-flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <ShieldCheck size={14} weight="fill" />
+                      <span>Admin Console</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      void signOutUser();
+                    }}
+                    className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <SignOut size={14} weight="bold" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              ) : (
                 <button
-                  key={sec.id}
                   type="button"
                   onClick={() => {
-                    onSelectSection(sec.id);
                     setMobileMenuOpen(false);
+                    openAuthModal();
                   }}
-                  className={cn(
-                    "px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-2 text-left transition-all cursor-pointer",
-                    isActive
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
-                      : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-high)]/50"
-                  )}
+                  className="min-h-[36px] px-3.5 py-1.5 rounded-xl bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold inline-flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Icon size={14} />
-                  <span className="truncate">{sec.label}</span>
+                  <LockKey size={14} weight="bold" />
+                  <span>Sign In</span>
                 </button>
-              );
-            })}
+              )}
+            </div>
           </div>
         )}
       </nav>
@@ -299,7 +372,7 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
       {/* Z-Level 2: Quick Search & Theme Switcher Modal */}
       {commandOpen && (
         <div
-          className="fixed inset-0 z-[80] flex items-start justify-center pt-24 px-4 bg-black/55 backdrop-blur-xs animate-in fade-in duration-150"
+          className="fixed inset-0 z-[80] flex items-start justify-center pt-20 sm:pt-24 px-4 bg-black/55 backdrop-blur-xs animate-in fade-in duration-150"
           onClick={() => setCommandOpen(false)}
         >
           <div
@@ -312,18 +385,20 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
           >
             {/* Search Input */}
             <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[var(--sys-outline-variant)]">
-              <Command size={18} className="text-[var(--sys-primary)]" />
+              <Command size={18} className="text-[var(--sys-primary)] shrink-0" />
               <input
                 type="text"
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search sections, switch colour themes, or toggle dark mode..."
-                className="flex-1 bg-transparent text-sm text-[var(--sys-on-surface)] placeholder:text-[var(--sys-on-surface-tertiary)] outline-none"
+                className="flex-1 min-w-0 bg-transparent text-sm text-[var(--sys-on-surface)] placeholder:text-[var(--sys-on-surface-tertiary)] outline-none"
               />
               <button
+                type="button"
+                aria-label="Close quick search"
                 onClick={() => setCommandOpen(false)}
-                className="p-1 rounded-lg text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-on-surface)]"
+                className="p-1.5 rounded-lg text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-on-surface)] cursor-pointer"
               >
                 <X size={16} />
               </button>
@@ -341,26 +416,27 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
                     return (
                       <button
                         key={sec.id}
+                        type="button"
                         onClick={() => {
                           onSelectSection(sec.id);
                           setCommandOpen(false);
                         }}
                         className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[var(--sys-surface-high)]/80 text-left transition-colors group cursor-pointer"
                       >
-                        <div className="flex items-center gap-3">
-                          <Icon size={16} className="text-[var(--sys-primary)]" />
-                          <div>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <Icon size={16} className="text-[var(--sys-primary)] shrink-0" />
+                          <div className="min-w-0">
                             <div className="text-xs font-semibold text-[var(--sys-on-surface)]">
                               {sec.label}
                             </div>
-                            <div className="text-[11px] text-[var(--sys-on-surface-tertiary)]">
+                            <div className="text-[11px] text-[var(--sys-on-surface-tertiary)] truncate">
                               {sec.title}
                             </div>
                           </div>
                         </div>
                         <ArrowRight
                           size={14}
-                          className="text-[var(--sys-on-surface-tertiary)] group-hover:text-[var(--sys-primary)] group-hover:translate-x-0.5 transition-all"
+                          className="text-[var(--sys-on-surface-tertiary)] group-hover:text-[var(--sys-primary)] group-hover:translate-x-0.5 transition-all shrink-0"
                         />
                       </button>
                     );
@@ -377,24 +453,25 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
                   {filteredPresets.map((preset) => (
                     <button
                       key={preset.name}
+                      type="button"
                       onClick={() => {
                         onSelectPreset(preset);
                         setCommandOpen(false);
                       }}
                       className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[var(--sys-surface-high)]/80 border border-transparent hover:border-[var(--sys-outline-variant)] text-left transition-all cursor-pointer"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <span
-                          className="w-3.5 h-3.5 rounded-full border border-white/25"
+                          className="w-3.5 h-3.5 rounded-full border border-white/25 shrink-0"
                           style={{
                             backgroundColor: `oklch(0.65 ${preset.chroma} ${preset.hue})`,
                           }}
                         />
-                        <span className="text-xs font-medium text-[var(--sys-on-surface)]">
+                        <span className="text-xs font-medium text-[var(--sys-on-surface)] truncate">
                           {preset.name}
                         </span>
                       </div>
-                      <span className="font-mono text-[10px] text-[var(--sys-on-surface-tertiary)] tabular-nums">
+                      <span className="font-mono text-[10px] text-[var(--sys-on-surface-tertiary)] tabular-nums shrink-0">
                         {preset.hue}°
                       </span>
                     </button>
@@ -404,9 +481,9 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2.5 border-t border-[var(--sys-outline-variant)] bg-[var(--sys-surface-lowest)]/40 flex items-center justify-between text-[11px] text-[var(--sys-on-surface-tertiary)] font-mono">
-              <span>Press [T] anywhere to switch Dark / Light mode</span>
-              <span>ESC to close</span>
+            <div className="px-4 py-2.5 border-t border-[var(--sys-outline-variant)] bg-[var(--sys-surface-lowest)]/40 flex items-center justify-between gap-2 text-[11px] text-[var(--sys-on-surface-tertiary)] font-mono">
+              <span className="truncate">Press [T] anywhere to switch Dark / Light mode</span>
+              <span className="shrink-0">ESC to close</span>
             </div>
           </div>
         </div>
