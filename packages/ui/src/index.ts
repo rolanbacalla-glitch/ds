@@ -29,4 +29,26 @@ export {
   SelectContent,
   SelectItem,
 } from "./controls";
+export {
+  CommandPalette,
+  type CommandPaletteProps,
+  type CommandItem,
+} from "./command-palette";
+export {
+  DropdownMenu,
+  type DropdownMenuProps,
+  type DropdownMenuItem,
+} from "./dropdown-menu";
+export {
+  ToastStack,
+  type ToastStackProps,
+  type ToastItem,
+  type ToastTone,
+} from "./toast";
+export { Drawer, type DrawerProps } from "./drawer";
+export {
+  Accordion,
+  type AccordionProps,
+  type AccordionItemData,
+} from "./accordion";
 export { cn, FOCUS_RING_CLASSES } from "./utils";

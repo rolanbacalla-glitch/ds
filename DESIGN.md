@@ -1,103 +1,57 @@
-# Design System: Antigravity Perceptual & Spatial Workbench (v2.4)
-**Project ID:** projects/antigravity-design-system
+# DESIGN.md — Antigravity Design System v3.0 Architectural & Agent Specification
 
-## 1. Visual Theme & Atmosphere
-The Antigravity Design System synthesises **Material 3 Expressive** perceptual OKLCH tonal mathematics with **Apple HIG Liquid Glass** Z-axis spatial discipline and **Swiss Design Engineering** grids. Content surfaces rest on crisp, zero-blur tonal containers (`Z-Level 1`), while floating navigation chrome and transient command overlays utilise optical Liquid Glass refraction (`Z-Level 2`).
+**System Version:** 3.0.0 ("Open Ecosystem & Production Release")  
+**Target Stack:** Next.js 16, React 19, Tailwind CSS v4, TypeScript  
+**Purpose:** Canonical design system rules, perceptual OKLCH token taxonomy, spatial surface laws, and AI agent guardrails for Google Antigravity IDE and compatible coding agents.
 
-## 2. Colour Palette & Roles (3-Tier OKLCH + Hex Dual-Polarity)
-All semantic roles guarantee **WCAG 2.2 AA/AAA** contrast across both **Obsidian Dark** and **Alabaster Light** modes.
+---
 
-```yaml
-colors:
-  dark:
-    bg-canvas: "#0b0e16"          # oklch(0.135 0.012 258) — Z-0 Base Canvas
-    bg-surface-recessed: "#07090e" # oklch(0.110 0.012 258) — Z-0 Recessed Input Well
-    bg-surface-card: "#111520"     # oklch(0.165 0.012 258) — Z-1 Default Tonal Card
-    bg-surface-elevated: "#161b28" # oklch(0.190 0.012 258) — Z-1 Elevated Modal/Header
-    bg-surface-hover: "#1e2434"    # oklch(0.225 0.012 258) — Z-1 Interactive Hover
-    bg-action-primary: "#7cacf9"   # oklch(0.770 0.152 258) — Primary Action (8.4:1 AAA)
-    bg-action-secondary: "#67bde8" # oklch(0.760 0.125 215) — Secondary Accent
-    text-primary: "#f3f5fa"        # oklch(0.972 0.006 258) — Primary Ink (16.2:1 AAA)
-    text-secondary: "#a4adc2"      # oklch(0.750 0.012 258) — Secondary Ink (8.1:1 AAA)
-    text-muted: "#858fa6"          # oklch(0.640 0.012 258) — Muted Caption (5.4:1 AA)
-    text-feedback-error: "#ff8fa1" # oklch(0.790 0.140 22)  — Validation Error (7.6:1 AAA)
-    text-feedback-success: "#6ee7b7" # oklch(0.840 0.130 154) — Optimal Status (11.2:1 AAA)
-  light:
-    bg-canvas: "#f9fafd"          # oklch(0.985 0.005 258) — Z-0 Base Canvas
-    bg-surface-recessed: "#ffffff" # oklch(0.996 0.002 258) — Z-0 Recessed Input Well
-    bg-surface-card: "#f3f5fa"     # oklch(0.972 0.006 258) — Z-1 Default Tonal Card
-    bg-surface-elevated: "#edeff6" # oklch(0.958 0.008 258) — Z-1 Elevated Modal/Header
-    bg-action-primary: "#2559c2"   # oklch(0.490 0.190 258) — Primary Action (6.1:1 AA)
-    text-primary: "#111520"        # oklch(0.165 0.012 258) — Primary Ink (16.4:1 AAA)
-    text-secondary: "#394154"      # oklch(0.360 0.015 258) — Secondary Ink (9.3:1 AAA)
-    text-muted: "#525b70"          # oklch(0.460 0.014 258) — Muted Caption (5.9:1 AA)
-    text-feedback-error: "#9e1c34" # oklch(0.420 0.170 22)  — Validation Error (6.8:1 AA)
-```
+## 1. Agent Operational Directives (Strict Guardrails)
 
-## 3. Typography Rules
-```yaml
-typography:
-  display:
-    fontFamily: Newsreader
-    fontWeight: 400..700 (Variable Optical Size opsz 6..72)
-    lineHeight: 1.08
-  sans:
-    fontFamily: Manrope
-    fontWeight: 400..800
-    lineHeight: 1.55
-  mono:
-    fontFamily: IBM Plex Mono
-    fontWeight: 400..600
-    fontVariantNumeric: tabular-nums
-```
+When generating, refactoring, or auditing code within the Antigravity repository (`design.rolanbacalla.online` or downstream `antigravity-ui` consumer apps), you **MUST** obey these invariants:
 
-## 4. Layout & 8px Spatial Grid
-```yaml
-spacing:
-  xs: 4px
-  sm: 8px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  section-gap: 48px
-  container-max: 1400px
-```
+1. **Zero Hardcoded Colours:** Never output hex (`#ffffff`), `rgb()`, or `hsl()` literals in components or stylesheets. Always reference semantic `--sys-*` or component `--comp-*` CSS variables backed by OKLCH values.
+2. **Strict 3-Tier W3C DTCG Token Hierarchy:**
+   - **Tier 1 (`--ref-*`):** Raw perceptual palette values (e.g., `--ref-palette-primary-40`). Never reference `--ref-*` directly inside UI components.
+   - **Tier 2 (`--sys-*`):** Role-based semantic tokens that switch across Light and Dark polarity (e.g., `--sys-color-surface-canvas`, `--sys-color-text-primary`, `--sys-color-action-primary`).
+   - **Tier 3 (`--comp-*`):** Component-scoped overrides (e.g., `--comp-button-primary-bg`, `--comp-card-surface-bg`).
+3. **Eliminate Legacy Token Names:** Prefer the unified `--sys-color-*` namespace over deprecated `--text-primary`, `--bg-canvas`, or `--bg-action-primary` aliases.
+4. **Enforce Solid vs. Glass Material Boundaries:**
+   - **Page Content, Cards & Data Tables:** Must sit on solid 5-step tonal surfaces (`--sys-color-surface-lowest` through `--sys-color-surface-highest`) with zero backdrop blur.
+   - **Floating Overlays (Top Navbars, Modals, Popovers, Context Menus):** Exclusively use `.liquid-glass-regular` (`24px` blur, `190%` saturation).
+   - **Anti-Pattern:** Never stack frosted glass on top of frosted glass ("glass-on-glass").
+5. **Tabular Numerals Everywhere:** Any dynamic numeric readout (contrast ratios, hex/OKLCH coordinates, timers, counters, prices, table figures) must apply `font-variant-numeric: tabular-nums` (`tabular-nums` in Tailwind v4) using `IBM Plex Mono`.
+6. **WCAG 2.2 AAA & Reduced Motion Compliance:**
+   - Primary and secondary body text must maintain `>= 7.0:1` contrast (`AAA`). Interactive borders and focus rings (`--sys-color-border-focus`) must maintain `>= 3.0:1` (`SC 1.4.11` / `SC 2.4.11`).
+   - Every transition must respect `@media (prefers-reduced-motion: reduce)` by collapsing spring/slide animations into instant opacity fades (`<= 50ms`).
 
-## 5. Shapes & Concentric Rounding
-```yaml
-rounded:
-  xs: 4px
-  sm: 8px
-  md: 12px
-  lg: 16px
-  xl: 24px
-  pill: 9999px
-```
+---
 
-## 6. Core Component Token Mappings
-```yaml
-components:
-  button-primary:
-    backgroundColor: "{colors.bg-action-primary}"
-    textColor: "{colors.text-on-action}"
-    rounded: "{rounded.md}"
-    activeMorphRounded: "{rounded.pill}"
-    minHeight: 40px
-  form-field:
-    backgroundColor: "{colors.bg-surface-recessed}"
-    borderColor: "{colors.border-default}"
-    focusRingColor: "{colors.bg-action-primary}"
-    errorColor: "{colors.text-feedback-error}"
-    rounded: "{rounded.md}"
-    minHeight: 44px
-  tonal-card:
-    backgroundColor: "{colors.bg-surface-card}"
-    rounded: "{rounded.lg}"
-    padding: "{spacing.lg}"
-    zLayer: "Z-1 (No Backdrop Blur)"
-  liquid-glass-bar:
-    backdropBlur: 24px
-    saturation: 190%
-    rounded: "{rounded.pill}"
-    zLayer: "Z-2 (Floating Chrome Only)"
-```
+## 2. Perceptual Colour Engine (OKLCH 13-Step Scale)
+
+Antigravity generates 13 perceptual tones (`0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99, 100`) where **Lightness (`L`) is locked per column** regardless of Hue (`H`) or Chroma (`C`). Swapping brand hues never alters perceived brightness or breaks WCAG contrast ratios.
+
+---
+
+## 3. Optical 2+1 Typography System
+
+1. **Interface & Body Sans (`--font-sans`):** `Manrope` (weights `400–800`).
+2. **Editorial Display Serif (`--font-serif`):** `Newsreader Variable` (`opsz 6..72`).
+3. **Data & Token Monospace (`--font-mono`):** `IBM Plex Mono` (weights `400–600`, `tabular-nums`).
+
+---
+
+## 4. Spatial Rhythm, Geometry & Elevation
+
+- **Concentric Nested Corner Formula:** `--sys-radius-outer: calc(var(--sys-radius-inner) + var(--sys-space-padding));`
+- **Spacing Scale (`4px` base grid):** `--sys-space-1` (`4px`) through `--sys-space-24` (`96px`).
+- **Breakpoints:** `--sys-breakpoint-sm` (`640px`) through `--sys-breakpoint-2xl` (`1536px`).
+- **Elevation Z-Index Tiers:** `--sys-z-base: 0`, `--sys-z-sticky: 100`, `--sys-z-overlay: 200`, `--sys-z-modal: 300`, `--sys-z-popover: 400`, `--sys-z-toast: 500`.
+
+---
+
+## 5. Motion Physics Tokens
+
+- `--ease-spatial-spring`: `cubic-bezier(0.34, 1.56, 0.64, 1)` (`220ms`)
+- `--ease-effects-smooth`: `cubic-bezier(0.25, 0.1, 0.25, 1)` (`180ms`)
+- `--ease-out-quart`: `cubic-bezier(0.25, 1, 0.5, 1)` (`260ms`)

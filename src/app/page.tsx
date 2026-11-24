@@ -182,7 +182,7 @@ export default function Home() {
               Explore live perceptual OKLCH brand palettes, optically scaled{" "}
               <strong className="text-[var(--sys-on-surface)]">Manrope &amp; Newsreader</strong>{" "}
               typography, and accessible UI primitives in dark and light mode. Full viewing is open
-              to visitors whilst token exports remain protected.
+              to visitors with open-access token exports.
             </p>
 
             {/* Primary Hero Actions */}
@@ -192,12 +192,8 @@ export default function Home() {
                 onClick={() => handleSelectSection("export")}
                 className="min-h-[44px] px-6 py-3 rounded-[var(--sys-radius-md)] active:rounded-full bg-[var(--sys-primary)] text-[var(--sys-on-primary)] text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-lg cursor-pointer transition-all hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
               >
-                {canExport ? (
-                  <DownloadSimple size={18} weight="bold" />
-                ) : (
-                  <Lock size={17} weight="bold" />
-                )}
-                <span>{canExport ? "Export Design Tokens" : "Protected Token Export"}</span>
+                <DownloadSimple size={18} weight="bold" />
+                <span>Export Design Tokens</span>
               </button>
 
               {isAdmin && (

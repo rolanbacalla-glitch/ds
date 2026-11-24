@@ -62,23 +62,23 @@ interface VerifiedContrastPair {
 const VERIFIED_CONTRAST_PAIRS: VerifiedContrastPair[] = [
   {
     pair: "Primary Body Ink on Base Canvas",
-    tokens: "--text-primary / --bg-canvas",
+    tokens: "--sys-color-text-primary / --sys-color-surface-canvas",
     criterion: "SC 1.4.3 (AAA)",
-    threshold: ">= 4.5:1",
+    threshold: ">= 7.0:1",
     lightRatio: "17.47:1",
     darkRatio: "17.68:1",
   },
   {
     pair: "Secondary Label Ink on Base Canvas",
-    tokens: "--text-secondary / --bg-canvas",
+    tokens: "--sys-color-text-secondary / --sys-color-surface-canvas",
     criterion: "SC 1.4.3 (AAA)",
-    threshold: ">= 4.5:1",
+    threshold: ">= 7.0:1",
     lightRatio: "9.78:1",
     darkRatio: "8.57:1",
   },
   {
     pair: "Muted Helper Ink on Base Canvas",
-    tokens: "--text-muted / --bg-canvas",
+    tokens: "--sys-color-text-muted / --sys-color-surface-canvas",
     criterion: "SC 1.4.3 (AA)",
     threshold: ">= 4.5:1",
     lightRatio: "6.51:1",
@@ -86,7 +86,7 @@ const VERIFIED_CONTRAST_PAIRS: VerifiedContrastPair[] = [
   },
   {
     pair: "Button Label on Primary Action",
-    tokens: "--text-on-action / --bg-action-primary",
+    tokens: "--sys-color-text-on-action / --sys-color-action-primary",
     criterion: "SC 1.4.3 (AA)",
     threshold: ">= 4.5:1",
     lightRatio: "6.39:1",
@@ -94,7 +94,7 @@ const VERIFIED_CONTRAST_PAIRS: VerifiedContrastPair[] = [
   },
   {
     pair: "Validation Error Ink on Subtle Banner",
-    tokens: "--text-feedback-error / --bg-feedback-error-subtle",
+    tokens: "--sys-color-feedback-error / --sys-color-feedback-error-bg",
     criterion: "SC 1.4.3 / 3.3.1",
     threshold: ">= 4.5:1",
     lightRatio: "7.12:1",
@@ -102,7 +102,7 @@ const VERIFIED_CONTRAST_PAIRS: VerifiedContrastPair[] = [
   },
   {
     pair: "Focus-Visible Ring on Base Canvas",
-    tokens: "--border-focus-ring / --bg-canvas",
+    tokens: "--sys-color-border-focus / --sys-color-surface-canvas",
     criterion: "SC 2.4.11 Focus",
     threshold: ">= 3.0:1",
     lightRatio: "6.12:1",
@@ -110,7 +110,7 @@ const VERIFIED_CONTRAST_PAIRS: VerifiedContrastPair[] = [
   },
   {
     pair: "Control Border on Recessed Well",
-    tokens: "--border-default / --bg-surface-recessed",
+    tokens: "--sys-color-border-default / --sys-color-surface-lowest",
     criterion: "SC 1.4.11 UI",
     threshold: ">= 3.0:1",
     lightRatio: "6.80:1",
@@ -385,9 +385,11 @@ function collectLiveDomChecks(): LiveCheckResult[] {
   const highContrast = window.matchMedia("(prefers-contrast: more)").matches;
   const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
 
-  // 6. Focus-visible ring token check
+  // 6. Focus-visible ring token check (unified v3.0 --sys-color-border-focus with legacy fallback)
   const rootStyle = window.getComputedStyle(document.documentElement);
-  const focusToken = rootStyle.getPropertyValue("--border-focus-ring").trim();
+  const focusToken =
+    rootStyle.getPropertyValue("--sys-color-border-focus").trim() ||
+    rootStyle.getPropertyValue("--border-focus-ring").trim();
 
   return [
     {
@@ -471,10 +473,36 @@ export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ 
   }, []);
 
   useEffect(() => {
-    const rafId = window.requestAnimationFrame(() => {
+    // Run immediately on mount so initial render never stalls at 0/6 Passed,
+    // plus a short settle pass for late-hydrated layout/fonts.
+    runLiveAudit();
+    const settleTimer = window.setTimeout(() => {
       runLiveAudit();
+    }, 150);
+
+    // Re-run debounced (150ms) whenever theme polarity or OKLCH CSS custom properties mutate.
+    let mutationTimer: number | undefined;
+    const observer = new MutationObserver(() => {
+      if (mutationTimer !== undefined) {
+        window.clearTimeout(mutationTimer);
+      }
+      mutationTimer = window.setTimeout(() => {
+        runLiveAudit();
+      }, 150);
     });
-    return () => window.cancelAnimationFrame(rafId);
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["style", "data-theme", "class"],
+    });
+
+    return () => {
+      window.clearTimeout(settleTimer);
+      if (mutationTimer !== undefined) {
+        window.clearTimeout(mutationTimer);
+      }
+      observer.disconnect();
+    };
   }, [runLiveAudit, theme]);
 
   const passedCount = liveChecks.filter((c) => c.status === "pass").length;

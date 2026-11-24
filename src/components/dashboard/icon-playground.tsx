@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import * as Icons from "phosphor-react";
 import {
@@ -36,7 +36,7 @@ interface UnifiedIconItem {
 
 export const IconPlayground: React.FC = () => {
   const [selectedIcon, setSelectedIcon] = useState<UnifiedIconItem>({
-    id: "material-volume_up",
+    id: "material:volume_up",
     name: "volume_up",
     source: "material",
     materialName: "volume_up",
@@ -48,8 +48,9 @@ export const IconPlayground: React.FC = () => {
   const [weight, setWeight] = useState<IconWeight>("regular");
   const [showKeylines, setShowKeylines] = useState(true);
   const [copiedType, setCopiedType] = useState<string | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
-  const { canCopySnippets, user, openAuthModal, logAuditEvent } = useAuth();
+  const { user, logAuditEvent } = useAuth();
 
   const CATEGORIES = [
     { id: "all", label: "All" },
@@ -63,37 +64,48 @@ export const IconPlayground: React.FC = () => {
     { id: "social", label: "Social" },
   ] as const;
 
-  // Phosphor Icon items
+  // Phosphor Icon items (deduplicated by canonical source:name ID)
   const PHOSPHOR_ICONS: UnifiedIconItem[] = useMemo(() => {
-    return Object.entries(Icons)
-      .filter(
-        ([name, Icon]) =>
-          typeof Icon !== "string" &&
-          name !== "IconContext" &&
-          name !== "Icons" &&
-          /^[A-Z]/.test(name)
-      )
-      .map(([name, Icon]) => ({
-        id: `phosphor-${name}`,
-        name,
-        source: "phosphor" as const,
-        phosphorIcon: Icon as unknown as PhosphorIconComponent,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name));
+    const seen = new Map<string, UnifiedIconItem>();
+    for (const [name, Icon] of Object.entries(Icons)) {
+      if (
+        typeof Icon === "string" ||
+        name === "IconContext" ||
+        name === "Icons" ||
+        !/^[A-Z]/.test(name)
+      ) {
+        continue;
+      }
+      const canonicalId = `phosphor:${name}`;
+      if (!seen.has(canonicalId)) {
+        seen.set(canonicalId, {
+          id: canonicalId,
+          name,
+          source: "phosphor" as const,
+          phosphorIcon: Icon as unknown as PhosphorIconComponent,
+        });
+      }
+    }
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
-  // Material Design Icons list (from official Google database)
+  // Material Design Icons list (deduplicated by canonical source:name ID)
   const MATERIAL_ICONS: UnifiedIconItem[] = useMemo(() => {
-    return (materialIconsData as { name: string; tags: string[]; category: string }[]).map(
-      (item) => ({
-        id: `material-${item.name}`,
-        name: item.name,
-        source: "material" as const,
-        category: item.category,
-        tags: item.tags,
-        materialName: item.name,
-      })
-    );
+    const seen = new Map<string, UnifiedIconItem>();
+    for (const item of materialIconsData as { name: string; tags: string[]; category: string }[]) {
+      const canonicalId = `material:${item.name}`;
+      if (!seen.has(canonicalId)) {
+        seen.set(canonicalId, {
+          id: canonicalId,
+          name: item.name,
+          source: "material" as const,
+          category: item.category,
+          tags: item.tags,
+          materialName: item.name,
+        });
+      }
+    }
+    return Array.from(seen.values());
   }, []);
 
   // Antigravity Media & Brand Icons (Spotify, AirPlay, Cast, Bluetooth, Lossless)
@@ -209,19 +221,27 @@ export const IconPlayground: React.FC = () => {
       .slice(0, 72);
   }, [searchQuery, selectedCategory, ALL_ICONS]);
 
-  const handleCopy = (type: string, content: string) => {
-    if (!canCopySnippets) {
-      if (user?.emailVerified) {
-        void logAuditEvent("blocked_export_attempt", `Icon snippet: ${selectedIcon.name}`);
-      }
-      openAuthModal("Exporting icon code snippets requires portfolio authorisation.");
-      return;
-    }
+  const handleCopy = (type: string, content: string, label?: string) => {
     navigator.clipboard.writeText(content);
     setCopiedType(type);
-    void logAuditEvent("export_copy", `Icon: ${selectedIcon.name}`);
-    showToast(`Copied ${selectedIcon.name} icon code to clipboard`);
+    if (user?.emailVerified) {
+      void logAuditEvent("export_copy", `Icon (${type}): ${selectedIcon.name}`);
+    }
+    showToast(`Copied ${selectedIcon.name} ${label ?? "React JSX"} to clipboard`);
     setTimeout(() => setCopiedType(null), 1600);
+  };
+
+  const handleCopySvg = () => {
+    const svgEl = previewRef.current?.querySelector("svg");
+    if (svgEl) {
+      handleCopy("svg", svgEl.outerHTML, "SVG");
+      return;
+    }
+    // Material Symbols render as variable font glyphs; copy the HTML glyph snippet as fallback
+    const fallbackHtml = `<span class="material-symbols-outlined" style="font-size:${size}px;font-variation-settings:'FILL' ${
+      weight === "fill" ? 1 : 0
+    },'wght' ${materialWeightNumeric},'GRAD' 0,'opsz' 48">${selectedIcon.materialName ?? selectedIcon.name}</span>`;
+    handleCopy("svg", fallbackHtml, "HTML glyph");
   };
 
   // Generate code snippet based on selected icon source
@@ -310,7 +330,10 @@ export const IconPlayground: React.FC = () => {
               </button>
             </div>
 
-            <div className="relative h-56 rounded-2xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-center justify-center overflow-hidden">
+            <div
+              ref={previewRef}
+              className="relative h-56 rounded-2xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-center justify-center overflow-hidden"
+            >
               {showKeylines && (
                 <>
                   <div className="absolute inset-0 swiss-grid-bg opacity-60 pointer-events-none" />
@@ -400,26 +423,47 @@ export const IconPlayground: React.FC = () => {
             />
           </div>
 
-          {/* Export Button */}
+          {/* Export Buttons (Open Access — v3.0) */}
           <div className="space-y-2 pt-2 border-t border-[var(--sys-outline-variant)]">
-            <button
-              type="button"
-              onClick={() => handleCopy("export", exports.code)}
-              className="w-full py-2.5 px-3.5 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-between text-xs font-mono text-[var(--sys-on-surface)] transition-colors cursor-pointer"
-            >
-              <span className="truncate pr-2">
-                {canCopySnippets
-                  ? exports.code.replace(/\n\s*/g, " ")
-                  : `Code export locked — ${selectedIcon.name} (Sign in to unlock)`}
-              </span>
-              {!canCopySnippets ? (
-                <Icons.Lock size={14} className="text-[var(--sys-primary)] shrink-0" />
-              ) : copiedType === "export" ? (
-                <Icons.Check size={14} className="text-emerald-400 shrink-0" />
-              ) : (
-                <Icons.Copy size={14} className="text-[var(--sys-on-surface-tertiary)] shrink-0" />
-              )}
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => handleCopy("jsx", exports.code, "React JSX")}
+                className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-primary)] hover:opacity-95 text-[var(--sys-on-primary)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold transition-opacity cursor-pointer"
+              >
+                {copiedType === "jsx" ? (
+                  <>
+                    <Icons.Check size={14} weight="bold" />
+                    <span>Copied JSX</span>
+                  </>
+                ) : (
+                  <>
+                    <Icons.Copy size={14} />
+                    <span>Copy React JSX</span>
+                  </>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleCopySvg}
+                className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[var(--sys-on-surface)] transition-colors cursor-pointer"
+              >
+                {copiedType === "svg" ? (
+                  <>
+                    <Icons.Check size={14} className="text-emerald-400" weight="bold" />
+                    <span>Copied {selectedIcon.source === "material" ? "HTML" : "SVG"}</span>
+                  </>
+                ) : (
+                  <>
+                    <Icons.Code size={14} className="text-[var(--sys-on-surface-tertiary)]" />
+                    <span>{selectedIcon.source === "material" ? "Copy HTML" : "Copy SVG"}</span>
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="px-3 py-2 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] truncate">
+              {exports.code.replace(/\n\s*/g, " ")}
+            </div>
           </div>
         </div>
 

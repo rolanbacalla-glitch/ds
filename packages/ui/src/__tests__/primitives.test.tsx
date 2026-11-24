@@ -1,7 +1,17 @@
 import * as React from "react";
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { Button, FormField, Badge, Alert } from "../index";
+import {
+  Button,
+  FormField,
+  Badge,
+  Alert,
+  CommandPalette,
+  DropdownMenu,
+  ToastStack,
+  Drawer,
+  Accordion,
+} from "../index";
 
 describe("@antigravity/ui primitives", () => {
   it("renders Button with accessible role and default type='button'", () => {
@@ -39,5 +49,37 @@ describe("@antigravity/ui primitives", () => {
     );
     expect(getByText("AAA Pass")).toBeTruthy();
     expect(getByRole("alert").textContent).toContain("Contrast ratio below 4.5:1");
+  });
+
+  it("renders v3.0 CommandPalette, DropdownMenu, ToastStack, Drawer, and Accordion with ARIA roles", () => {
+    const { getByRole, getByText } = render(
+      <>
+        <CommandPalette
+          open={true}
+          onOpenChange={() => {}}
+          items={[{ id: "export", label: "Export Tokens", shortcut: "⌘E", onSelect: () => {} }]}
+        />
+        <DropdownMenu
+          triggerLabel="Actions"
+          items={[{ id: "copy", label: "Copy CSS", onSelect: () => {} }]}
+        />
+        <ToastStack
+          toasts={[{ id: "t1", title: "Tokens Compiled", tone: "success", timestamp: "08:00" }]}
+          onDismiss={() => {}}
+        />
+        <Drawer open={true} onOpenChange={() => {}} title="Token Inspector">
+          <p>Drawer body</p>
+        </Drawer>
+        <Accordion
+          defaultOpenId="a1"
+          items={[{ id: "a1", title: "OKLCH Math", content: "Locked lightness curve." }]}
+        />
+      </>
+    );
+    expect(getByText("Export Tokens")).toBeTruthy();
+    expect(getByRole("button", { name: "Actions" })).toBeTruthy();
+    expect(getByRole("status").textContent).toContain("Tokens Compiled");
+    expect(getByText("Token Inspector")).toBeTruthy();
+    expect(getByText("Locked lightness curve.")).toBeTruthy();
   });
 });

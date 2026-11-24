@@ -1,0 +1,15 @@
+{
+  "version": "3.0.0",
+  "components": {
+    "button": { "file": "button.tsx", "description": "Accessible button with 40px touch target and active pill morph" },
+    "form-field": { "file": "form-field.tsx", "description": "WCAG 2.2 labelled input with polite aria-live validation" },
+    "badge-alert": { "file": "badge-alert.tsx", "description": "Semantic status badges and alert banners" },
+    "dialog": { "file": "dialog.tsx", "description": "Radix-backed modal dialogue with focus trapping" },
+    "controls": { "file": "controls.tsx", "description": "Checkbox, Switch, Tabs, Tooltip, Popover, and Select primitives" },
+    "command-palette": { "file": "command-palette.tsx", "description": "⌘K keyboard-navigable command palette on frosted glass" },
+    "dropdown-menu": { "file": "dropdown-menu.tsx", "description": "WAI-ARIA dropdown menu with Arrow/Escape navigation" },
+    "toast": { "file": "toast.tsx", "description": "Non-blocking notification stack with tabular timestamps" },
+    "drawer": { "file": "drawer.tsx", "description": "Slide-over sheet with Escape dismissal and reduced-motion safety" },
+    "accordion": { "file": "accordion.tsx", "description": "Solid tonal disclosure accordion with ARIA controls" }
+  }
+}

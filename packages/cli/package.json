@@ -1,0 +1,14 @@
+{
+  "name": "antigravity-ui",
+  "version": "3.0.0",
+  "description": "CLI for installing Antigravity Design System v3.0 OKLCH tokens and accessible React 19 + Tailwind v4 primitives.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "antigravity-ui": "./bin/antigravity-ui.mjs"
+  },
+  "files": [
+    "bin",
+    "registry.json"
+  ]
+}

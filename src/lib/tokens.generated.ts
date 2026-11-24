@@ -6,6 +6,7 @@
 export interface CompiledSemanticToken {
   name: string;
   cssVar: string;
+  sysColorVar: string;
   workbenchAlias: string;
   category: "surface" | "action" | "text" | "feedback" | "border" | "general";
   description: string;
@@ -36,6 +37,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-canvas",
     "cssVar": "--bg-canvas",
+    "sysColorVar": "--sys-color-surface-canvas",
     "workbenchAlias": "--sys-surface-canvas",
     "category": "surface",
     "description": "Z-Level 0 base environment canvas in Light mode",
@@ -51,6 +53,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-surface-recessed",
     "cssVar": "--bg-surface-recessed",
+    "sysColorVar": "--sys-color-surface-lowest",
     "workbenchAlias": "--sys-surface-lowest",
     "category": "surface",
     "description": "Z-Level 0 recessed well and input field background",
@@ -66,6 +69,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-surface-card",
     "cssVar": "--bg-surface-card",
+    "sysColorVar": "--sys-color-surface-low",
     "workbenchAlias": "--sys-surface-low",
     "category": "surface",
     "description": "Z-Level 1 default tonal card container",
@@ -81,6 +85,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-surface-elevated",
     "cssVar": "--bg-surface-elevated",
+    "sysColorVar": "--sys-color-surface-container",
     "workbenchAlias": "--sys-surface-container",
     "category": "surface",
     "description": "Z-Level 1 elevated modal/header container",
@@ -96,6 +101,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-surface-hover",
     "cssVar": "--bg-surface-hover",
+    "sysColorVar": "--sys-color-surface-high",
     "workbenchAlias": "--sys-surface-high",
     "category": "surface",
     "description": "Z-Level 1 interactive hover surface",
@@ -111,6 +117,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-surface-active",
     "cssVar": "--bg-surface-active",
+    "sysColorVar": "--sys-color-bg-surface-active",
     "workbenchAlias": "--sys-surface-highest",
     "category": "surface",
     "description": "Z-Level 1 active/selected surface and slider track",
@@ -126,6 +133,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-action-primary",
     "cssVar": "--bg-action-primary",
+    "sysColorVar": "--sys-color-action-primary",
     "workbenchAlias": "--sys-primary",
     "category": "action",
     "description": "Primary interactive action fill (WCAG AA >= 6.1:1 vs white)",
@@ -141,6 +149,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-action-primary-hover",
     "cssVar": "--bg-action-primary-hover",
+    "sysColorVar": "--sys-color-bg-action-primary-hover",
     "workbenchAlias": "--sys-primary-strong",
     "category": "action",
     "description": "Primary interactive hover fill in Light mode",
@@ -156,6 +165,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-action-primary-subtle",
     "cssVar": "--bg-action-primary-subtle",
+    "sysColorVar": "--sys-color-bg-action-primary-subtle",
     "workbenchAlias": "--sys-primary-container",
     "category": "action",
     "description": "Subtle tonal fill for selected pills and active badges",
@@ -171,6 +181,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-action-secondary",
     "cssVar": "--bg-action-secondary",
+    "sysColorVar": "--sys-color-action-secondary",
     "workbenchAlias": "--sys-secondary",
     "category": "action",
     "description": "Secondary interactive accent fill",
@@ -186,6 +197,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "text-primary",
     "cssVar": "--text-primary",
+    "sysColorVar": "--sys-color-text-primary",
     "workbenchAlias": "--sys-on-surface",
     "category": "text",
     "description": "Primary body and headline ink (WCAG AAA >= 16.4:1 vs light canvas)",
@@ -201,6 +213,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "text-secondary",
     "cssVar": "--text-secondary",
+    "sysColorVar": "--sys-color-text-secondary",
     "workbenchAlias": "--sys-on-surface-secondary",
     "category": "text",
     "description": "Secondary supporting copy and field labels (WCAG AAA >= 9.3:1)",
@@ -216,6 +229,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "text-muted",
     "cssVar": "--text-muted",
+    "sysColorVar": "--sys-color-text-muted",
     "workbenchAlias": "--sys-on-surface-tertiary",
     "category": "text",
     "description": "Helper metadata and technical captions (WCAG AA >= 5.9:1)",
@@ -231,6 +245,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "text-on-action",
     "cssVar": "--text-on-action",
+    "sysColorVar": "--sys-color-text-on-action",
     "workbenchAlias": "--sys-on-primary",
     "category": "text",
     "description": "High-contrast ink placed atop bg-action-primary",
@@ -246,6 +261,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "text-feedback-error",
     "cssVar": "--text-feedback-error",
+    "sysColorVar": "--sys-color-feedback-error",
     "workbenchAlias": "--sys-error",
     "category": "feedback",
     "description": "Inline validation error text and icon ink (WCAG AA >= 6.8:1)",
@@ -261,6 +277,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-feedback-error-subtle",
     "cssVar": "--bg-feedback-error-subtle",
+    "sysColorVar": "--sys-color-feedback-error-bg",
     "workbenchAlias": "--sys-error-container",
     "category": "feedback",
     "description": "Subtle background fill for error banners and invalid inputs",
@@ -276,6 +293,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "border-feedback-error",
     "cssVar": "--border-feedback-error",
+    "sysColorVar": "--sys-color-border-error",
     "workbenchAlias": "--sys-error-border",
     "category": "feedback",
     "description": "High-visibility border for invalid form fields (WCAG AA >= 4.5:1)",
@@ -291,6 +309,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "text-feedback-success",
     "cssVar": "--text-feedback-success",
+    "sysColorVar": "--sys-color-feedback-success",
     "workbenchAlias": "--sys-success",
     "category": "feedback",
     "description": "Positive validation and optimal status ink (WCAG AA >= 6.3:1)",
@@ -306,6 +325,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-feedback-success-subtle",
     "cssVar": "--bg-feedback-success-subtle",
+    "sysColorVar": "--sys-color-feedback-success-bg",
     "workbenchAlias": "--sys-success-container",
     "category": "feedback",
     "description": "Subtle background fill for success badges",
@@ -321,6 +341,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "text-feedback-warning",
     "cssVar": "--text-feedback-warning",
+    "sysColorVar": "--sys-color-feedback-warning",
     "workbenchAlias": "--sys-warning",
     "category": "feedback",
     "description": "Cautionary status and overload ink (WCAG AA >= 6.1:1)",
@@ -336,6 +357,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "bg-feedback-warning-subtle",
     "cssVar": "--bg-feedback-warning-subtle",
+    "sysColorVar": "--sys-color-feedback-warning-bg",
     "workbenchAlias": "--sys-warning-container",
     "category": "feedback",
     "description": "Subtle background fill for warning callouts",
@@ -351,6 +373,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "border-default",
     "cssVar": "--border-default",
+    "sysColorVar": "--sys-color-border-default",
     "workbenchAlias": "--sys-outline-strong",
     "category": "border",
     "description": "Standard structural control border (WCAG AA >= 3.1:1 UI contrast)",
@@ -366,6 +389,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "border-subtle",
     "cssVar": "--border-subtle",
+    "sysColorVar": "--sys-color-border-subtle",
     "workbenchAlias": "--sys-outline-subtle",
     "category": "border",
     "description": "Decorative hairline divider for bento cells and table rows",
@@ -381,6 +405,7 @@ export const COMPILED_SEMANTIC_TOKENS: readonly CompiledSemanticToken[] = [
   {
     "name": "border-focus-ring",
     "cssVar": "--border-focus-ring",
+    "sysColorVar": "--sys-color-border-focus",
     "workbenchAlias": "--sys-focus-ring",
     "category": "border",
     "description": "WCAG 2.2 SC 2.4.11 focus-visible indicator ring (>= 6.1:1 contrast)",
@@ -843,10 +868,10 @@ export const COMPILED_COMPONENT_TOKENS: readonly CompiledComponentToken[] = [
 ] as const;
 
 export const TOKEN_BUILD_METADATA = {
-  version: "2.4.0",
+  version: "3.0.0",
   schema: "https://tr.designtokens.org/format/",
-  tier1Count: 68,
+  tier1Count: 41,
   tier2Count: 24,
   tier3Count: 37,
-  wcagTarget: "WCAG 2.2 AA",
+  wcagTarget: "WCAG 2.2 AA / AAA",
 } as const;
