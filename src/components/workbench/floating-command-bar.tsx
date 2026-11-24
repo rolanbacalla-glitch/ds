@@ -119,18 +119,18 @@ export const FloatingCommandBar: React.FC<WorkbenchNavProps> = ({
               window.scrollTo({ top: 0, behavior: "smooth" });
               setMobileMenuOpen(false);
             }}
-            aria-label="Antigravity Design System — back to top"
+            aria-label="RB Design System — back to top"
             className="flex items-center gap-2 sm:gap-2.5 text-left group cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)] rounded-lg shrink-0"
           >
             <div className="w-7 h-7 rounded-full bg-[var(--sys-primary)] flex items-center justify-center text-[var(--sys-on-primary)] font-mono text-xs font-bold shadow-sm group-hover:scale-105 transition-transform shrink-0">
-              A
+              RB
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="font-semibold text-sm tracking-tight text-[var(--sys-on-surface)] whitespace-nowrap">
-                Antigravity
+                RB Design System
               </span>
               <span className="hidden xs:inline-block sm:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-[var(--sys-surface-high)]/80 text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)]">
-                v2.4
+                v3.0
               </span>
             </div>
           </button>

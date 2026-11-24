@@ -4,7 +4,7 @@ import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
 
 export const metadata: Metadata = {
-  title: "Antigravity Design System — Perceptual & Spatial Workbench (v2.4)",
+  title: "RB Design System — Perceptual & Spatial Workbench (v3.0)",
   description:
     "A three-tier OKLCH token architecture, tonal surface hierarchy, and optical Liquid Glass design system portfolio workbench crafted by Rolan Bacalla.",
 };

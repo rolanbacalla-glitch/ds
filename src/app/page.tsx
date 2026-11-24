@@ -156,7 +156,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[var(--sys-on-surface-secondary)]">
               <span className="font-semibold text-[var(--sys-primary)] flex items-center gap-1.5">
                 <Sparkle size={13} weight="fill" />
-                Antigravity Design System v{TOKEN_BUILD_METADATA.version}
+                RB Design System v{TOKEN_BUILD_METADATA.version}
               </span>
               <span aria-hidden="true">·</span>
               <span>Portfolio Showcase by {portfolioSettings.ownerDisplayName}</span>
