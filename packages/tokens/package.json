@@ -1,6 +1,6 @@
 {
   "name": "@antigravity/tokens",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "description": "Perceptual OKLCH 3-tier W3C DTCG design tokens for Antigravity Design System (CSS, TypeScript, Figma Variables).",
   "license": "MIT",
   "sideEffects": [

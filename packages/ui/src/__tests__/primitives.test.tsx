@@ -11,6 +11,12 @@ import {
   ToastStack,
   Drawer,
   Accordion,
+  Skeleton,
+  ProgressBar,
+  Avatar,
+  AvatarGroup,
+  Pagination,
+  Breadcrumbs,
 } from "../index";
 
 describe("@antigravity/ui primitives", () => {
@@ -81,5 +87,36 @@ describe("@antigravity/ui primitives", () => {
     expect(getByRole("status").textContent).toContain("Tokens Compiled");
     expect(getByText("Token Inspector")).toBeTruthy();
     expect(getByText("Locked lightness curve.")).toBeTruthy();
+  });
+
+  it("renders v3.0 Skeleton, ProgressBar, Avatar/AvatarGroup, Pagination, and Breadcrumbs", () => {
+    const { getByRole, getByText } = render(
+      <>
+        <Skeleton className="h-6 w-24" />
+        <ProgressBar value={72} label="Token Compilation" />
+        <Avatar alt="Rolan Bacalla" status="online" />
+        <AvatarGroup
+          max={2}
+          avatars={[
+            { alt: "Alice Smith" },
+            { alt: "Bob Jones" },
+            { alt: "Carol White" },
+          ]}
+        />
+        <Pagination currentPage={2} totalPages={3} onPageChange={() => {}} />
+        <Breadcrumbs
+          items={[
+            { label: "Components", href: "/components" },
+            { label: "Pagination" },
+          ]}
+        />
+      </>
+    );
+    expect(getByRole("progressbar").getAttribute("aria-valuenow")).toBe("72");
+    expect(getByText("72%")).toBeTruthy();
+    expect(getByText("RB")).toBeTruthy();
+    expect(getByText("+1")).toBeTruthy();
+    expect(getByRole("navigation", { name: "Pagination" })).toBeTruthy();
+    expect(getByRole("navigation", { name: "Breadcrumb" })).toBeTruthy();
   });
 });

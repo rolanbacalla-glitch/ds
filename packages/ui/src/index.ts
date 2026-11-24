@@ -51,4 +51,24 @@ export {
   type AccordionProps,
   type AccordionItemData,
 } from "./accordion";
+export {
+  Skeleton,
+  ProgressBar,
+  type SkeletonProps,
+  type ProgressBarProps,
+} from "./skeleton-progress";
+export {
+  Avatar,
+  AvatarGroup,
+  type AvatarProps,
+  type AvatarGroupProps,
+  type AvatarStatus,
+} from "./avatar";
+export {
+  Pagination,
+  Breadcrumbs,
+  type PaginationProps,
+  type BreadcrumbsProps,
+  type BreadcrumbItem,
+} from "./navigation";
 export { cn, FOCUS_RING_CLASSES } from "./utils";

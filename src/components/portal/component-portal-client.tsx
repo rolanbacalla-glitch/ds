@@ -126,18 +126,11 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
   }, [spec.slug, modalOpen]);
 
   const handleCopy = (key: string, text: string) => {
-    if (!canCopySnippets) {
-      if (user?.emailVerified) {
-        void logAuditEvent("blocked_export_attempt", `Portal copy: ${spec.slug}/${key}`);
-      }
-      openAuthModal(
-        `Copying source code or tokens from ${spec.name} requires authorised portfolio access.`
-      );
-      return;
-    }
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
-    void logAuditEvent("export_copy", `Portal: ${spec.slug}/${key}`);
+    if (user?.emailVerified) {
+      void logAuditEvent("export_copy", `Portal: ${spec.slug}/${key}`);
+    }
     setTimeout(() => setCopiedKey(null), 1800);
   };
 
@@ -929,8 +922,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   </div>
                 )}
               </div>
-            ) : canCopySnippets ? (
-              /* Copyable React / TypeScript Code Block View (Authorised Users Only) */
+            ) : (
+              /* Copyable React / TypeScript Code Block View (Open Access — v3.0) */
               <div className="p-6 bg-[var(--bg-surface-recessed)] flex-1 flex flex-col justify-between space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono text-[var(--text-secondary)]">
@@ -957,33 +950,6 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 <pre className="p-4 rounded-xl bg-black/40 border border-[var(--border-subtle)] text-xs font-mono text-[var(--text-primary)] overflow-x-auto leading-relaxed max-h-[420px]">
                   <code>{spec.codeSnippet}</code>
                 </pre>
-              </div>
-            ) : (
-              /* Portfolio Protection Gate for Source Code Tab */
-              <div className="p-8 sm:p-12 bg-[var(--bg-surface-recessed)] flex-1 flex flex-col items-center justify-center text-center space-y-4 min-h-[380px]">
-                <div className="w-12 h-12 rounded-2xl bg-[var(--bg-action-primary-subtle)] text-[var(--bg-action-primary)] flex items-center justify-center">
-                  <Lock size={22} weight="bold" />
-                </div>
-                <div className="space-y-1.5 max-w-md">
-                  <h3 className="text-base font-bold text-[var(--text-primary)]">
-                    Component Source Code Is Protected
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                    {portfolioSettings.lockMessage}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    openAuthModal(
-                      `Sign in with Google, Apple, or Email to unlock ${spec.name} source code or request access.`
-                    )
-                  }
-                  className="min-h-[40px] px-5 py-2 rounded-[var(--comp-button-radius-rest)] bg-[var(--bg-action-primary)] text-[var(--text-on-action)] text-xs font-semibold inline-flex items-center gap-2 cursor-pointer"
-                >
-                  <LockKey size={15} weight="bold" />
-                  <span>Sign In to Unlock or Request Access</span>
-                </button>
               </div>
             )}
           </div>

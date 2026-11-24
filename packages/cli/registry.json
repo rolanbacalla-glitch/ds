@@ -10,6 +10,9 @@
     "dropdown-menu": { "file": "dropdown-menu.tsx", "description": "WAI-ARIA dropdown menu with Arrow/Escape navigation" },
     "toast": { "file": "toast.tsx", "description": "Non-blocking notification stack with tabular timestamps" },
     "drawer": { "file": "drawer.tsx", "description": "Slide-over sheet with Escape dismissal and reduced-motion safety" },
-    "accordion": { "file": "accordion.tsx", "description": "Solid tonal disclosure accordion with ARIA controls" }
+    "accordion": { "file": "accordion.tsx", "description": "Solid tonal disclosure accordion with ARIA controls" },
+    "skeleton-progress": { "file": "skeleton-progress.tsx", "description": "Recessed skeleton loaders and determinate/indeterminate progress bars" },
+    "avatar": { "file": "avatar.tsx", "description": "Avatar with initials fallback, status ring, and stacked AvatarGroup" },
+    "navigation": { "file": "navigation.tsx", "description": "Keyboard-accessible Pagination and semantic Breadcrumbs" }
   }
 }

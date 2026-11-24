@@ -1,6 +1,6 @@
 {
   "name": "@antigravity/ui",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "description": "WCAG 2.2 AA accessible, Radix-backed React 19 UI primitives for Antigravity Design System.",
   "license": "MIT",
   "sideEffects": false,
