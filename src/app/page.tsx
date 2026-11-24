@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SEED_PRESETS, type SeedConfig } from "@/lib/tokens";
 import { TOKEN_BUILD_METADATA } from "@/lib/tokens.generated";
 import { FloatingCommandBar } from "@/components/workbench/floating-command-bar";
+import { FloatingStudioDock } from "@/components/workbench/floating-studio-dock";
 import { TokenEngineSection } from "@/components/workbench/token-engine-section";
 import { SurfacesGlassSection } from "@/components/workbench/surfaces-glass-section";
 import { TypographySection } from "@/components/workbench/typography-section";
@@ -135,26 +136,22 @@ export default function Home() {
           onSelectPreset={(preset) => setCustomSeed(preset)}
         />
 
-        {/* Floating Back to Top Button */}
-        {showScrollTop && (
-          <button
-            type="button"
-            onClick={scrollToTop}
-            aria-label="Back to top"
-            style={{
-              backdropFilter: "blur(40px) saturate(190%)",
-              WebkitBackdropFilter: "blur(40px) saturate(190%)",
-            }}
-            className="fixed bottom-6 right-6 z-50 p-3 rounded-full liquid-glass-regular backdrop-blur-2xl shadow-xl hover:scale-105 active:scale-95 text-[var(--sys-on-surface)] border border-[var(--sys-outline)] transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
-          >
-            <ArrowUp size={18} weight="bold" />
-          </button>
-        )}
+        {/* Figma-inspired Floating Studio Dock (Light/Dark + Preset + Export) */}
+        <FloatingStudioDock
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          seed={seed}
+          onSelectPreset={(preset) => setCustomSeed(preset)}
+          onJumpExport={() => handleSelectSection("export")}
+          showScrollTop={showScrollTop}
+          onScrollTop={scrollToTop}
+        />
 
       {/* Main Content Container */}
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-8 pt-28 pb-24 space-y-24">
-        {/* Hero Section */}
-        <section className="tonal-card p-6 sm:p-12 relative overflow-hidden swiss-grid-bg">
+      <main className="max-w-[1400px] mx-auto px-4 sm:px-8 pt-28 pb-32 space-y-24">
+        {/* Hero Section — Clerk Recessed Shell + Linear Hairline Header + Dotted Technical Canvas */}
+        <section className="linear-shell p-2 sm:p-3">
+          <div className="tonal-card p-6 sm:p-12 relative overflow-hidden clerk-dot-canvas">
           <div className="relative z-10 max-w-4xl space-y-6">
             <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[var(--sys-on-surface-secondary)]">
               <span className="font-semibold text-[var(--sys-primary)] flex items-center gap-1.5">
@@ -278,6 +275,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </section>
 
