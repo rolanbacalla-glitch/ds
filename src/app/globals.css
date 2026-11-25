@@ -4,10 +4,10 @@
 @custom-variant dark (&:where(.dark, [data-theme="dark"], .dark *));
 
 @theme {
-  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: "Newsreader", Georgia, serif;
-  --font-display: "Newsreader", Georgia, serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
   /* Map Tailwind semantic utilities to our 3-Tier System Tokens */
   --color-canvas: var(--sys-surface-canvas);
@@ -209,22 +209,19 @@
    TIER 3: COMPONENT & MATERIAL UTILITIES
    ============================================================================ */
 
-/* Z-Level 1: Content Surface Card (NO backdrop blur — crisp tonal elevation) */
+/* Z-Level 1: Content Surface Card (crisp hairline border, flat tonal elevation) */
 .tonal-card {
-  background-color: var(--sys-surface-low);
+  background-color: var(--sys-surface-lowest);
   border: 1px solid var(--sys-outline-variant);
   border-radius: var(--sys-radius-lg);
-  box-shadow: 0 1px 0 0 var(--sys-specular-top) inset;
-  transition: background-color 180ms var(--ease-effects-smooth),
-              border-color 180ms var(--ease-effects-smooth),
-              transform 200ms var(--ease-spatial-spring);
+  transition: background-color 160ms var(--ease-effects-smooth),
+              border-color 160ms var(--ease-effects-smooth);
 }
 
 .tonal-card-elevated {
-  background-color: var(--sys-surface-container);
+  background-color: var(--sys-surface-low);
   border: 1px solid var(--sys-outline);
   border-radius: var(--sys-radius-lg);
-  box-shadow: 0 1px 0 0 var(--sys-specular-top) inset;
 }
 
 /* Z-Level 2: Apple HIG Liquid Glass (Floating Chrome & Transient Controls ONLY) */

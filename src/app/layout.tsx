@@ -1,12 +1,25 @@
 /* eslint-disable @next/next/no-page-custom-font */
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
 
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "RB Design System — Perceptual & Spatial Workbench (v3.0)",
+  title: "RB Design System — Tokens, Foundations & UI Primitives",
   description:
-    "A three-tier OKLCH token architecture, tonal surface hierarchy, and optical Liquid Glass design system portfolio workbench crafted by Rolan Bacalla.",
+    "A modern perceptual OKLCH design system with Geist typography, accessible UI primitives, and multi-platform token exports by Rolan Bacalla.",
 };
 
 export default function RootLayout({
@@ -18,7 +31,7 @@ export default function RootLayout({
     <html
       lang="en-GB"
       data-theme="light"
-      className="h-full antialiased"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -31,14 +44,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&display=swap"
-        />
-        <link
-          rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         />
       </head>
-      <body className="min-h-full bg-[var(--sys-surface-canvas)] text-[var(--sys-on-surface)] font-sans selection:bg-[var(--sys-primary)]/25 selection:text-[var(--sys-on-surface)]">
+      <body className="min-h-full bg-[var(--sys-surface-canvas)] text-[var(--sys-on-surface)] font-sans selection:bg-[var(--sys-primary)]/20 selection:text-[var(--sys-on-surface)]">
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

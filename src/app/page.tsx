@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { SEED_PRESETS, type SeedConfig } from "@/lib/tokens";
 import { TOKEN_BUILD_METADATA } from "@/lib/tokens.generated";
-import { FloatingCommandBar } from "@/components/workbench/floating-command-bar";
-import { FloatingStudioDock } from "@/components/workbench/floating-studio-dock";
+import { DocsShell, type DocSectionId } from "@/components/workbench/docs-shell";
 import { TokenEngineSection } from "@/components/workbench/token-engine-section";
 import { SurfacesGlassSection } from "@/components/workbench/surfaces-glass-section";
 import { TypographySection } from "@/components/workbench/typography-section";
@@ -17,91 +16,54 @@ import { IconPlayground } from "@/components/dashboard/icon-playground";
 import {
   DownloadSimple,
   Cube,
-  ShieldCheck,
   Swatches,
-  ArrowUpRight,
-  ArrowUp,
+  TextT,
+  Stack,
   Sparkle,
-  FigmaLogo,
-  TerminalWindow,
-  Lock,
+  ShieldCheck,
+  Code,
+  ArrowRight,
+  ArrowUpRight,
 } from "phosphor-react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 
+const VALID_SECTIONS: DocSectionId[] = [
+  "overview",
+  "colours",
+  "typography",
+  "surfaces",
+  "components",
+  "icons",
+  "accessibility",
+  "export",
+];
+
 export default function Home() {
-  const { canExport, isAdmin, portfolioSettings, openAdminConsole } = useAuth();
+  const { portfolioSettings } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [customSeed, setCustomSeed] = useState<SeedConfig | null>(null);
-  const [activeSection, setActiveSection] = useState<string>("tokens");
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [activeSection, setActiveSection] = useState<DocSectionId>("overview");
 
   const seed =
     customSeed ??
     SEED_PRESETS.find((p) => p.name === portfolioSettings.defaultPresetName) ??
     SEED_PRESETS[0];
 
-  // Robust Scroll-Spy to track active section during scroll
+  // Sync URL hash to focused documentation section
   useEffect(() => {
-    const sectionIds = [
-      "tokens",
-      "surfaces",
-      "typography",
-      "components",
-      "motion",
-      "icons",
-      "usability",
-      "export",
-    ];
-
-    const determineActiveSection = () => {
-      // 1. If at the bottom of the page, activate the last section
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      
-      if (scrollPosition + windowHeight >= documentHeight - 100) {
-        setActiveSection("export");
-        setShowScrollTop(true);
-        return;
+    const syncFromHash = () => {
+      const hash = window.location.hash.replace("#", "") as DocSectionId;
+      if (VALID_SECTIONS.includes(hash)) {
+        setActiveSection(hash);
       }
-
-      setShowScrollTop(scrollPosition > 400);
-
-      // 2. Find which section heading/top is currently in view relative to top offset (navbar height ~120px)
-      const topOffset = 180;
-      let currentSection = sectionIds[0];
-
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (el) {
-          const top = el.getBoundingClientRect().top;
-          // If the section top is above or near the offset threshold, consider it active
-          if (top <= topOffset) {
-            currentSection = id;
-          } else {
-            // Since sections are in DOM order, stop once a section starts below the offset
-            break;
-          }
-        }
-      }
-
-      setActiveSection(currentSection);
     };
-
-    // Run on initial mount
-    determineActiveSection();
-
-    window.addEventListener("scroll", determineActiveSection, { passive: true });
-    window.addEventListener("resize", determineActiveSection, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", determineActiveSection);
-      window.removeEventListener("resize", determineActiveSection);
-    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
   }, []);
 
-  // Sync live seed parameters to root CSS variables
+  // Sync live OKLCH seed parameters to root CSS variables
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--seed-hue", String(seed.hue));
@@ -112,197 +74,246 @@ export default function Home() {
     root.style.setProperty("--seed-radius-scale", String(seed.radiusScale));
   }, [seed]);
 
-  const handleSelectSection = (id: string) => {
+  const handleSelectSection = (id: DocSectionId) => {
     setActiveSection(id);
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (typeof window !== "undefined") {
+      const nextHash = id === "overview" ? "" : `#${id}`;
+      window.history.replaceState(null, "", nextHash || window.location.pathname);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const totalTokens =
+    TOKEN_BUILD_METADATA.tier1Count +
+    TOKEN_BUILD_METADATA.tier2Count +
+    TOKEN_BUILD_METADATA.tier3Count;
+
+  const overviewCards: Array<{
+    id: DocSectionId;
+    group: string;
+    title: string;
+    summary: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+  }> = [
+    {
+      id: "colours",
+      group: "Foundations",
+      title: "Colours & Tokens",
+      summary: `${totalTokens} OKLCH tokens across 3 tiers with live seed modulation and automatic light/dark polarity.`,
+      icon: Swatches,
+    },
+    {
+      id: "typography",
+      group: "Foundations",
+      title: "Typography",
+      summary: "Geist Sans & Geist Mono variable type scale with tabular numerals for jitter-free data.",
+      icon: TextT,
+    },
+    {
+      id: "surfaces",
+      group: "Foundations",
+      title: "Surfaces & Motion",
+      summary: "Tonal surface elevation, floating glass rules, concentric radii, and tactile spring curves.",
+      icon: Stack,
+    },
+    {
+      id: "components",
+      group: "Library",
+      title: "Components",
+      summary: "Accessible Radix-backed UI primitives, form controls, dialogues, and interactive states.",
+      icon: Cube,
+    },
+    {
+      id: "icons",
+      group: "Library",
+      title: "Icons",
+      summary: "Unified multi-library icon playground supporting Lucide, Phosphor, and Material Symbols.",
+      icon: Sparkle,
+    },
+    {
+      id: "export",
+      group: "Ship",
+      title: "Export & Accessibility",
+      summary: "WCAG AAA verification plus instant exports for Tailwind v4, Figma Variables, JSON, and AI.",
+      icon: Code,
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-[var(--sys-surface-canvas)] text-[var(--sys-on-surface)] selection:bg-[var(--sys-primary)]/25">
-        {/* Z-Level 2: Floating Liquid Glass Navigation & Command Bar */}
-        <FloatingCommandBar
-          activeSection={activeSection}
-          onSelectSection={handleSelectSection}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          seed={seed}
-          onSelectPreset={(preset) => setCustomSeed(preset)}
-        />
-
-        {/* Figma-inspired Floating Studio Dock (Light/Dark + Preset + Export) */}
-        <FloatingStudioDock
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          seed={seed}
-          onSelectPreset={(preset) => setCustomSeed(preset)}
-          onJumpExport={() => handleSelectSection("export")}
-          showScrollTop={showScrollTop}
-          onScrollTop={scrollToTop}
-        />
-
-      {/* Main Content Container */}
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-8 pt-28 pb-32 space-y-24">
-        {/* Hero Section — Clerk Recessed Shell + Linear Hairline Header + Dotted Technical Canvas */}
-        <section className="linear-shell p-2 sm:p-3">
-          <div className="tonal-card p-6 sm:p-12 relative overflow-hidden clerk-dot-canvas">
-          <div className="relative z-10 max-w-4xl space-y-6">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[var(--sys-on-surface-secondary)]">
-              <span className="font-semibold text-[var(--sys-primary)] flex items-center gap-1.5">
-                <Sparkle size={13} weight="fill" />
-                RB Design System v{TOKEN_BUILD_METADATA.version}
-              </span>
+    <DocsShell
+      activeSection={activeSection}
+      onSelectSection={handleSelectSection}
+      theme={theme}
+      onToggleTheme={toggleTheme}
+      seed={seed}
+      onSelectPreset={(preset) => setCustomSeed(preset)}
+    >
+      {activeSection === "overview" && (
+        <div className="space-y-12">
+          {/* Clean, Modern Product Hero (Zero Serif Clutter, Zero Nested Box Noise) */}
+          <section className="space-y-6 pb-10 border-b border-[var(--sys-outline-variant)]">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-[var(--sys-on-surface-tertiary)]">
+              <span className="w-2 h-2 rounded-full bg-[var(--sys-primary)]" />
+              <span>RB Design System v{TOKEN_BUILD_METADATA.version}</span>
               <span aria-hidden="true">·</span>
-              <span>Portfolio Showcase by {portfolioSettings.ownerDisplayName}</span>
-              <span aria-hidden="true">·</span>
-              <span className="text-emerald-500 font-semibold flex items-center gap-1">
-                <ShieldCheck size={14} weight="fill" />
-                WCAG AAA Accessible
-              </span>
+              <span>{portfolioSettings.ownerDisplayName}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[var(--sys-on-surface)] leading-[1.06] text-balance">
-              A Design System Built for{" "}
-              <span className="font-serif italic font-normal text-[var(--sys-primary)]">
-                Clarity, Depth,
-              </span>{" "}
-              and Speed.
+            <h1 className="text-3xl sm:text-5xl font-semibold tracking-[-0.035em] leading-[1.08] text-[var(--sys-on-surface)] max-w-3xl text-balance">
+              Design tokens, primitives, and foundations — built to ship.
             </h1>
 
-            <p className="text-base sm:text-lg text-[var(--sys-on-surface-secondary)] max-w-3xl leading-relaxed">
-              Explore live perceptual OKLCH brand palettes, optically scaled{" "}
-              <strong className="text-[var(--sys-on-surface)]">Manrope &amp; Newsreader</strong>{" "}
-              typography, and accessible UI primitives in dark and light mode. Full viewing is open
-              to visitors with open-access token exports.
+            <p className="text-base text-[var(--sys-on-surface-secondary)] max-w-2xl leading-relaxed">
+              A focused, perceptual OKLCH design system pairing{" "}
+              <strong className="font-medium text-[var(--sys-on-surface)]">
+                Geist Sans &amp; Mono
+              </strong>{" "}
+              with accessible React 19 primitives and ready-to-use token exports for code and Figma.
             </p>
 
-            {/* Primary Hero Actions */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => handleSelectSection("components")}
+                className="h-10 px-4 rounded-lg bg-[var(--sys-on-surface)] text-[var(--sys-surface-canvas)] text-sm font-medium inline-flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <Cube size={16} />
+                <span>Browse Components</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => handleSelectSection("export")}
-                className="min-h-[44px] px-6 py-3 rounded-[var(--sys-radius-md)] active:rounded-full bg-[var(--sys-primary)] text-[var(--sys-on-primary)] text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-lg cursor-pointer transition-all hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
+                className="h-10 px-4 rounded-lg bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-container)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] text-sm font-medium inline-flex items-center gap-2 transition-colors cursor-pointer"
               >
-                <DownloadSimple size={18} weight="bold" />
-                <span>Export Design Tokens</span>
+                <DownloadSimple size={16} />
+                <span>Export Tokens</span>
               </button>
-
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={openAdminConsole}
-                  className="min-h-[44px] px-5 py-3 rounded-[var(--sys-radius-md)] bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] border border-[var(--sys-primary)]/40 text-xs sm:text-sm font-semibold inline-flex items-center gap-2 cursor-pointer transition-all hover:opacity-95"
-                >
-                  <ShieldCheck size={17} weight="fill" />
-                  <span>Admin Console</span>
-                </button>
-              )}
 
               <Link
                 href="/components/form-field"
-                className="min-h-[44px] px-6 py-3 rounded-[var(--sys-radius-md)] bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
+                className="h-10 px-3.5 rounded-lg text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-low)] text-sm font-medium inline-flex items-center gap-1.5 transition-colors"
               >
-                <Cube size={18} className="text-[var(--sys-primary)]" />
-                <span>Explore Components</span>
+                <span>Component Specs</span>
                 <ArrowUpRight size={15} />
               </Link>
+            </div>
+          </section>
 
-              <Link
-                href="/components/modal-dialog"
-                className="min-h-[44px] px-4 py-3 rounded-[var(--sys-radius-md)] bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] text-xs font-medium inline-flex items-center gap-1.5 transition-all"
-              >
-                <span>Modal Dialogue</span>
-                <ArrowUpRight size={13} />
-              </Link>
-
-              <Link
-                href="/components/data-table"
-                className="min-h-[44px] px-4 py-3 rounded-[var(--sys-radius-md)] bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] text-xs font-medium inline-flex items-center gap-1.5 transition-all"
-              >
-                <span>Data Table</span>
-                <ArrowUpRight size={13} />
-              </Link>
+          {/* Compact Live Theme & Seed Strip */}
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-mono uppercase tracking-wider text-[var(--sys-on-surface-tertiary)]">
+                Live Brand Seed
+              </h2>
+              <span className="text-xs font-mono text-[var(--sys-on-surface-tertiary)] tabular-nums">
+                Hue {seed.hue}° · Chroma {seed.chroma} · {theme === "dark" ? "Dark" : "Light"}
+              </span>
             </div>
 
-            {/* System Highlights Ribbon */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-[var(--sys-outline-variant)] tabular-nums">
-              <div className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]">
-                <div className="text-[11px] font-medium text-[var(--sys-on-surface-tertiary)] flex items-center gap-1.5">
-                  <Swatches size={13} className="text-[var(--sys-primary)]" />
-                  Design Tokens
-                </div>
-                <div className="text-xl font-bold text-[var(--sys-on-surface)] mt-1">
-                  {TOKEN_BUILD_METADATA.tier1Count +
-                    TOKEN_BUILD_METADATA.tier2Count +
-                    TOKEN_BUILD_METADATA.tier3Count}{" "}
-                  <span className="text-xs font-normal text-[var(--sys-primary)]">Ready to Use</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]">
-                <div className="text-[11px] font-medium text-[var(--sys-on-surface-tertiary)] flex items-center gap-1.5">
-                  <ShieldCheck size={13} className="text-emerald-400" />
-                  Readability Score
-                </div>
-                <div className="text-xl font-bold text-[var(--sys-on-surface)] mt-1">
-                  16.2:1 <span className="text-xs font-normal text-emerald-400">AAA Pass</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]">
-                <div className="text-[11px] font-medium text-[var(--sys-on-surface-tertiary)] flex items-center gap-1.5">
-                  <FigmaLogo size={13} className="text-[var(--sys-primary)]" />
-                  Design Sync
-                </div>
-                <div className="text-xl font-bold text-[var(--sys-on-surface)] mt-1">
-                  Figma <span className="text-xs font-normal text-[var(--sys-on-surface-secondary)]">Variables</span>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]">
-                <div className="text-[11px] font-medium text-[var(--sys-on-surface-tertiary)] flex items-center gap-1.5">
-                  <TerminalWindow size={13} className="text-[var(--sys-primary)]" />
-                  Export Formats
-                </div>
-                <div className="text-xl font-bold text-[var(--sys-on-surface)] mt-1">
-                  4 <span className="text-xs font-normal text-[var(--sys-on-surface-secondary)]">CSS, JSON & AI</span>
-                </div>
-              </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {SEED_PRESETS.map((preset) => {
+                const isSelected = preset.name === seed.name;
+                return (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => setCustomSeed(preset)}
+                    className={
+                      isSelected
+                        ? "h-9 px-3 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-primary)] text-xs font-medium text-[var(--sys-on-surface)] inline-flex items-center gap-2 cursor-pointer"
+                        : "h-9 px-3 rounded-lg bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-container)] border border-[var(--sys-outline-variant)] text-xs text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] inline-flex items-center gap-2 transition-colors cursor-pointer"
+                    }
+                  >
+                    <span
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: `oklch(0.58 ${preset.chroma} ${preset.hue})` }}
+                    />
+                    <span>{preset.name}</span>
+                  </button>
+                );
+              })}
             </div>
-          </div>
-          </div>
-        </section>
+          </section>
 
-        {/* 01 // 3-Tier OKLCH Token Engine */}
+          {/* Clean 2x3 Architecture Directory */}
+          <section className="space-y-4">
+            <h2 className="text-xs font-mono uppercase tracking-wider text-[var(--sys-on-surface-tertiary)]">
+              Explore the System
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {overviewCards.map((card) => {
+                const Icon = card.icon;
+                return (
+                  <button
+                    key={card.id}
+                    type="button"
+                    onClick={() => handleSelectSection(card.id)}
+                    className="group tonal-card p-5 text-left flex flex-col justify-between gap-4 hover:border-[var(--sys-outline)] transition-colors cursor-pointer"
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="w-8 h-8 rounded-md bg-[var(--sys-surface-low)] border border-[var(--sys-outline-variant)] inline-flex items-center justify-center text-[var(--sys-primary)]">
+                          <Icon size={16} />
+                        </span>
+                        <span className="text-[11px] font-mono text-[var(--sys-on-surface-tertiary)]">
+                          {card.group}
+                        </span>
+                      </div>
+                      <h3 className="text-sm font-semibold text-[var(--sys-on-surface)] group-hover:text-[var(--sys-primary)] transition-colors">
+                        {card.title}
+                      </h3>
+                      <p className="text-xs text-[var(--sys-on-surface-secondary)] leading-relaxed">
+                        {card.summary}
+                      </p>
+                    </div>
+
+                    <div className="text-xs font-medium text-[var(--sys-on-surface-tertiary)] group-hover:text-[var(--sys-on-surface)] inline-flex items-center gap-1 transition-colors">
+                      <span>Open</span>
+                      <ArrowRight size={13} />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Subtle Compliance Line */}
+          <section className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-4 text-xs text-[var(--sys-on-surface-tertiary)] tabular-nums">
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck size={14} className="text-emerald-500" />
+              WCAG 2.2 AAA (16.2:1 contrast)
+            </span>
+            <span>{totalTokens} semantic tokens</span>
+            <span>Tailwind CSS v4 + W3C DTCG</span>
+            <span>React 19 + Radix Primitives</span>
+          </section>
+        </div>
+      )}
+
+      {activeSection === "colours" && (
         <TokenEngineSection seed={seed} onChangeSeed={setCustomSeed} theme={theme} />
+      )}
 
-        {/* 02 // Z-Axis Spatial Discipline: Tonal Surfaces vs. Liquid Glass */}
-        <SurfacesGlassSection theme={theme} />
+      {activeSection === "typography" && <TypographySection />}
 
-        {/* 03 // M3 Emphasized Typography & Tabular Numerals */}
-        <TypographySection />
+      {activeSection === "surfaces" && (
+        <div className="space-y-16">
+          <SurfacesGlassSection theme={theme} />
+          <div className="border-t border-[var(--sys-outline-variant)] pt-12">
+            <MotionGeometrySection />
+          </div>
+        </div>
+      )}
 
-        {/* 04 // Interactive Component Primitive Matrix + Portal Deep Links */}
-        <ComponentsSection />
+      {activeSection === "components" && <ComponentsSection />}
 
-        {/* 05 // Spring Physics & Concentric Radii Geometry */}
-        <MotionGeometrySection />
+      {activeSection === "icons" && <IconPlayground />}
 
-        {/* 06 // Optical Iconography Studio */}
-        <IconPlayground />
+      {activeSection === "accessibility" && <UsabilityChecksSection theme={theme} />}
 
-        {/* 07 // Usability Guidelines, Browser Compatibility & Live Checks */}
-        <UsabilityChecksSection theme={theme} />
-
-        {/* 08 // Live Multi-Platform Exporter (Tailwind v4, Figma DTCG, Stitch DESIGN.md, Cursor) */}
-        <ExportCompilerSection seed={seed} />
-      </main>
-    </div>
+      {activeSection === "export" && <ExportCompilerSection seed={seed} />}
+    </DocsShell>
   );
 }
