@@ -170,12 +170,12 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
     <div
       className={
         embedded
-          ? "linear-shell p-4 sm:p-6 text-[var(--text-primary)] space-y-6"
-          : "min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] pb-24"
+          ? "linear-shell p-4 sm:p-6 text-[var(--sys-on-surface)] space-y-6"
+          : "min-h-screen bg-[var(--sys-surface-canvas)] text-[var(--sys-on-surface)] pb-24"
       }
     >
       {embedded ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--border-subtle)]">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--sys-outline-variant)]">
           <div className="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Component Specs">
             {COMPONENT_SLUGS.map((slug) => {
               const item = COMPONENT_REGISTRY[slug];
@@ -190,8 +190,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   className={cn(
                     "min-h-[36px] px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap",
                     active
-                      ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold shadow-sm"
-                      : "bg-[var(--bg-surface-recessed)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)]"
+                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
+                      : "bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)]"
                   )}
                 >
                   {item.name}
@@ -203,7 +203,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] inline-flex items-center gap-1.5 cursor-pointer"
+              className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] inline-flex items-center gap-1.5 cursor-pointer"
             >
               <X size={14} />
               <span>Close Spec</span>
@@ -225,22 +225,22 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
             <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 sm:gap-2 text-xs min-w-0">
               <Link
                 href="/"
-                className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)] transition-colors shrink-0"
+                className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-high)] focus-visible:outline-2 focus-visible:outline-[var(--sys-primary)] transition-colors shrink-0"
               >
                 <ArrowLeft size={14} />
                 <span className="hidden sm:inline">Back to Design System</span>
                 <span className="sm:hidden">Back</span>
               </Link>
-              <span className="text-[var(--text-muted)] shrink-0" aria-hidden="true">
+              <span className="text-[var(--sys-on-surface-tertiary)] shrink-0" aria-hidden="true">
                 /
               </span>
-              <span className="text-[var(--text-secondary)] hidden md:inline shrink-0">Components</span>
-              <span className="text-[var(--text-muted)] hidden md:inline shrink-0" aria-hidden="true">
+              <span className="text-[var(--sys-on-surface-secondary)] hidden md:inline shrink-0">Components</span>
+              <span className="text-[var(--sys-on-surface-tertiary)] hidden md:inline shrink-0" aria-hidden="true">
                 /
               </span>
               <span
                 aria-current="page"
-                className="font-semibold text-[var(--bg-action-primary)] px-2 py-0.5 rounded bg-[var(--bg-action-primary-subtle)] truncate"
+                className="font-semibold text-[var(--sys-primary)] px-2 py-0.5 rounded bg-[var(--sys-primary-container)] truncate"
               >
                 {spec.name}
               </span>
@@ -250,7 +250,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
             <div
               role="navigation"
               aria-label="Component Switcher"
-              className="hidden xl:flex items-center gap-1 p-1 rounded-full bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] shrink-0"
+              className="hidden xl:flex items-center gap-1 p-1 rounded-full bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] shrink-0"
             >
               {COMPONENT_SLUGS.map((slug) => {
                 const item = COMPONENT_REGISTRY[slug];
@@ -263,8 +263,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                     className={cn(
                       "px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap",
                       active
-                        ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold shadow-sm"
-                        : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                        ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
+                        : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                     )}
                   >
                     {item.name}
@@ -279,16 +279,16 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 type="button"
                 onClick={toggleTheme}
                 aria-label={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
-                className="min-h-[36px] px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] border border-[var(--border-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)] cursor-pointer transition-all whitespace-nowrap"
+                className="min-h-[36px] px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 bg-[var(--sys-surface-container)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)] cursor-pointer transition-all whitespace-nowrap"
               >
                 {theme === "dark" ? (
                   <>
-                    <Moon size={15} weight="fill" className="text-[var(--bg-action-primary)]" />
+                    <Moon size={15} weight="fill" className="text-[var(--sys-primary)]" />
                     <span className="hidden md:inline">Dark Mode</span>
                   </>
                 ) : (
                   <>
-                    <Sun size={15} weight="fill" className="text-[var(--bg-action-primary)]" />
+                    <Sun size={15} weight="fill" className="text-[var(--sys-primary)]" />
                     <span className="hidden md:inline">Light Mode</span>
                   </>
                 )}
@@ -298,7 +298,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 <button
                   type="button"
                   onClick={openAdminConsole}
-                  className="min-h-[36px] px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--bg-action-primary)] text-[var(--text-on-action)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  className="min-h-[36px] px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
                 >
                 <ShieldCheck size={14} weight="fill" />
                 <span className="hidden sm:inline">Admin</span>
@@ -309,9 +309,9 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 <button
                   type="button"
                   onClick={() => openAuthModal()}
-                  className="min-h-[36px] px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] border border-[var(--border-default)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  className="min-h-[36px] px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--sys-surface-container)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
                 >
-                  <LockKey size={14} weight="bold" className="text-[var(--bg-action-primary)]" />
+                  <LockKey size={14} weight="bold" className="text-[var(--sys-primary)]" />
                   <span>Sign In</span>
                 </button>
               ) : (
@@ -320,7 +320,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   onClick={() => void signOutUser()}
                   aria-label="Sign out"
                   title={`Sign out (${user.email})`}
-                  className="min-h-[36px] min-w-[36px] rounded-full bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] border border-[var(--border-default)] flex items-center justify-center cursor-pointer"
+                  className="min-h-[36px] min-w-[36px] rounded-full bg-[var(--sys-surface-container)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline)] flex items-center justify-center cursor-pointer"
                 >
                   <SignOut size={14} weight="bold" />
                 </button>
@@ -332,7 +332,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
           <div
             role="navigation"
             aria-label="Mobile Component Switcher"
-            className="flex xl:hidden items-center gap-1.5 pt-2 border-t border-[var(--border-subtle)] overflow-x-auto"
+            className="flex xl:hidden items-center gap-1.5 pt-2 border-t border-[var(--sys-outline-variant)] overflow-x-auto"
           >
             {COMPONENT_SLUGS.map((slug) => {
               const item = COMPONENT_REGISTRY[slug];
@@ -345,8 +345,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   className={cn(
                     "min-h-[34px] px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap shrink-0 inline-flex items-center",
                     active
-                      ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold shadow-sm"
-                      : "bg-[var(--bg-surface-recessed)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)]"
+                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
+                      : "bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)]"
                   )}
                 >
                   {item.name}
@@ -360,13 +360,13 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
 
       <div className={embedded ? "space-y-10" : "max-w-[1400px] mx-auto px-4 sm:px-8 pt-10 space-y-12"}>
         {/* 1. Component Title & Architectural Metadata Header */}
-        <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-[var(--border-subtle)]">
+        <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-[var(--sys-outline-variant)]">
           <div className="space-y-3 max-w-3xl">
             <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-              <span className="px-2.5 py-0.5 rounded-full bg-[var(--bg-action-primary-subtle)] text-[var(--bg-action-primary)] font-semibold">
+              <span className="px-2.5 py-0.5 rounded-full bg-[var(--sys-primary-container)] text-[var(--sys-primary)] font-semibold">
                 {spec.bucket}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
+              <span className="px-2.5 py-0.5 rounded-full bg-[var(--sys-surface-container)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)]">
                 {spec.zLayer}
               </span>
               <span className="px-2.5 py-0.5 rounded-full bg-[var(--bg-feedback-success-subtle)] text-[var(--text-feedback-success)] font-semibold flex items-center gap-1">
@@ -375,10 +375,10 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-[var(--text-primary)]">
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-[var(--sys-on-surface)]">
               {spec.name}
             </h1>
-            <p className="text-base text-[var(--text-secondary)] leading-relaxed">
+            <p className="text-base text-[var(--sys-on-surface-secondary)] leading-relaxed">
               {spec.tagline}
             </p>
           </div>
@@ -392,8 +392,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 className={cn(
                   "px-3 py-1.5 rounded-lg text-xs font-mono border",
                   slug === spec.slug
-                    ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] border-transparent font-semibold"
-                    : "bg-[var(--bg-surface-card)] text-[var(--text-secondary)] border-[var(--border-subtle)]"
+                    ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] border-transparent font-semibold"
+                    : "bg-[var(--sys-surface-low)] text-[var(--sys-on-surface-secondary)] border-[var(--sys-outline-variant)]"
                 )}
               >
                 /components/{slug}
@@ -407,12 +407,12 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
           {/* Left 8 Columns: Live Component Stage + State Matrix Controls */}
           <div className="lg:col-span-8 tonal-card overflow-hidden flex flex-col">
             {/* Toolbar: State Simulator + Preview/Code Toggle */}
-            <div className="p-4 bg-[var(--bg-surface-elevated)] border-b border-[var(--border-subtle)] flex flex-wrap items-center justify-between gap-3">
+            <div className="p-4 bg-[var(--sys-surface-container)] border-b border-[var(--sys-outline-variant)] flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <Sliders size={16} className="text-[var(--bg-action-primary)]" />
+                <Sliders size={16} className="text-[var(--sys-primary)]" />
                 <span
                   id="playground-heading"
-                  className="text-xs font-mono uppercase tracking-wider font-semibold text-[var(--text-primary)]"
+                  className="text-xs font-mono uppercase tracking-wider font-semibold text-[var(--sys-on-surface)]"
                 >
                   Interactive State Simulator
                 </span>
@@ -422,7 +422,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
               <div
                 role="tablist"
                 aria-label="Specimen View Mode"
-                className="inline-flex p-1 rounded-lg bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)]"
+                className="inline-flex p-1 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]"
               >
                 <button
                   role="tab"
@@ -432,8 +432,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   className={cn(
                     "px-3 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-all",
                     viewMode === "preview"
-                      ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold"
-                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold"
+                      : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
                   <Eye size={14} />
@@ -447,8 +447,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   className={cn(
                     "px-3 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-all",
                     viewMode === "code"
-                      ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold"
-                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold"
+                      : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
                   <Code size={14} />
@@ -461,9 +461,9 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
             <div
               role="group"
               aria-label="Simulate interactive component state"
-              className="px-4 py-3 bg-[var(--bg-surface-card)] border-b border-[var(--border-subtle)] flex flex-wrap items-center gap-2"
+              className="px-4 py-3 bg-[var(--sys-surface-low)] border-b border-[var(--sys-outline-variant)] flex flex-wrap items-center gap-2"
             >
-              <span className="text-[11px] font-mono text-[var(--text-muted)] mr-1">
+              <span className="text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] mr-1">
                 STATE MATRIX:
               </span>
               {STATE_MODES.map((mode) => {
@@ -475,10 +475,10 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                     onClick={() => setSimulatedState(mode.id)}
                     aria-pressed={active}
                     className={cn(
-                      "min-h-[32px] px-3 py-1 rounded-lg text-xs font-medium inline-flex items-center gap-1.5 border transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)]",
+                      "min-h-[32px] px-3 py-1 rounded-lg text-xs font-medium inline-flex items-center gap-1.5 border transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]",
                       active
-                        ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] border-transparent font-semibold shadow-sm"
-                        : "bg-[var(--bg-surface-recessed)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]"
+                        ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] border-transparent font-semibold shadow-sm"
+                        : "bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface-secondary)] border-[var(--sys-outline-variant)] hover:border-[var(--sys-outline)] hover:text-[var(--sys-on-surface)]"
                     )}
                   >
                     <span>{mode.label}</span>
@@ -486,8 +486,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                       className={cn(
                         "text-[10px] font-mono px-1.5 py-0.2 rounded",
                         active
-                          ? "bg-black/20 text-[var(--text-on-action)]"
-                          : "bg-[var(--bg-surface-elevated)] text-[var(--text-muted)]"
+                          ? "bg-black/20 text-[var(--sys-on-primary)]"
+                          : "bg-[var(--sys-surface-container)] text-[var(--sys-on-surface-tertiary)]"
                       )}
                     >
                       {mode.badge}
@@ -503,16 +503,16 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 {/* SPECIMEN 1: FORM FIELD INPUT */}
                 {spec.slug === "form-field" && (
                   <div className="max-w-lg w-full mx-auto tonal-card-elevated p-6 space-y-6 shadow-xl">
-                    <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                    <div className="flex items-center justify-between border-b border-[var(--sys-outline-variant)] pb-3">
                       <div>
-                        <span className="text-[11px] font-mono uppercase text-[var(--bg-action-primary)] font-semibold">
+                        <span className="text-[11px] font-mono uppercase text-[var(--sys-primary)] font-semibold">
                           LIVE SPECIMEN // FORM-FIELD
                         </span>
-                        <h2 className="text-sm font-bold text-[var(--text-primary)]">
+                        <h2 className="text-sm font-bold text-[var(--sys-on-surface)]">
                           Token Coordinate & Identity Configuration
                         </h2>
                       </div>
-                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[var(--bg-surface-recessed)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)]">
                         State: {simulatedState.toUpperCase()}
                       </span>
                     </div>
@@ -529,7 +529,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                             *
                           </span>
                         </span>
-                        <span className="font-mono text-[11px] text-[var(--text-muted)]">
+                        <span className="font-mono text-[11px] text-[var(--sys-on-surface-tertiary)]">
                           Tier-1 Reference
                         </span>
                       </label>
@@ -538,7 +538,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                         <span
                           aria-hidden="true"
                           className="w-4 h-4 rounded-full border border-white/25 absolute left-3.5 pointer-events-none"
-                          style={{ backgroundColor: "var(--bg-action-primary)" }}
+                          style={{ backgroundColor: "var(--sys-primary)" }}
                         />
                         <input
                           id={formInputId}
@@ -581,7 +581,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                                 : "oklch(0.77 0.152 258)"
                             )
                           }
-                          className="absolute right-2 min-h-[28px] px-2 rounded text-[11px] font-mono bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] border border-[var(--border-subtle)] cursor-pointer"
+                          className="absolute right-2 min-h-[28px] px-2 rounded text-[11px] font-mono bg-[var(--sys-surface-container)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)] cursor-pointer"
                         >
                           Reset
                         </button>
@@ -621,7 +621,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                     </div>
 
                     {/* Secondary Floating-Style Maintainer Email Input */}
-                    <div className="space-y-1.5 pt-2 border-t border-[var(--border-subtle)]">
+                    <div className="space-y-1.5 pt-2 border-t border-[var(--sys-outline-variant)]">
                       <label
                         htmlFor={`${formInputId}-email`}
                         className="block text-xs font-semibold text-[var(--comp-form-field-text-label)]"
@@ -654,11 +654,11 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                         type="button"
                         disabled={isDisabled}
                         onClick={() => setModalOpen((prev) => !prev)}
-                        className="min-h-[40px] px-4 py-2 rounded-[var(--comp-button-radius-rest)] bg-[var(--bg-action-primary)] text-[var(--text-on-action)] text-xs font-semibold cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)]"
+                        className="min-h-[40px] px-4 py-2 rounded-[var(--comp-button-radius-rest)] bg-[var(--sys-primary)] text-[var(--sys-on-primary)] text-xs font-semibold cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
                       >
                         {modalOpen ? "Close Modal Specimen (or Press Esc)" : "Launch Focus-Trapped Modal"}
                       </button>
-                      <span className="text-xs font-mono text-[var(--text-secondary)]">
+                      <span className="text-xs font-mono text-[var(--sys-on-surface-secondary)]">
                         FocusScope Trap: <strong>{modalOpen ? "ACTIVE" : "IDLE"}</strong>
                       </span>
                     </div>
@@ -673,14 +673,14 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                         className={cn(
                           "rounded-[var(--comp-modal-dialog-radius)] p-6 bg-[var(--comp-modal-dialog-bg-surface)] border border-[var(--comp-modal-dialog-border-surface)] shadow-2xl space-y-5 transition-all",
                           isFocusSimulated &&
-                            "outline-2 outline-offset-2 outline-[var(--border-focus-ring)]",
+                            "outline-2 outline-offset-2 outline-[var(--sys-primary)]",
                           isInvalidField && "border-[var(--border-feedback-error)]",
                           isDisabled && "opacity-50 pointer-events-none"
                         )}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="space-y-1">
-                            <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--bg-action-primary)] font-semibold">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--sys-primary)] font-semibold">
                               Z-LEVEL 2 // RADIX FOCUSSCOPE DIALOG
                             </span>
                             <h2
@@ -693,7 +693,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                               id={modalDescId}
                               className="text-xs text-[var(--comp-modal-dialog-text-body)] leading-relaxed"
                             >
-                              Press <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] font-mono">Tab</kbd> to verify keyboard focus stays trapped inside this dialogue, or press <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] font-mono">Esc</kbd> to dismiss and restore focus.
+                              Press <kbd className="px-1.5 py-0.5 rounded bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] font-mono">Tab</kbd> to verify keyboard focus stays trapped inside this dialogue, or press <kbd className="px-1.5 py-0.5 rounded bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] font-mono">Esc</kbd> to dismiss and restore focus.
                             </p>
                           </div>
                           <button
@@ -703,7 +703,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                               modalTriggerRef.current?.focus();
                             }}
                             aria-label="Close export dialog"
-                            className="min-w-[36px] min-h-[36px] rounded-lg flex items-center justify-center bg-[var(--bg-surface-recessed)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] border border-[var(--border-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)] cursor-pointer"
+                            className="min-w-[36px] min-h-[36px] rounded-lg flex items-center justify-center bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)] cursor-pointer"
                           >
                             <X size={16} />
                           </button>
@@ -728,14 +728,14 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                                 aria-checked={selected}
                                 onClick={() => setModalExportFormat(opt.id as "dtcg" | "tailwind" | "stitch")}
                                 className={cn(
-                                  "p-3 rounded-xl text-left border transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)]",
+                                  "p-3 rounded-xl text-left border transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]",
                                   selected
-                                    ? "bg-[var(--bg-action-primary-subtle)] border-[var(--border-focus-ring)] text-[var(--text-primary)]"
-                                    : "bg-[var(--bg-surface-recessed)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]"
+                                    ? "bg-[var(--sys-primary-container)] border-[var(--sys-primary)] text-[var(--sys-on-surface)]"
+                                    : "bg-[var(--sys-surface-lowest)] border-[var(--sys-outline-variant)] text-[var(--sys-on-surface-secondary)] hover:bg-[var(--sys-surface-high)]"
                                 )}
                               >
                                 <div className="text-xs font-bold">{opt.title}</div>
-                                <div className="text-[11px] font-mono text-[var(--text-muted)] mt-0.5">
+                                <div className="text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] mt-0.5">
                                   {opt.sub}
                                 </div>
                               </button>
@@ -756,14 +756,14 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                           </div>
                         )}
 
-                        <footer className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border-subtle)]">
+                        <footer className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--sys-outline-variant)]">
                           <button
                             type="button"
                             onClick={() => {
                               setModalOpen(false);
                               modalTriggerRef.current?.focus();
                             }}
-                            className="min-h-[40px] px-4 py-2 rounded-[var(--comp-button-radius-rest)] bg-[var(--bg-surface-recessed)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] border border-[var(--border-default)] text-xs font-semibold cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)]"
+                            className="min-h-[40px] px-4 py-2 rounded-[var(--comp-button-radius-rest)] bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline)] text-xs font-semibold cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
                           >
                             Cancel
                           </button>
@@ -772,7 +772,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                             onClick={() =>
                               handleCopy("modal-export", `Exported ${modalExportFormat.toUpperCase()}`)
                             }
-                            className="min-h-[40px] px-4 py-2 rounded-[var(--comp-button-radius-rest)] active:rounded-full bg-[var(--bg-action-primary)] hover:bg-[var(--bg-action-primary-hover)] text-[var(--text-on-action)] text-xs font-semibold cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)] transition-all"
+                            className="min-h-[40px] px-4 py-2 rounded-[var(--comp-button-radius-rest)] active:rounded-full bg-[var(--sys-primary)] hover:bg-[var(--bg-action-primary-hover)] text-[var(--sys-on-primary)] text-xs font-semibold cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)] transition-all"
                           >
                             {copiedKey === "modal-export"
                               ? "Bundle Copied!"
@@ -781,8 +781,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                         </footer>
                       </div>
                     ) : (
-                      <div className="p-8 rounded-2xl border border-dashed border-[var(--border-default)] text-center space-y-2">
-                        <p className="text-sm font-medium text-[var(--text-secondary)]">
+                      <div className="p-8 rounded-2xl border border-dashed border-[var(--sys-outline)] text-center space-y-2">
+                        <p className="text-sm font-medium text-[var(--sys-on-surface-secondary)]">
                           Modal closed via Escape / Cancel and focus returned to the trigger button.
                         </p>
                       </div>
@@ -793,11 +793,11 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 {/* SPECIMEN 3: INTERACTIVE DATA TABLE */}
                 {spec.slug === "data-table" && (
                   <div className="w-full space-y-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--bg-surface-elevated)] p-3 rounded-xl border border-[var(--border-subtle)]">
+                    <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--sys-surface-container)] p-3 rounded-xl border border-[var(--sys-outline-variant)]">
                       <div className="relative flex-1 min-w-[200px]">
                         <MagnifyingGlass
                           size={14}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-on-surface-tertiary)]"
                         />
                         <input
                           type="search"
@@ -806,12 +806,12 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                           onChange={(e) => setTableFilter(e.target.value)}
                           aria-label="Filter semantic tokens"
                           placeholder="Filter by token name or category..."
-                          className="w-full min-h-[38px] pl-8 pr-3 py-1.5 rounded-lg text-xs font-mono bg-[var(--bg-surface-recessed)] text-[var(--text-primary)] border border-[var(--border-default)] focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)]"
+                          className="w-full min-h-[38px] pl-8 pr-3 py-1.5 rounded-lg text-xs font-mono bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] focus-visible:outline-2 focus-visible:outline-[var(--sys-primary)]"
                         />
                       </div>
                       <div
                         aria-live="polite"
-                        className="text-xs font-mono tabular-nums text-[var(--text-secondary)]"
+                        className="text-xs font-mono tabular-nums text-[var(--sys-on-surface-secondary)]"
                       >
                         {selectedRows.length} selected • {filteredTokensForTable.length} tokens
                       </div>
@@ -845,7 +845,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                                 type="button"
                                 disabled={isDisabled}
                                 onClick={() => setSortAsc((prev) => !prev)}
-                                className="min-h-[28px] inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[var(--bg-surface-recessed)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] border border-[var(--border-subtle)] cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)]"
+                                className="min-h-[28px] inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--sys-primary)]"
                               >
                                 <span>WCAG Contrast</span>
                                 <ArrowsDownUp size={12} />
@@ -877,13 +877,13 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                                     disabled={isDisabled}
                                     onChange={() => toggleRowSelection(tok.cssVar)}
                                     aria-label={`Select token ${tok.cssVar}`}
-                                    className="w-4 h-4 accent-[var(--bg-action-primary)] rounded cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--border-focus-ring)]"
+                                    className="w-4 h-4 accent-[var(--sys-primary)] rounded cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--sys-primary)]"
                                   />
                                 </td>
                                 <td className="py-3 px-4 font-semibold text-[var(--comp-data-table-text-cell)]">
                                   {tok.cssVar}
                                 </td>
-                                <td className="py-3 px-4 text-[var(--text-secondary)] flex items-center gap-2">
+                                <td className="py-3 px-4 text-[var(--sys-on-surface-secondary)] flex items-center gap-2">
                                   <span
                                     className="w-3.5 h-3.5 rounded-full border border-white/20 shrink-0"
                                     style={{
@@ -911,10 +911,10 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 {spec.slug === "button" && (
                   <div className="max-w-lg w-full mx-auto tonal-card-elevated p-6 space-y-6">
                     <div className="space-y-1">
-                      <span className="text-[11px] font-mono uppercase text-[var(--bg-action-primary)] font-semibold">
+                      <span className="text-[11px] font-mono uppercase text-[var(--sys-primary)] font-semibold">
                         01 // M3 EXPRESSIVE SHAPE MORPH
                       </span>
-                      <h2 className="text-sm font-bold text-[var(--text-primary)]">
+                      <h2 className="text-sm font-bold text-[var(--sys-on-surface)]">
                         Press & Hold Any Button to Observe 12px → 9999px Pill Morph
                       </h2>
                     </div>
@@ -945,8 +945,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                         className={cn(
                           "min-h-[42px] px-5 py-2.5 text-xs font-semibold inline-flex items-center gap-2 cursor-pointer transition-all duration-150",
                           "rounded-[var(--comp-button-radius-rest)] active:rounded-full active:scale-[0.97]",
-                          "bg-[var(--bg-action-primary-subtle)] text-[var(--bg-action-primary)] border border-[var(--border-subtle)]",
-                          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--border-focus-ring)]",
+                          "bg-[var(--sys-primary-container)] text-[var(--sys-primary)] border border-[var(--sys-outline-variant)]",
+                          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]",
                           "disabled:opacity-45 disabled:pointer-events-none",
                           isActiveSimulated && "rounded-full scale-[0.97]"
                         )}
@@ -974,15 +974,15 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
               </div>
             ) : (
               /* Copyable React / TypeScript Code Block View (Open Access — v3.0) */
-              <div className="p-6 bg-[var(--bg-surface-recessed)] flex-1 flex flex-col justify-between space-y-4">
+              <div className="p-6 bg-[var(--sys-surface-lowest)] flex-1 flex flex-col justify-between space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-[var(--text-secondary)]">
+                  <span className="text-xs font-mono text-[var(--sys-on-surface-secondary)]">
                     src/components/ui/{spec.slug}.tsx · Strict TypeScript · Zero `any`
                   </span>
                   <button
                     type="button"
                     onClick={() => handleCopy("code-snippet", spec.codeSnippet)}
-                    className="min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[var(--bg-action-primary)] text-[var(--text-on-action)] inline-flex items-center gap-1.5 cursor-pointer"
+                    className="min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] inline-flex items-center gap-1.5 cursor-pointer"
                   >
                     {copiedKey === "code-snippet" ? (
                       <>
@@ -997,7 +997,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                     )}
                   </button>
                 </div>
-                <pre className="p-4 rounded-xl bg-black/40 border border-[var(--border-subtle)] text-xs font-mono text-[var(--text-primary)] overflow-x-auto leading-relaxed max-h-[420px]">
+                <pre className="p-4 rounded-xl bg-black/40 border border-[var(--sys-outline-variant)] text-xs font-mono text-[var(--sys-on-surface)] overflow-x-auto leading-relaxed max-h-[420px]">
                   <code>{spec.codeSnippet}</code>
                 </pre>
               </div>
@@ -1008,25 +1008,25 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
           <div className="lg:col-span-4 space-y-6">
             {/* WAI-ARIA & Keyboard Navigation Card */}
             <div className="tonal-card p-6 space-y-5">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[var(--bg-action-primary)] font-semibold">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[var(--sys-primary)] font-semibold">
                 <Keyboard size={16} />
                 <span>Keyboard & WAI-ARIA 1.2 Spec</span>
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs text-[var(--text-secondary)]">Primary ARIA Role:</div>
-                <div className="font-mono text-xs px-3 py-2 rounded-lg bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] text-[var(--text-primary)]">
+                <div className="text-xs text-[var(--sys-on-surface-secondary)]">Primary ARIA Role:</div>
+                <div className="font-mono text-xs px-3 py-2 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-[var(--sys-on-surface)]">
                   {spec.ariaRole}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs text-[var(--text-secondary)]">Required ARIA Attributes:</div>
+                <div className="text-xs text-[var(--sys-on-surface-secondary)]">Required ARIA Attributes:</div>
                 <ul className="space-y-1.5">
                   {spec.ariaAttributes.map((attr) => (
                     <li
                       key={attr}
-                      className="text-xs font-mono px-2.5 py-1.5 rounded bg-[var(--bg-surface-recessed)] text-[var(--text-primary)] border border-[var(--border-subtle)]"
+                      className="text-xs font-mono px-2.5 py-1.5 rounded bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)]"
                     >
                       {attr}
                     </li>
@@ -1034,20 +1034,20 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 </ul>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-[var(--border-subtle)]">
-                <div className="text-xs font-semibold text-[var(--text-primary)]">
+              <div className="space-y-2 pt-2 border-t border-[var(--sys-outline-variant)]">
+                <div className="text-xs font-semibold text-[var(--sys-on-surface)]">
                   Keyboard Interaction Map:
                 </div>
                 <div className="space-y-2">
                   {spec.keyboardMap.map((k) => (
                     <div
                       key={k.key}
-                      className="p-2.5 rounded-lg bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] space-y-1"
+                      className="p-2.5 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] space-y-1"
                     >
-                      <kbd className="inline-block text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-[var(--bg-action-primary-subtle)] text-[var(--bg-action-primary)]">
+                      <kbd className="inline-block text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-[var(--sys-primary-container)] text-[var(--sys-primary)]">
                         {k.key}
                       </kbd>
-                      <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                      <p className="text-xs text-[var(--sys-on-surface-secondary)] leading-relaxed">
                         {k.behavior}
                       </p>
                     </div>
@@ -1058,22 +1058,22 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
 
             {/* Cross-Platform Bindings (Figma + Stitch) */}
             <div className="tonal-card p-6 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[var(--bg-action-primary)] font-semibold">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[var(--sys-primary)] font-semibold">
                 <Cube size={16} />
                 <span>Multi-Platform Sync Keys</span>
               </div>
               <div className="text-xs space-y-2 font-mono">
-                <div className="flex justify-between py-1.5 border-b border-[var(--border-subtle)]">
-                  <span className="text-[var(--text-muted)]">Figma Node:</span>
-                  <span className="text-[var(--text-primary)]">{spec.figmaNodePath}</span>
+                <div className="flex justify-between py-1.5 border-b border-[var(--sys-outline-variant)]">
+                  <span className="text-[var(--sys-on-surface-tertiary)]">Figma Node:</span>
+                  <span className="text-[var(--sys-on-surface)]">{spec.figmaNodePath}</span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[var(--border-subtle)]">
-                  <span className="text-[var(--text-muted)]">Google Stitch:</span>
-                  <span className="text-[var(--bg-action-primary)]">{spec.stitchComponentKey}</span>
+                <div className="flex justify-between py-1.5 border-b border-[var(--sys-outline-variant)]">
+                  <span className="text-[var(--sys-on-surface-tertiary)]">Google Stitch:</span>
+                  <span className="text-[var(--sys-primary)]">{spec.stitchComponentKey}</span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-[var(--text-muted)]">Concentric Formula:</span>
-                  <span className="text-[var(--text-secondary)] text-right max-w-[200px]">
+                  <span className="text-[var(--sys-on-surface-tertiary)]">Concentric Formula:</span>
+                  <span className="text-[var(--sys-on-surface-secondary)] text-right max-w-[200px]">
                     {spec.concentricFormula}
                   </span>
                 </div>
@@ -1084,17 +1084,17 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
 
         {/* 3. Tier-2 Semantic & Tier-3 Component Token Lineage Table */}
         <section aria-labelledby="token-lineage-heading" className="tonal-card p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border-subtle)] pb-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--sys-outline-variant)] pb-5">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[var(--bg-action-primary)] font-semibold">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[var(--sys-primary)] font-semibold">
                 <Swatches size={16} />
                 <span>3-TIER TOKEN LINEAGE & POLARITY INSPECTOR</span>
               </div>
-              <h2 id="token-lineage-heading" className="text-2xl font-bold text-[var(--text-primary)]">
-                Active Semantic Tokens Fueling <code className="font-mono text-[var(--bg-action-primary)]">{spec.slug}</code>
+              <h2 id="token-lineage-heading" className="text-2xl font-bold text-[var(--sys-on-surface)]">
+                Active Semantic Tokens Fueling <code className="font-mono text-[var(--sys-primary)]">{spec.slug}</code>
               </h2>
             </div>
-            <span className="text-xs font-mono text-[var(--text-secondary)]">
+            <span className="text-xs font-mono text-[var(--sys-on-surface-secondary)]">
               Showing {semanticTokens.length} Tier-2 Semantic & {tier3Tokens.length} Tier-3 Component Bindings
             </span>
           </div>
@@ -1102,7 +1102,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[var(--border-subtle)] text-[11px] font-mono uppercase text-[var(--text-muted)]">
+                <tr className="border-b border-[var(--sys-outline-variant)] text-[11px] font-mono uppercase text-[var(--sys-on-surface-tertiary)]">
                   <th scope="col" className="py-3 px-4">
                     Tier-2 Semantic Variable
                   </th>
@@ -1120,17 +1120,17 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border-subtle)] font-mono text-xs tabular-nums">
+              <tbody className="divide-y divide-[var(--sys-outline-variant)] font-mono text-xs tabular-nums">
                 {semanticTokens.map((tok) => (
                   <tr
                     key={tok.cssVar}
-                    className="hover:bg-[var(--bg-surface-hover)] transition-colors"
+                    className="hover:bg-[var(--sys-surface-high)] transition-colors"
                   >
                     <td className="py-3.5 px-4">
                       <button
                         type="button"
                         onClick={() => handleCopy(tok.cssVar, `var(${tok.cssVar})`)}
-                        className="font-semibold text-[var(--text-primary)] hover:text-[var(--bg-action-primary)] inline-flex items-center gap-1.5 cursor-pointer"
+                        className="font-semibold text-[var(--sys-on-surface)] hover:text-[var(--sys-primary)] inline-flex items-center gap-1.5 cursor-pointer"
                       >
                         <span>{tok.cssVar}</span>
                         {copiedKey === tok.cssVar ? (
@@ -1139,11 +1139,11 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                           <Copy size={12} className="opacity-50" />
                         )}
                       </button>
-                      <div className="text-[11px] font-sans text-[var(--text-muted)] mt-0.5">
+                      <div className="text-[11px] font-sans text-[var(--sys-on-surface-tertiary)] mt-0.5">
                         {tok.description}
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)]">
+                    <td className="py-3.5 px-4 text-[var(--sys-on-surface-secondary)]">
                       {tok.workbenchAlias}
                     </td>
                     <td className="py-3.5 px-4">
@@ -1153,8 +1153,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                           style={{ backgroundColor: tok.lightHex }}
                         />
                         <div>
-                          <div className="text-[var(--text-primary)]">{tok.lightOklch}</div>
-                          <div className="text-[10px] text-[var(--text-muted)]">
+                          <div className="text-[var(--sys-on-surface)]">{tok.lightOklch}</div>
+                          <div className="text-[10px] text-[var(--sys-on-surface-tertiary)]">
                             {tok.lightRef} ({tok.lightHex})
                           </div>
                         </div>
@@ -1167,8 +1167,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                           style={{ backgroundColor: tok.darkHex }}
                         />
                         <div>
-                          <div className="text-[var(--text-primary)]">{tok.darkOklch}</div>
-                          <div className="text-[10px] text-[var(--text-muted)]">
+                          <div className="text-[var(--sys-on-surface)]">{tok.darkOklch}</div>
+                          <div className="text-[10px] text-[var(--sys-on-surface-tertiary)]">
                             {tok.darkRef} ({tok.darkHex})
                           </div>
                         </div>
@@ -1190,23 +1190,23 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Anatomy Breakdown */}
           <div className="lg:col-span-6 tonal-card p-6 space-y-4">
-            <h3 className="text-lg font-bold text-[var(--text-primary)]">
+            <h3 className="text-lg font-bold text-[var(--sys-on-surface)]">
               Visual Anatomy & Slot Geometry
             </h3>
             <div className="space-y-3">
               {spec.anatomy.map((item) => (
                 <div
                   key={item.slot}
-                  className="p-3.5 rounded-xl bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] space-y-1"
+                  className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] space-y-1"
                 >
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="font-bold text-[var(--bg-action-primary)]">{item.slot}</span>
-                    <span className="text-[var(--text-muted)]">{item.element}</span>
+                    <span className="font-bold text-[var(--sys-primary)]">{item.slot}</span>
+                    <span className="text-[var(--sys-on-surface-tertiary)]">{item.element}</span>
                   </div>
-                  <div className="text-xs text-[var(--text-primary)] font-medium">
+                  <div className="text-xs text-[var(--sys-on-surface)] font-medium">
                     {item.geometry}
                   </div>
-                  <div className="text-[11px] font-mono text-[var(--text-secondary)]">
+                  <div className="text-[11px] font-mono text-[var(--sys-on-surface-secondary)]">
                     Token: {item.tokenBinding}
                   </div>
                 </div>
@@ -1222,7 +1222,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   <CheckCircle size={15} weight="fill" />
                   <span>When to Use (Do)</span>
                 </div>
-                <ul className="space-y-2 text-xs text-[var(--text-secondary)] leading-relaxed">
+                <ul className="space-y-2 text-xs text-[var(--sys-on-surface-secondary)] leading-relaxed">
                   {spec.whenToUse.map((rule) => (
                     <li key={rule}>• {rule}</li>
                   ))}
@@ -1233,7 +1233,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   <WarningCircle size={15} weight="fill" />
                   <span>When Not to Use (Don&apos;t)</span>
                 </div>
-                <ul className="space-y-2 text-xs text-[var(--text-secondary)] leading-relaxed">
+                <ul className="space-y-2 text-xs text-[var(--sys-on-surface-secondary)] leading-relaxed">
                   {spec.whenNotToUse.map((rule) => (
                     <li key={rule}>• {rule}</li>
                   ))}
@@ -1242,7 +1242,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
             </div>
 
             <div className="tonal-card p-6 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase text-[var(--bg-action-primary)] font-semibold">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase text-[var(--sys-primary)] font-semibold">
                 <Info size={16} />
                 <span>WCAG 2.2 AA Verification Gates</span>
               </div>
@@ -1250,13 +1250,13 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                 {spec.accessibilityRules.map((rule) => (
                   <div
                     key={rule.criterion}
-                    className="p-3 rounded-lg bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] flex items-start justify-between gap-4"
+                    className="p-3 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-start justify-between gap-4"
                   >
                     <div className="space-y-1">
-                      <div className="text-xs font-bold text-[var(--text-primary)]">
+                      <div className="text-xs font-bold text-[var(--sys-on-surface)]">
                         {rule.criterion}
                       </div>
-                      <p className="text-xs text-[var(--text-secondary)]">{rule.requirement}</p>
+                      <p className="text-xs text-[var(--sys-on-surface-secondary)]">{rule.requirement}</p>
                     </div>
                     <span className="shrink-0 text-[11px] font-mono px-2 py-0.5 rounded bg-[var(--bg-feedback-success-subtle)] text-[var(--text-feedback-success)] font-semibold">
                       {rule.wcagRef}
