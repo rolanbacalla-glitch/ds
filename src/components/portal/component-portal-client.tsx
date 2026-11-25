@@ -40,6 +40,9 @@ import { useTheme } from "@/components/providers/theme-provider";
 
 interface ComponentPortalClientProps {
   initialSlug: ComponentSlug;
+  embedded?: boolean;
+  onSelectSlug?: (slug: ComponentSlug) => void;
+  onClose?: () => void;
 }
 
 const STATE_MODES: { id: InteractiveStateMode; label: string; badge: string }[] = [
@@ -53,6 +56,9 @@ const STATE_MODES: { id: InteractiveStateMode; label: string; badge: string }[] 
 
 export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
   initialSlug,
+  embedded = false,
+  onSelectSlug,
+  onClose,
 }) => {
   const spec = COMPONENT_REGISTRY[initialSlug] ?? COMPONENT_REGISTRY["form-field"];
   const semanticTokens = getComponentSemanticTokens(spec.slug);
@@ -161,8 +167,51 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] pb-24">
-      {/* Z-Level 2: Unified Floating Liquid Glass Top Portal Chrome */}
+    <div
+      className={
+        embedded
+          ? "linear-shell p-4 sm:p-6 text-[var(--text-primary)] space-y-6"
+          : "min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] pb-24"
+      }
+    >
+      {embedded ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--border-subtle)]">
+          <div className="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Component Specs">
+            {COMPONENT_SLUGS.map((slug) => {
+              const item = COMPONENT_REGISTRY[slug];
+              const active = slug === spec.slug;
+              return (
+                <button
+                  key={slug}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => onSelectSlug?.(slug)}
+                  className={cn(
+                    "min-h-[36px] px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap",
+                    active
+                      ? "bg-[var(--bg-action-primary)] text-[var(--text-on-action)] font-semibold shadow-sm"
+                      : "bg-[var(--bg-surface-recessed)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)]"
+                  )}
+                >
+                  {item.name}
+                </button>
+              );
+            })}
+          </div>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-surface-recessed)] border border-[var(--border-subtle)] inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <X size={14} />
+              <span>Close Spec</span>
+            </button>
+          )}
+        </div>
+      ) : (
+      /* Z-Level 2: Unified Floating Liquid Glass Top Portal Chrome */
       <header className="sticky top-0 z-50 px-3 sm:px-6 pt-3 sm:pt-4">
         <div
           style={{
@@ -307,8 +356,9 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
           </div>
         </div>
       </header>
+      )}
 
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-8 pt-10 space-y-12">
+      <div className={embedded ? "space-y-10" : "max-w-[1400px] mx-auto px-4 sm:px-8 pt-10 space-y-12"}>
         {/* 1. Component Title & Architectural Metadata Header */}
         <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-[var(--border-subtle)]">
           <div className="space-y-3 max-w-3xl">
@@ -1217,7 +1267,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 };

@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ComponentPortalClient } from "@/components/portal/component-portal-client";
+import type { ComponentSlug } from "@/lib/component-registry";
 import {
   Cube,
   Sparkle,
@@ -20,7 +21,24 @@ import {
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/auth-provider";
 
-export const ComponentsSection: React.FC = () => {
+interface ComponentsSectionProps {
+  activeSpecSlug?: ComponentSlug | null;
+  onSelectSpecSlug?: (slug: ComponentSlug | null) => void;
+}
+
+export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
+  activeSpecSlug: controlledSlug,
+  onSelectSpecSlug,
+}) => {
+  const [internalSlug, setInternalSlug] = useState<ComponentSlug | null>(null);
+  const activeSpecSlug = controlledSlug !== undefined ? controlledSlug : internalSlug;
+  const setActiveSpecSlug = (slug: ComponentSlug | null) => {
+    if (onSelectSpecSlug) {
+      onSelectSpecSlug(slug);
+    } else {
+      setInternalSlug(slug);
+    }
+  };
   // Interactive Specimen State
   const [activeSegment, setActiveSegment] = useState<"production" | "staging" | "canary">("production");
   const [sliderValue, setSliderValue] = useState(72);
@@ -517,35 +535,56 @@ export const ComponentsSection: React.FC = () => {
               badge: "Touch-Ready (40px+)",
               desc: "Primary, secondary, and frosted glass buttons with smooth press animations.",
             },
-          ].map((item) => (
-            <Link
-              key={item.slug}
-              href={`/components/${item.slug}`}
-              className="group p-4 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] hover:border-[var(--sys-primary)] transition-all flex flex-col justify-between gap-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)]">
-                    {item.badge}
-                  </span>
-                  <ArrowUpRight
-                    size={15}
-                    className="text-[var(--sys-on-surface-tertiary)] group-hover:text-[var(--sys-primary)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                  />
+          ].map((item) => {
+            const isSelected = activeSpecSlug === item.slug;
+            return (
+              <button
+                key={item.slug}
+                type="button"
+                onClick={() => setActiveSpecSlug(item.slug as ComponentSlug)}
+                className={cn(
+                  "group text-left p-4 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border transition-all flex flex-col justify-between gap-4 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]",
+                  isSelected
+                    ? "border-[var(--sys-primary)] ring-1 ring-[var(--sys-primary)]/40"
+                    : "border-[var(--sys-outline-variant)] hover:border-[var(--sys-primary)]"
+                )}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)]">
+                      {item.badge}
+                    </span>
+                    <ArrowUpRight
+                      size={15}
+                      className="text-[var(--sys-on-surface-tertiary)] group-hover:text-[var(--sys-primary)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                    />
+                  </div>
+                  <div className="text-sm font-bold text-[var(--sys-on-surface)] group-hover:text-[var(--sys-primary)] transition-colors">
+                    {item.title}
+                  </div>
+                  <p className="text-xs text-[var(--sys-on-surface-secondary)] leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
-                <div className="text-sm font-bold text-[var(--sys-on-surface)] group-hover:text-[var(--sys-primary)] transition-colors">
-                  {item.title}
+                <div className="text-xs font-semibold text-[var(--sys-primary)]">
+                  {isSelected ? `Viewing ${item.title} Spec ↓` : `Open ${item.title} Guide →`}
                 </div>
-                <p className="text-xs text-[var(--sys-on-surface-secondary)] leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-              <div className="text-xs font-semibold text-[var(--sys-primary)]">
-                Open {item.title} Guide →
-              </div>
-            </Link>
-          ))}
+              </button>
+            );
+          })}
         </div>
+
+        {/* Inline Embedded Component Spec Portal (No Separate Page Load) */}
+        {activeSpecSlug && (
+          <div id="inline-component-spec" className="pt-4 scroll-mt-24">
+            <ComponentPortalClient
+              initialSlug={activeSpecSlug}
+              embedded={true}
+              onSelectSlug={(slug) => setActiveSpecSlug(slug)}
+              onClose={() => setActiveSpecSlug(null)}
+            />
+          </div>
+        )}
       </div>
     </section>
   );
