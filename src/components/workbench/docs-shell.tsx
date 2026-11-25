@@ -173,6 +173,40 @@ export const DocsShell: React.FC<DocsShellProps> = ({
   const nextItem =
     activeIdx >= 0 && activeIdx < DOC_NAV_ITEMS.length - 1 ? DOC_NAV_ITEMS[activeIdx + 1] : null;
 
+  // Spec-aware Previous / Next targets when viewing an inline Component Spec
+  const activeSpecIdx =
+    activeSection === "components" && activeSpecSlug
+      ? COMPONENT_SPECS.findIndex((s) => s.slug === activeSpecSlug)
+      : -1;
+
+  const prevTarget: { label: string; onClick: () => void } | null =
+    activeSpecIdx >= 0
+      ? activeSpecIdx > 0
+        ? {
+            label: COMPONENT_SPECS[activeSpecIdx - 1].label,
+            onClick: () => onSelectSpec?.(COMPONENT_SPECS[activeSpecIdx - 1].slug),
+          }
+        : prevItem
+          ? { label: prevItem.label, onClick: () => handleNavClick(prevItem.id) }
+          : null
+      : prevItem
+        ? { label: prevItem.label, onClick: () => handleNavClick(prevItem.id) }
+        : null;
+
+  const nextTarget: { label: string; onClick: () => void } | null =
+    activeSpecIdx >= 0
+      ? activeSpecIdx < COMPONENT_SPECS.length - 1
+        ? {
+            label: COMPONENT_SPECS[activeSpecIdx + 1].label,
+            onClick: () => onSelectSpec?.(COMPONENT_SPECS[activeSpecIdx + 1].slug),
+          }
+        : nextItem
+          ? { label: nextItem.label, onClick: () => handleNavClick(nextItem.id) }
+          : null
+      : nextItem
+        ? { label: nextItem.label, onClick: () => handleNavClick(nextItem.id) }
+        : null;
+
   const filteredItems = DOC_NAV_ITEMS.filter(
     (item) =>
       item.label.toLowerCase().includes(query.toLowerCase()) ||
@@ -436,34 +470,34 @@ export const DocsShell: React.FC<DocsShellProps> = ({
 
             {/* Previous / Next Pagination Footer */}
             <footer className="mt-16 pt-6 border-t border-[var(--sys-outline-variant)] flex items-center justify-between gap-4">
-              {prevItem ? (
+              {prevTarget ? (
                 <button
                   type="button"
-                  onClick={() => handleNavClick(prevItem.id)}
+                  onClick={prevTarget.onClick}
                   className="group flex flex-col items-start gap-1 text-left cursor-pointer"
                 >
                   <span className="text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] inline-flex items-center gap-1">
                     <ArrowLeft size={12} /> Previous
                   </span>
                   <span className="text-sm font-medium text-[var(--sys-on-surface)] group-hover:text-[var(--sys-primary)] transition-colors">
-                    {prevItem.label}
+                    {prevTarget.label}
                   </span>
                 </button>
               ) : (
                 <div />
               )}
 
-              {nextItem ? (
+              {nextTarget ? (
                 <button
                   type="button"
-                  onClick={() => handleNavClick(nextItem.id)}
+                  onClick={nextTarget.onClick}
                   className="group flex flex-col items-end gap-1 text-right cursor-pointer"
                 >
                   <span className="text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] inline-flex items-center gap-1">
                     Next <ArrowRight size={12} />
                   </span>
                   <span className="text-sm font-medium text-[var(--sys-on-surface)] group-hover:text-[var(--sys-primary)] transition-colors">
-                    {nextItem.label}
+                    {nextTarget.label}
                   </span>
                 </button>
               ) : (
