@@ -106,15 +106,17 @@ export const DOC_NAV_ITEMS: NavItem[] = [
 
 const NAV_GROUPS: Array<NavItem["group"]> = ["Overview", "Foundations", "Library", "Ship"];
 
-const COMPONENT_SPECS = [
-  { href: "/components/form-field", label: "Form Field" },
-  { href: "/components/modal-dialog", label: "Modal Dialogue" },
-  { href: "/components/data-table", label: "Data Table" },
+const COMPONENT_SPECS: Array<{ slug: "form-field" | "modal-dialog" | "data-table"; label: string }> = [
+  { slug: "form-field", label: "Form Field" },
+  { slug: "modal-dialog", label: "Modal Dialogue" },
+  { slug: "data-table", label: "Data Table" },
 ];
 
 interface DocsShellProps {
   activeSection: DocSectionId;
   onSelectSection: (id: DocSectionId) => void;
+  activeSpecSlug?: "form-field" | "modal-dialog" | "data-table" | "button" | null;
+  onSelectSpec?: (slug: "form-field" | "modal-dialog" | "data-table" | "button") => void;
   theme: "dark" | "light";
   onToggleTheme: () => void;
   seed: SeedConfig;
@@ -125,6 +127,8 @@ interface DocsShellProps {
 export const DocsShell: React.FC<DocsShellProps> = ({
   activeSection,
   onSelectSection,
+  activeSpecSlug,
+  onSelectSpec,
   theme,
   onToggleTheme,
   seed,
@@ -383,21 +387,40 @@ export const DocsShell: React.FC<DocsShellProps> = ({
               </div>
             ))}
 
-            {/* Deep-Linked Component Spec Pages */}
+            {/* Inline Component Specs (stays inside DocsShell without separate page load) */}
             <div className="pt-4 border-t border-[var(--sys-outline-variant)] space-y-1">
               <div className="px-2.5 pb-1 text-[11px] font-medium text-[var(--sys-on-surface-tertiary)]">
                 Component Specs
               </div>
-              {COMPONENT_SPECS.map((spec) => (
-                <Link
-                  key={spec.href}
-                  href={spec.href}
-                  className="w-full px-2.5 py-1.5 rounded-md text-[13px] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-low)]/60 flex items-center justify-between transition-colors"
-                >
-                  <span>{spec.label}</span>
-                  <ArrowUpRight size={13} className="text-[var(--sys-on-surface-tertiary)]" />
-                </Link>
-              ))}
+              {COMPONENT_SPECS.map((spec) => {
+                const isActive = activeSection === "components" && activeSpecSlug === spec.slug;
+                return (
+                  <button
+                    key={spec.slug}
+                    type="button"
+                    onClick={() => {
+                      onSelectSpec?.(spec.slug);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={cn(
+                      "w-full px-2.5 py-1.5 rounded-md text-[13px] flex items-center justify-between transition-colors cursor-pointer text-left",
+                      isActive
+                        ? "bg-[var(--sys-surface-low)] text-[var(--sys-on-surface)] font-medium"
+                        : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-low)]/60"
+                    )}
+                  >
+                    <span>{spec.label}</span>
+                    <ArrowUpRight
+                      size={13}
+                      className={
+                        isActive
+                          ? "text-[var(--sys-primary)]"
+                          : "text-[var(--sys-on-surface-tertiary)]"
+                      }
+                    />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </aside>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { SEED_PRESETS, type SeedConfig } from "@/lib/tokens";
+import type { ComponentSlug } from "@/lib/component-registry";
 import { TOKEN_BUILD_METADATA } from "@/lib/tokens.generated";
 import { DocsShell, type DocSectionId } from "@/components/workbench/docs-shell";
 import { TokenEngineSection } from "@/components/workbench/token-engine-section";
@@ -44,6 +45,7 @@ export default function Home() {
   const { theme, toggleTheme } = useTheme();
   const [customSeed, setCustomSeed] = useState<SeedConfig | null>(null);
   const [activeSection, setActiveSection] = useState<DocSectionId>("overview");
+  const [activeSpecSlug, setActiveSpecSlug] = useState<ComponentSlug | null>(null);
 
   const seed =
     customSeed ??
@@ -76,10 +78,29 @@ export default function Home() {
 
   const handleSelectSection = (id: DocSectionId) => {
     setActiveSection(id);
+    if (id !== "components") {
+      setActiveSpecSlug(null);
+    }
     if (typeof window !== "undefined") {
       const nextHash = id === "overview" ? "" : `#${id}`;
       window.history.replaceState(null, "", nextHash || window.location.pathname);
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleSelectSpec = (slug: ComponentSlug) => {
+    setActiveSection("components");
+    setActiveSpecSlug(slug);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", "#components");
+      window.setTimeout(() => {
+        const el = document.getElementById("inline-component-spec");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 60);
     }
   };
 
@@ -143,6 +164,8 @@ export default function Home() {
     <DocsShell
       activeSection={activeSection}
       onSelectSection={handleSelectSection}
+      activeSpecSlug={activeSpecSlug}
+      onSelectSpec={handleSelectSpec}
       theme={theme}
       onToggleTheme={toggleTheme}
       seed={seed}
@@ -307,7 +330,12 @@ export default function Home() {
         </div>
       )}
 
-      {activeSection === "components" && <ComponentsSection />}
+      {activeSection === "components" && (
+        <ComponentsSection
+          activeSpecSlug={activeSpecSlug}
+          onSelectSpecSlug={setActiveSpecSlug}
+        />
+      )}
 
       {activeSection === "icons" && <IconPlayground />}
 
