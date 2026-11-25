@@ -106,10 +106,14 @@ export const DOC_NAV_ITEMS: NavItem[] = [
 
 const NAV_GROUPS: Array<NavItem["group"]> = ["Overview", "Foundations", "Library", "Ship"];
 
-const COMPONENT_SPECS: Array<{ slug: "form-field" | "modal-dialog" | "data-table"; label: string }> = [
+const COMPONENT_SPECS: Array<{
+  slug: "form-field" | "modal-dialog" | "data-table" | "button";
+  label: string;
+}> = [
   { slug: "form-field", label: "Form Field" },
   { slug: "modal-dialog", label: "Modal Dialogue" },
   { slug: "data-table", label: "Data Table" },
+  { slug: "button", label: "M3 Shape-Morphing Action Button" },
 ];
 
 interface DocsShellProps {

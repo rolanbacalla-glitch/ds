@@ -175,31 +175,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
       }
     >
       {embedded ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--sys-outline-variant)]">
-          <div className="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Component Specs">
-            {COMPONENT_SLUGS.map((slug) => {
-              const item = COMPONENT_REGISTRY[slug];
-              const active = slug === spec.slug;
-              return (
-                <button
-                  key={slug}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => onSelectSlug?.(slug)}
-                  className={cn(
-                    "min-h-[36px] px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap",
-                    active
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
-                      : "bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)]"
-                  )}
-                >
-                  {item.name}
-                </button>
-              );
-            })}
-          </div>
-          {onClose && (
+        onClose ? (
+          <div className="flex items-center justify-end pb-2">
             <button
               type="button"
               onClick={onClose}
@@ -208,8 +185,8 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
               <X size={14} />
               <span>Close Spec</span>
             </button>
-          )}
-        </div>
+          </div>
+        ) : null
       ) : (
       /* Z-Level 2: Unified Floating Liquid Glass Top Portal Chrome */
       <header className="sticky top-0 z-50 px-3 sm:px-6 pt-3 sm:pt-4">
