@@ -152,7 +152,7 @@ const USABILITY_GUIDELINES: UsabilityGuideline[] = [
     id: "z-axis-discipline",
     category: "Motion & Depth",
     title: "Z-Axis Tonal Clarity Over Heavy Blur",
-    standard: "Antigravity Z-Level Spec",
+    standard: "RB Design System Z-Level Spec",
     doText:
       "Use solid tonal steps (.tonal-card) for Z-Level 1 reading surfaces, reserving Liquid Glass blur strictly for Z-Level 2 floating chrome (navbars, command bars, modals).",
     dontText:
@@ -403,7 +403,7 @@ function collectLiveDomChecks(): LiveCheckResult[] {
     {
       id: "z-axis-audit",
       title: "Z-Axis Tonal Surface Discipline",
-      standard: "Antigravity Z-Level Spec",
+      standard: "RB Design System Z-Level Spec",
       status: leakingCards === 0 ? "pass" : "advisory",
       metric: `${leakingCards} blur leaks across ${tonalCards.length} cards`,
       detail:

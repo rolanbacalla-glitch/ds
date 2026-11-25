@@ -41,12 +41,12 @@ export const ExportCompilerSection: React.FC<ExportCompilerSectionProps> = ({ se
 
   const cursorRulesPreview = useMemo(
     () => `---
-description: Antigravity Design System (${seed.name}) — AI Coding Agent Guardrails
+description: RB Design System (${seed.name}) — AI Coding Agent Guardrails
 globs: ["src/**/*.ts", "src/**/*.tsx", "src/**/*.css", "tokens/**/*.json"]
 alwaysApply: true
 ---
 
-# Antigravity Multi-Platform Agent Rules (Cursor & Google Antigravity)
+# RB Design System Multi-Platform Agent Rules (Cursor & Antigravity)
 - Active Preset: ${seed.name} (Hue: ${seed.hue}°, Chroma: ${seed.chroma}, Radius Scale: ${seed.radiusScale}x)
 - Typography Stack: Manrope (Sans), Newsreader Variable (Modern Display Serif), IBM Plex Mono (Mono)
 - Next.js 16.2+ App Router: dynamic route params are Promises and must be awaited.

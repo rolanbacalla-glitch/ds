@@ -81,7 +81,7 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
 
   // Live Interactive FormField state
   const [fieldValue, setFieldValue] = useState("oklch(0.77 0.152 258)");
-  const [emailValue, setEmailValue] = useState("architect@antigravity.design");
+  const [emailValue, setEmailValue] = useState("architect@rolanbacalla.online");
   const formInputId = useId();
 
   // Live Interactive ModalDialog state (with FocusScope trap)
