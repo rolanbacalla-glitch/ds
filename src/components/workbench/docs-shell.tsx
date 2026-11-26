@@ -348,33 +348,40 @@ export const DocsShell: React.FC<DocsShellProps> = ({
             </button>
 
             {/* Auth / Admin */}
-            {isAdmin ? (
-              <button
-                type="button"
-                onClick={openAdminConsole}
-                className="hidden sm:inline-flex h-8 px-2.5 rounded-md bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] text-xs font-medium items-center gap-1.5 cursor-pointer"
-              >
-                <ShieldCheck size={14} weight="fill" />
-                <span>Admin</span>
-              </button>
-            ) : user ? (
-              <button
-                type="button"
-                onClick={() => signOutUser()}
-                title="Sign out"
-                className="w-8 h-8 rounded-md bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-container)] border border-[var(--sys-outline-variant)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] inline-flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <SignOut size={15} />
-              </button>
+            {user ? (
+              <div className="flex items-center gap-1.5">
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={openAdminConsole}
+                    className="inline-flex h-8 px-2.5 rounded-md bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] text-xs font-medium items-center gap-1.5 hover:brightness-105 transition-all cursor-pointer"
+                  >
+                    <ShieldCheck size={14} weight="fill" />
+                    <span className="hidden sm:inline">Admin</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    void signOutUser();
+                  }}
+                  aria-label="Sign out"
+                  title={`Sign out (${user.email ?? "account"})`}
+                  className="h-8 px-2.5 rounded-md bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-container)] border border-[var(--sys-outline-variant)] text-xs font-medium text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <SignOut size={14} />
+                  <span className="hidden md:inline">Sign out</span>
+                </button>
+              </div>
             ) : (
               <button
                 type="button"
                 onClick={() => openAuthModal()}
                 title="Sign in"
-                className="hidden sm:inline-flex h-8 px-2.5 rounded-md bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-container)] border border-[var(--sys-outline-variant)] text-xs font-medium text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] items-center gap-1.5 transition-colors cursor-pointer"
+                className="inline-flex h-8 px-2.5 rounded-md bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-container)] border border-[var(--sys-outline-variant)] text-xs font-medium text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <LockKey size={13} />
-                <span>Sign in</span>
+                <span className="hidden sm:inline">Sign in</span>
               </button>
             )}
           </div>

@@ -18,6 +18,7 @@ import {
   UserX,
   Sliders,
   ExternalLink,
+  LogOut,
 } from "lucide-react";
 import firebaseConfig from "../../../firebase-applet-config.json";
 import { collection, onSnapshot, orderBy, query, limit } from "firebase/firestore";
@@ -48,6 +49,7 @@ export const AdminConsoleModal: React.FC = () => {
     isAdmin,
     adminConsoleOpen,
     closeAdminConsole,
+    signOutUser,
     portfolioSettings,
     updatePortfolioSettings,
     approveAccessRequest,
@@ -250,14 +252,26 @@ export const AdminConsoleModal: React.FC = () => {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={closeAdminConsole}
-            aria-label="Close admin console"
-            className="min-w-[36px] min-h-[36px] rounded-xl flex items-center justify-center bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)] cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                void signOutUser();
+              }}
+              className="min-h-[36px] px-3 rounded-xl inline-flex items-center gap-1.5 bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-xs font-medium text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)] transition-colors cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign out</span>
+            </button>
+            <button
+              type="button"
+              onClick={closeAdminConsole}
+              aria-label="Close admin console"
+              className="min-w-[36px] min-h-[36px] rounded-xl flex items-center justify-center bg-[var(--sys-surface-high)]/70 hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline-variant)] cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Navigation Tabs */}

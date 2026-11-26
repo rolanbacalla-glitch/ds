@@ -426,9 +426,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   const signOutUser = useCallback(async () => {
-    await signOut(auth);
-    setAdminConsoleOpen(false);
-    showToast("Signed out cleanly.");
+    try {
+      await signOut(auth);
+      setAdminConsoleOpen(false);
+      setAuthModalOpen(false);
+      showToast("Signed out cleanly.");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      showToast("Could not sign out. Please try again.");
+    }
   }, [showToast]);
 
   // ============================================================================

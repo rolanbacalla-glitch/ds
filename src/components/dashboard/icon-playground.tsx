@@ -18,7 +18,7 @@ import materialIconsData from "@/data/material-icons.json";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/auth-provider";
 
-type IconWeight = "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
+type IconWeight = "thin" | "light" | "regular" | "bold";
 type PhosphorIconComponent = React.ComponentType<Icons.IconProps>;
 type CustomMediaIconComponent = React.ComponentType<MediaIconProps>;
 type IconSetType = "all" | "material" | "phosphor" | "media";
@@ -46,6 +46,7 @@ export const IconPlayground: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [size, setSize] = useState(56);
   const [weight, setWeight] = useState<IconWeight>("regular");
+  const [filled, setFilled] = useState(false);
   const [showKeylines, setShowKeylines] = useState(true);
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -239,26 +240,10 @@ export const IconPlayground: React.FC = () => {
     }
     // Material Symbols render as variable font glyphs; copy the HTML glyph snippet as fallback
     const fallbackHtml = `<span class="material-symbols-outlined" style="font-size:${size}px;font-variation-settings:'FILL' ${
-      weight === "fill" ? 1 : 0
+      filled ? 1 : 0
     },'wght' ${materialWeightNumeric},'GRAD' 0,'opsz' 48">${selectedIcon.materialName ?? selectedIcon.name}</span>`;
     handleCopy("svg", fallbackHtml, "HTML glyph");
   };
-
-  // Generate code snippet based on selected icon source
-  const exports = useMemo(() => {
-    if (selectedIcon.source === "material") {
-      const code = `<span className="material-symbols-outlined text-[var(--sys-primary)]" style={{ fontSize: ${size} }}>\n  ${selectedIcon.materialName}\n</span>`;
-      return {
-        code,
-        label: "React / HTML Code",
-      };
-    }
-    const code = `<${selectedIcon.name} size={${size}} weight="${weight}" className="text-[var(--sys-primary)]" />`;
-    return {
-      code,
-      label: "Phosphor React Code",
-    };
-  }, [selectedIcon, size, weight]);
 
   // Convert weight string to numeric font-variation weight for Material Symbols
   const materialWeightNumeric = useMemo(() => {
@@ -271,14 +256,31 @@ export const IconPlayground: React.FC = () => {
         return 400;
       case "bold":
         return 700;
-      case "fill":
-        return 400;
-      case "duotone":
-        return 500;
       default:
         return 400;
     }
   }, [weight]);
+
+  // Effective Phosphor weight (fill toggle overrides stroke weight for Phosphor)
+  const effectivePhosphorWeight: Icons.IconWeight = filled ? "fill" : weight;
+
+  // Generate code snippet based on selected icon source
+  const exports = useMemo(() => {
+    if (selectedIcon.source === "material") {
+      const code = `<span className="material-symbols-outlined text-[var(--sys-primary)]" style={{ fontSize: ${size}, fontVariationSettings: "'FILL' ${
+        filled ? 1 : 0
+      }, 'wght' ${materialWeightNumeric}, 'GRAD' 0, 'opsz' 48" }}>\n  ${selectedIcon.materialName}\n</span>`;
+      return {
+        code,
+        label: "React / HTML Code",
+      };
+    }
+    const code = `<${selectedIcon.name} size={${size}} weight="${effectivePhosphorWeight}" className="text-[var(--sys-primary)]" />`;
+    return {
+      code,
+      label: "Phosphor React Code",
+    };
+  }, [selectedIcon, size, filled, materialWeightNumeric, effectivePhosphorWeight]);
 
   return (
     <section id="icons" className="scroll-mt-24 space-y-10">
@@ -368,7 +370,7 @@ export const IconPlayground: React.FC = () => {
                   style={{
                     fontSize: `${size}px`,
                     fontVariationSettings: `'FILL' ${
-                      weight === "fill" ? 1 : 0
+                      filled ? 1 : 0
                     }, 'wght' ${materialWeightNumeric}, 'GRAD' 0, 'opsz' 48`,
                   }}
                 >
@@ -377,13 +379,13 @@ export const IconPlayground: React.FC = () => {
               ) : selectedIcon.customIcon ? (
                 <selectedIcon.customIcon
                   size={size}
-                  strokeWidth={weight === "thin" ? 1.2 : weight === "bold" ? 2.4 : 1.8}
+                  strokeWidth={weight === "thin" ? 1.2 : weight === "light" ? 1.5 : weight === "bold" ? 2.4 : 1.8}
                   className="text-[var(--sys-primary)] relative z-10 transition-all duration-150"
                 />
               ) : selectedIcon.phosphorIcon ? (
                 <selectedIcon.phosphorIcon
                   size={size}
-                  weight={weight}
+                  weight={effectivePhosphorWeight}
                   className="text-[var(--sys-primary)] relative z-10 transition-all duration-150"
                 />
               ) : null}
@@ -392,6 +394,7 @@ export const IconPlayground: React.FC = () => {
                 <span className="truncate pr-2">{selectedIcon.name}</span>
                 <span className="tabular-nums shrink-0">
                   {size}×{size}px • {weight}
+                  {filled ? " • fill" : ""}
                 </span>
               </div>
             </div>
@@ -402,13 +405,14 @@ export const IconPlayground: React.FC = () => {
             <div className="text-xs font-medium text-[var(--sys-on-surface-secondary)]">
               Stroke Weight
             </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {(["thin", "light", "regular", "bold", "fill", "duotone"] as const).map((w) => (
+            <div className="grid grid-cols-4 gap-1.5">
+              {(["thin", "light", "regular", "bold"] as const).map((w) => (
                 <button
                   key={w}
+                  type="button"
                   onClick={() => setWeight(w)}
                   className={cn(
-                    "py-2 px-2.5 rounded-lg text-xs font-mono capitalize border transition-all cursor-pointer",
+                    "py-2 px-2 rounded-lg text-xs font-mono capitalize border transition-all cursor-pointer",
                     weight === w
                       ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] border-[var(--sys-primary)] font-semibold"
                       : "bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface-secondary)] border-[var(--sys-outline-variant)] hover:text-[var(--sys-on-surface)]"
@@ -418,6 +422,34 @@ export const IconPlayground: React.FC = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Independent Fill Toggle */}
+          <div className="p-3 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-medium text-[var(--sys-on-surface)]">Fill</div>
+              <div className="text-[11px] text-[var(--sys-on-surface-tertiary)]">
+                {filled ? "Filled glyph (keeps weight)" : "Outlined glyph"}
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={filled}
+              aria-label="Toggle icon fill"
+              onClick={() => setFilled((prev) => !prev)}
+              className={cn(
+                "w-11 h-6 rounded-full p-0.5 shrink-0 transition-colors cursor-pointer",
+                filled ? "bg-[var(--sys-primary)]" : "bg-[var(--sys-surface-highest)]"
+              )}
+            >
+              <div
+                className={cn(
+                  "w-5 h-5 rounded-full bg-white shadow transition-transform",
+                  filled ? "translate-x-5" : "translate-x-0"
+                )}
+              />
+            </button>
           </div>
 
           {/* Optical Size Slider */}
@@ -593,7 +625,7 @@ export const IconPlayground: React.FC = () => {
                         className="material-symbols-outlined text-[22px] select-none"
                         style={{
                           fontVariationSettings: `'FILL' ${
-                            active && weight === "fill" ? 1 : 0
+                            active && filled ? 1 : 0
                           }, 'wght' ${materialWeightNumeric}, 'opsz' 24`,
                         }}
                       >
@@ -602,7 +634,7 @@ export const IconPlayground: React.FC = () => {
                     ) : item.customIcon ? (
                       <item.customIcon size={22} />
                     ) : item.phosphorIcon ? (
-                      <item.phosphorIcon size={22} weight={active ? weight : "regular"} />
+                      <item.phosphorIcon size={22} weight={active ? effectivePhosphorWeight : "regular"} />
                     ) : null}
                     <span className="font-mono text-[9px] truncate w-full text-center opacity-75">
                       {item.name}
