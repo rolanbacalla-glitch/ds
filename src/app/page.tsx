@@ -164,7 +164,7 @@ export default function Home() {
       id: "animations",
       group: "Library",
       title: "Animations",
-      summary: "34 minimalist 60fps geometric micro-loaders built with tokenised SVG and CSS keyframes.",
+      summary: "35 minimalist 60fps geometric micro-loaders built with tokenised SVG and CSS keyframes.",
       icon: PlayCircle,
     },
     {

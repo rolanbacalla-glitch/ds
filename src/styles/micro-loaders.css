@@ -449,3 +449,28 @@
 .ml-mandala-dot {
   animation: ml-mandala-dot calc(1.35s / var(--ml-speed, 1)) ease-in-out infinite;
 }
+
+/* 9. Circle Line Sweep (Dot -> 155° Arc -> Dot at 12 o'clock) */
+@keyframes ml-circle-line {
+  0% {
+    stroke-dasharray: 0.1 98;
+    stroke-dashoffset: 0;
+  }
+  35% {
+    stroke-dasharray: 42 98;
+    stroke-dashoffset: 0;
+  }
+  58% {
+    stroke-dasharray: 42 98;
+    stroke-dashoffset: -28;
+  }
+  96%,
+  100% {
+    stroke-dasharray: 0.1 98;
+    stroke-dashoffset: -97.39;
+  }
+}
+
+.ml-circle-line {
+  animation: ml-circle-line calc(1.3s / var(--ml-speed, 1)) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}

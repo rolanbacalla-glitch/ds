@@ -1029,6 +1029,28 @@ export const MICRO_LOADERS: MicroLoaderSpec[] = [
       </>
     ),
   },
+  {
+    id: "circle-line-sweep",
+    name: "Circle Line Sweep",
+    category: "circular",
+    useCase: "Refresh & buffer",
+    description:
+      "Single rounded stroke that blooms from a 12 o'clock dot into a 155° clockwise arc and collapses cleanly back.",
+    tags: ["circle", "line", "sweep", "trim", "buffer", "refresh", "spinner"],
+    render: () => (
+      <circle
+        cx="24"
+        cy="24"
+        r="15.5"
+        fill="none"
+        stroke="var(--sys-primary)"
+        strokeWidth="4.2"
+        strokeLinecap="round"
+        transform="rotate(-90 24 24)"
+        className="ml-circle-line"
+      />
+    ),
+  },
 ];
 
 interface MicroLoaderPreviewProps {
