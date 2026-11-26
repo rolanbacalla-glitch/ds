@@ -6,10 +6,12 @@
 /* Scope transform-box per animation type so SVG rotate(a cx cy) attributes
    on parent <g> or spokes are never shifted off-centre */
 .ml-spin,
+.ml-spin-fast,
 .ml-spin-slow,
 .ml-spin-reverse,
 .ml-square-turn,
-.ml-hex-spin {
+.ml-hex-spin,
+.ml-hourglass-flip {
   transform-box: view-box;
   transform-origin: 24px 24px;
 }
@@ -17,7 +19,10 @@
 .ml-dot-scale,
 .ml-grid-pulse,
 .ml-fold,
-.ml-ripple {
+.ml-ripple,
+.ml-mandala-dot,
+.ml-swap-a,
+.ml-swap-b {
   transform-box: fill-box;
   transform-origin: center;
 }
@@ -278,4 +283,169 @@
 
 .ml-ripple {
   animation: ml-ripple calc(1.6s / var(--ml-speed, 1)) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* 8. Extended Expressive Loaders (Multi-Orbit, Gooey, Swap, Hourglass, Script, Mandala) */
+.ml-spin-fast {
+  animation: ml-spin calc(0.85s / var(--ml-speed, 1)) linear infinite;
+}
+
+@keyframes ml-blob-left {
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(14px);
+  }
+}
+
+@keyframes ml-blob-right {
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(-14px);
+  }
+}
+
+.ml-blob-left {
+  animation: ml-blob-left calc(1.5s / var(--ml-speed, 1)) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.ml-blob-right {
+  animation: ml-blob-right calc(1.5s / var(--ml-speed, 1)) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes ml-swap-a {
+  0%,
+  100% {
+    transform: translateX(-8px) scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: translateX(0px) scale(1.16);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateX(8px) scale(0.92);
+    opacity: 0.85;
+  }
+  75% {
+    transform: translateX(0px) scale(0.82);
+    opacity: 0.7;
+  }
+}
+
+@keyframes ml-swap-b {
+  0%,
+  100% {
+    transform: translateX(8px) scale(0.92);
+    opacity: 0.85;
+  }
+  25% {
+    transform: translateX(0px) scale(0.82);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateX(-8px) scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: translateX(0px) scale(1.16);
+    opacity: 0.95;
+  }
+}
+
+.ml-swap-a {
+  animation: ml-swap-a calc(1.4s / var(--ml-speed, 1)) ease-in-out infinite;
+}
+
+.ml-swap-b {
+  animation: ml-swap-b calc(1.4s / var(--ml-speed, 1)) ease-in-out infinite;
+}
+
+@keyframes ml-hourglass-flip {
+  0%,
+  72% {
+    transform: rotate(0deg);
+  }
+  92%,
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes ml-sand-top {
+  0% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  70%,
+  100% {
+    transform: scaleY(0.05);
+    opacity: 0.4;
+  }
+}
+
+@keyframes ml-sand-bottom {
+  0% {
+    transform: scaleY(0.08);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.ml-hourglass-flip {
+  animation: ml-hourglass-flip calc(2.4s / var(--ml-speed, 1)) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.ml-sand-top {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: ml-sand-top calc(2.4s / var(--ml-speed, 1)) ease-in-out infinite;
+}
+
+.ml-sand-bottom {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: ml-sand-bottom calc(2.4s / var(--ml-speed, 1)) ease-in-out infinite;
+}
+
+@keyframes ml-script-draw {
+  0% {
+    stroke-dashoffset: 130;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -130;
+  }
+}
+
+.ml-script-draw {
+  stroke-dasharray: 130;
+  animation: ml-script-draw calc(2.1s / var(--ml-speed, 1)) cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes ml-mandala-dot {
+  0%,
+  100% {
+    transform: scale(0.55);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+.ml-mandala-dot {
+  animation: ml-mandala-dot calc(1.35s / var(--ml-speed, 1)) ease-in-out infinite;
 }
