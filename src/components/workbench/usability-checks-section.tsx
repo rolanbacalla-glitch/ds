@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   ShieldCheck,
   CheckCircle2,
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SlidingTabList } from "@/components/ui/sliding-tab-list";
+import { useToast } from "@/components/ui/toast-provider";
 
 interface UsabilityChecksSectionProps {
   theme: "dark" | "light";
@@ -455,15 +456,20 @@ function collectLiveDomChecks(): LiveCheckResult[] {
 }
 
 export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ theme }) => {
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<UsabilityTab>("checks");
   const [selectedCategory, setSelectedCategory] = useState<GuidelineCategory>("All");
   const [liveChecks, setLiveChecks] = useState<LiveCheckResult[]>([]);
   const [capabilities, setCapabilities] = useState<BrowserCapability[]>([]);
   const [lastAudited, setLastAudited] = useState<string>("Ready");
+  const [auditState, setAuditState] = useState<"idle" | "scanning" | "complete">("idle");
+  const scanTimersRef = useRef<number[]>([]);
 
   const runLiveAudit = useCallback(() => {
-    setLiveChecks(collectLiveDomChecks());
-    setCapabilities(collectBrowserCapabilities());
+    const nextChecks = collectLiveDomChecks();
+    const nextCaps = collectBrowserCapabilities();
+    setLiveChecks(nextChecks);
+    setCapabilities(nextCaps);
     setLastAudited(
       new Date().toLocaleTimeString("en-GB", {
         hour: "2-digit",
@@ -471,12 +477,49 @@ export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ 
         second: "2-digit",
       })
     );
+    return { nextChecks, nextCaps };
+  }, []);
+
+  const handleManualAudit = useCallback(() => {
+    if (auditState === "scanning") return;
+    scanTimersRef.current.forEach((id) => window.clearTimeout(id));
+    scanTimersRef.current = [];
+
+    setAuditState("scanning");
+    if (activeTab !== "checks") {
+      setActiveTab("checks");
+    }
+
+    const completeTimer = window.setTimeout(() => {
+      const { nextChecks, nextCaps } = runLiveAudit();
+      const passed = nextChecks.filter((c) => c.status === "pass").length;
+      const supported = nextCaps.filter((c) => c.supported).length;
+      setAuditState("complete");
+      showToast(
+        `Live DOM audit complete — ${passed}/${nextChecks.length} checks passed & ${supported}/${nextCaps.length} browser features detected.`
+      );
+
+      const resetTimer = window.setTimeout(() => {
+        setAuditState("idle");
+      }, 1800);
+      scanTimersRef.current.push(resetTimer);
+    }, 380);
+
+    scanTimersRef.current.push(completeTimer);
+  }, [activeTab, auditState, runLiveAudit, showToast]);
+
+  useEffect(() => {
+    return () => {
+      scanTimersRef.current.forEach((id) => window.clearTimeout(id));
+    };
   }, []);
 
   useEffect(() => {
-    // Run immediately on mount so initial render never stalls at 0/6 Passed,
+    // Schedule initial audit asynchronously on mount to avoid synchronous setState in effect,
     // plus a short settle pass for late-hydrated layout/fonts.
-    runLiveAudit();
+    const initialTimer = window.setTimeout(() => {
+      runLiveAudit();
+    }, 0);
     const settleTimer = window.setTimeout(() => {
       runLiveAudit();
     }, 150);
@@ -498,6 +541,7 @@ export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ 
     });
 
     return () => {
+      window.clearTimeout(initialTimer);
       window.clearTimeout(settleTimer);
       if (mutationTimer !== undefined) {
         window.clearTimeout(mutationTimer);
@@ -538,16 +582,56 @@ export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ 
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="px-3.5 py-2 rounded-xl bg-[var(--sys-surface-low)] border border-[var(--sys-outline-variant)] text-xs font-mono tabular-nums text-[var(--sys-on-surface-secondary)]">
-            Last scan: <span className="text-[var(--sys-on-surface)] font-semibold">{lastAudited}</span>
+          <div
+            aria-live="polite"
+            className={cn(
+              "px-3.5 py-2 rounded-xl border text-xs font-mono tabular-nums transition-colors duration-300 inline-flex items-center gap-2",
+              auditState === "complete"
+                ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-600 dark:text-emerald-400"
+                : "bg-[var(--sys-surface-low)] border-[var(--sys-outline-variant)] text-[var(--sys-on-surface-secondary)]"
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className={cn(
+                "w-1.5 h-1.5 rounded-full transition-colors",
+                auditState === "scanning"
+                  ? "bg-[var(--sys-primary)] animate-pulse"
+                  : "bg-emerald-500"
+              )}
+            />
+            <span>
+              {auditState === "scanning" ? "Scanning DOM…" : "Last scan:"}{" "}
+              {auditState !== "scanning" && (
+                <span className="text-[var(--sys-on-surface)] font-semibold">{lastAudited}</span>
+              )}
+            </span>
           </div>
           <button
             type="button"
-            onClick={runLiveAudit}
-            className="min-h-[40px] px-4 py-2 rounded-[var(--sys-radius-md)] bg-[var(--sys-primary)] text-[var(--sys-on-primary)] text-xs font-semibold inline-flex items-center gap-2 cursor-pointer hover:opacity-95 transition-opacity"
+            onClick={handleManualAudit}
+            disabled={auditState === "scanning"}
+            title="Re-scans the live page DOM for WCAG hit targets, glass discipline, landmarks, and browser capabilities."
+            className={cn(
+              "min-h-[40px] px-4 py-2 rounded-[var(--sys-radius-md)] text-xs font-semibold inline-flex items-center gap-2 transition-all duration-150 select-none cursor-pointer shadow-xs active:scale-[0.95]",
+              auditState === "complete"
+                ? "bg-emerald-600 text-white"
+                : "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] hover:brightness-110",
+              auditState === "scanning" && "opacity-85 cursor-wait"
+            )}
           >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Re-run Live Audit</span>
+            {auditState === "complete" ? (
+              <Check className="w-3.5 h-3.5" />
+            ) : (
+              <RefreshCw className={cn("w-3.5 h-3.5", auditState === "scanning" && "animate-spin")} />
+            )}
+            <span>
+              {auditState === "scanning"
+                ? "Scanning DOM…"
+                : auditState === "complete"
+                  ? `Verified (${passedCount}/${liveChecks.length || 6})`
+                  : "Re-run Live Audit"}
+            </span>
           </button>
         </div>
       </div>
