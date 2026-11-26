@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
+import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 import {
   Stack,
   Sparkle,
@@ -181,7 +182,12 @@ export const SurfacesGlassSection: React.FC<{ theme: "dark" | "light" }> = ({ th
             </div>
 
             {/* Stage Background Selector */}
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-xs">
+            <SlidingTabList
+              activeKey={stageBackdrop}
+              ariaLabel="Stage background style"
+              className="inline-flex items-center gap-1 p-1 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-xs"
+              indicatorClassName="rounded-md bg-[var(--sys-primary)] shadow-xs"
+            >
               {(
                 [
                   { id: "chromatic", label: "Colourful Media" },
@@ -191,18 +197,21 @@ export const SurfacesGlassSection: React.FC<{ theme: "dark" | "light" }> = ({ th
               ).map((bg) => (
                 <button
                   key={bg.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={stageBackdrop === bg.id}
                   onClick={() => setStageBackdrop(bg.id)}
                   className={cn(
-                    "px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer",
+                    "relative z-10 px-2.5 py-1 rounded-md text-xs font-medium transition-colors duration-200 whitespace-nowrap cursor-pointer",
                     stageBackdrop === bg.id
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)]"
+                      ? "text-[var(--sys-on-primary)] font-semibold"
                       : "text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
                   {bg.label}
                 </button>
               ))}
-            </div>
+            </SlidingTabList>
           </div>
 
           {/* The Stage Canvas */}
@@ -410,7 +419,12 @@ export const SurfacesGlassSection: React.FC<{ theme: "dark" | "light" }> = ({ th
               <label className="text-xs font-medium text-[var(--sys-on-surface-secondary)]">
                 Glass Style
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <SlidingTabList
+                activeKey={glassVariant}
+                ariaLabel="Glass Style"
+                className="grid grid-cols-2 p-1 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]"
+                indicatorClassName="rounded-lg bg-[var(--sys-primary)] shadow-xs"
+              >
                 {(
                   [
                     { id: "regular", label: "Frosted Glass" },
@@ -419,18 +433,21 @@ export const SurfacesGlassSection: React.FC<{ theme: "dark" | "light" }> = ({ th
                 ).map((v) => (
                   <button
                     key={v.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={glassVariant === v.id}
                     onClick={() => setGlassVariant(v.id)}
                     className={cn(
-                      "py-2 px-3 rounded-xl text-xs font-medium border transition-all cursor-pointer",
+                      "relative z-10 py-2 px-3 rounded-lg text-xs font-medium transition-colors duration-200 cursor-pointer",
                       glassVariant === v.id
-                        ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] border-[var(--sys-primary)] font-semibold"
-                        : "bg-[var(--sys-surface-lowest)] text-[var(--sys-on-surface-secondary)] border-[var(--sys-outline-variant)]"
+                        ? "text-[var(--sys-on-primary)] font-semibold"
+                        : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                     )}
                   >
                     {v.label}
                   </button>
                 ))}
-              </div>
+              </SlidingTabList>
             </div>
 
             {/* Blur Radius */}
