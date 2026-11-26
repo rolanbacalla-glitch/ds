@@ -16,6 +16,7 @@ import {
   TextT,
   Cube,
   Sparkle,
+  PlayCircle,
   Code,
   ArrowRight,
   ArrowLeft,
@@ -33,6 +34,7 @@ export type DocSectionId =
   | "surfaces"
   | "components"
   | "icons"
+  | "animations"
   | "accessibility"
   | "export";
 
@@ -86,6 +88,13 @@ export const DOC_NAV_ITEMS: NavItem[] = [
     description: "Multi-library optical icon explorer",
     group: "Library",
     icon: Sparkle,
+  },
+  {
+    id: "animations",
+    label: "Animations",
+    description: "Minimalist geometric micro-loaders and motion primitives",
+    group: "Library",
+    icon: PlayCircle,
   },
   {
     id: "accessibility",

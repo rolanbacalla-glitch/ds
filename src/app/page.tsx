@@ -14,6 +14,7 @@ import { MotionGeometrySection } from "@/components/workbench/motion-geometry-se
 import { ExportCompilerSection } from "@/components/workbench/export-compiler-section";
 import { UsabilityChecksSection } from "@/components/workbench/usability-checks-section";
 import { IconPlayground } from "@/components/dashboard/icon-playground";
+import { AnimationsPlayground } from "@/components/dashboard/animations-playground";
 import {
   DownloadSimple,
   Cube,
@@ -21,6 +22,7 @@ import {
   TextT,
   Stack,
   Sparkle,
+  PlayCircle,
   ShieldCheck,
   Code,
   ArrowRight,
@@ -36,6 +38,7 @@ const VALID_SECTIONS: DocSectionId[] = [
   "surfaces",
   "components",
   "icons",
+  "animations",
   "accessibility",
   "export",
 ];
@@ -150,6 +153,13 @@ export default function Home() {
       title: "Icons",
       summary: "Unified multi-library icon playground supporting Lucide, Phosphor, and Material Symbols.",
       icon: Sparkle,
+    },
+    {
+      id: "animations",
+      group: "Library",
+      title: "Animations",
+      summary: "24 minimalist 60fps geometric micro-loaders built with tokenised SVG and CSS keyframes.",
+      icon: PlayCircle,
     },
     {
       id: "export",
@@ -338,6 +348,8 @@ export default function Home() {
       )}
 
       {activeSection === "icons" && <IconPlayground />}
+
+      {activeSection === "animations" && <AnimationsPlayground />}
 
       {activeSection === "accessibility" && <UsabilityChecksSection theme={theme} />}
 
