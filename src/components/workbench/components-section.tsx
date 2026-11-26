@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { ComponentPortalClient } from "@/components/portal/component-portal-client";
 import type { ComponentSlug } from "@/lib/component-registry";
@@ -42,13 +42,44 @@ export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
   // Interactive Specimen State
   const [activeSegment, setActiveSegment] = useState<"production" | "staging" | "canary">("production");
   const [sliderValue, setSliderValue] = useState(72);
-  const [toggleA, setToggleA] = useState(true);
-  const [toggleB, setToggleB] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [reduceTransparency, setReduceTransparency] = useState(false);
   const [morphActive, setMorphActive] = useState(false);
   const [inputVal, setInputVal] = useState("oklch(0.77 0.152 258)");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const { showToast } = useToast();
   const { canCopySnippets, user, openAuthModal, logAuditEvent } = useAuth();
+
+  // Sync live accessibility toggles with <html> attributes on mount
+  useEffect(() => {
+    const root = document.documentElement;
+    setHighContrast(root.getAttribute("data-contrast") === "high");
+    setReduceTransparency(root.getAttribute("data-reduce-transparency") === "true");
+  }, []);
+
+  const handleToggleHighContrast = () => {
+    const next = !highContrast;
+    setHighContrast(next);
+    if (next) {
+      document.documentElement.setAttribute("data-contrast", "high");
+      showToast("High-contrast mode enabled across the workbench");
+    } else {
+      document.documentElement.removeAttribute("data-contrast");
+      showToast("Standard contrast restored");
+    }
+  };
+
+  const handleToggleReduceTransparency = () => {
+    const next = !reduceTransparency;
+    setReduceTransparency(next);
+    if (next) {
+      document.documentElement.setAttribute("data-reduce-transparency", "true");
+      showToast("Reduced transparency enabled — glass surfaces are now solid");
+    } else {
+      document.documentElement.removeAttribute("data-reduce-transparency");
+      showToast("Liquid glass transparency restored");
+    }
+  };
 
   const copySnippet = (id: string, text: string) => {
     if (!canCopySnippets) {
@@ -209,7 +240,7 @@ export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
               className={cn(
                 "px-5 py-2.5 text-xs font-semibold shrink-0 cursor-pointer",
                 morphActive
-                  ? "bg-[var(--sys-tertiary)] text-slate-950 scale-105"
+                  ? "bg-[var(--sys-tertiary)] text-white dark:text-slate-950 scale-105"
                   : "bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)]"
               )}
             >
@@ -242,15 +273,30 @@ export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
                 {activeSegment}
               </span>
             </div>
-            <div className="grid grid-cols-3 p-1 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]">
+            <div
+              role="tablist"
+              aria-label="Environment Switcher"
+              className="relative grid grid-cols-3 p-1 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]"
+            >
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1 bottom-1 left-1 w-[calc((100%-0.5rem)/3)] rounded-lg bg-[var(--sys-surface-high)] shadow-xs border border-[var(--sys-outline)]"
+                style={{
+                  transform: `translateX(${(["production", "staging", "canary"] as const).indexOf(activeSegment) * 100}%)`,
+                  transition: "transform 280ms var(--ease-spatial-spring)",
+                }}
+              />
               {(["production", "staging", "canary"] as const).map((seg) => (
                 <button
                   key={seg}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeSegment === seg}
                   onClick={() => setActiveSegment(seg)}
                   className={cn(
-                    "py-2 rounded-lg text-xs font-medium capitalize transition-all cursor-pointer",
+                    "relative z-10 py-2 rounded-lg text-xs font-medium capitalize transition-colors duration-200 cursor-pointer",
                     activeSegment === seg
-                      ? "bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] font-semibold shadow-xs border border-[var(--sys-outline)]"
+                      ? "text-[var(--sys-on-surface)] font-semibold"
                       : "text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
@@ -294,55 +340,61 @@ export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
             </div>
           </div>
 
-          {/* Toggles */}
+          {/* Live Accessibility Toggles */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="p-3 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-center justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold text-[var(--sys-on-surface)]">
                   Auto-Adjust Contrast
                 </div>
                 <div className="text-[11px] text-[var(--sys-on-surface-tertiary)]">
-                  Keeps text readable
+                  {highContrast ? "High contrast active" : "Boosts text & borders"}
                 </div>
               </div>
               <button
-                onClick={() => setToggleA(!toggleA)}
+                type="button"
+                role="switch"
+                aria-checked={highContrast}
+                onClick={handleToggleHighContrast}
                 className={cn(
-                  "w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer",
-                  toggleA ? "bg-[var(--sys-primary)]" : "bg-[var(--sys-surface-highest)]"
+                  "w-11 h-6 rounded-full p-0.5 shrink-0 transition-colors cursor-pointer",
+                  highContrast ? "bg-[var(--sys-primary)]" : "bg-[var(--sys-surface-highest)]"
                 )}
                 aria-label="Toggle Auto-Adjust Contrast"
               >
                 <div
                   className={cn(
                     "w-5 h-5 rounded-full bg-white shadow transition-transform",
-                    toggleA ? "translate-x-5" : "translate-x-0"
+                    highContrast ? "translate-x-5" : "translate-x-0"
                   )}
                 />
               </button>
             </div>
 
-            <div className="p-3 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex items-center justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold text-[var(--sys-on-surface)]">
                   Reduce Transparency
                 </div>
                 <div className="text-[11px] text-[var(--sys-on-surface-tertiary)]">
-                  Accessibility preference
+                  {reduceTransparency ? "Solid surfaces active" : "Removes glass blur"}
                 </div>
               </div>
               <button
-                onClick={() => setToggleB(!toggleB)}
+                type="button"
+                role="switch"
+                aria-checked={reduceTransparency}
+                onClick={handleToggleReduceTransparency}
                 className={cn(
-                  "w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer",
-                  toggleB ? "bg-[var(--sys-primary)]" : "bg-[var(--sys-surface-highest)]"
+                  "w-11 h-6 rounded-full p-0.5 shrink-0 transition-colors cursor-pointer",
+                  reduceTransparency ? "bg-[var(--sys-primary)]" : "bg-[var(--sys-surface-highest)]"
                 )}
                 aria-label="Toggle Reduce Transparency"
               >
                 <div
                   className={cn(
                     "w-5 h-5 rounded-full bg-white shadow transition-transform",
-                    toggleB ? "translate-x-5" : "translate-x-0"
+                    reduceTransparency ? "translate-x-5" : "translate-x-0"
                   )}
                 />
               </button>

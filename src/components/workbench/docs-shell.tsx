@@ -19,7 +19,6 @@ import {
   Code,
   ArrowRight,
   ArrowLeft,
-  ArrowUpRight,
   List,
   X,
   ShieldCheck,
@@ -424,42 +423,6 @@ export const DocsShell: React.FC<DocsShellProps> = ({
                 })}
               </div>
             ))}
-
-            {/* Inline Component Specs (stays inside DocsShell without separate page load) */}
-            <div className="pt-4 border-t border-[var(--sys-outline-variant)] space-y-1">
-              <div className="px-2.5 pb-1 text-[11px] font-medium text-[var(--sys-on-surface-tertiary)]">
-                Component Specs
-              </div>
-              {COMPONENT_SPECS.map((spec) => {
-                const isActive = activeSection === "components" && activeSpecSlug === spec.slug;
-                return (
-                  <button
-                    key={spec.slug}
-                    type="button"
-                    onClick={() => {
-                      onSelectSpec?.(spec.slug);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={cn(
-                      "w-full px-2.5 py-1.5 rounded-md text-[13px] flex items-center justify-between transition-colors cursor-pointer text-left",
-                      isActive
-                        ? "bg-[var(--sys-surface-low)] text-[var(--sys-on-surface)] font-medium"
-                        : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-low)]/60"
-                    )}
-                  >
-                    <span>{spec.label}</span>
-                    <ArrowUpRight
-                      size={13}
-                      className={
-                        isActive
-                          ? "text-[var(--sys-primary)]"
-                          : "text-[var(--sys-on-surface-tertiary)]"
-                      }
-                    />
-                  </button>
-                );
-              })}
-            </div>
           </div>
         </aside>
 

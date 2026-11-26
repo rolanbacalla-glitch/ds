@@ -306,26 +306,42 @@ export const IconPlayground: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left 4 Cols: Optical Keyline Inspector & Weight Controls */}
-        <div className="lg:col-span-4 tonal-card p-6 flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-4 lg:sticky lg:top-20 tonal-card p-6 flex flex-col gap-5">
           {/* Keyline Preview Box */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-mono uppercase text-[var(--sys-primary)] flex items-center gap-1.5">
-                <span>Icon Preview</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)]">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col gap-1 min-w-0">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[var(--sys-primary)] leading-none whitespace-nowrap">
+                  Icon Preview
+                </span>
+                <span className="font-mono text-[10px] text-[var(--sys-on-surface-tertiary)] truncate">
                   {selectedIcon.source === "material"
                     ? "Material Design"
                     : selectedIcon.source === "media"
                       ? "@antigravity/icons"
-                      : "Phosphor"}
+                      : "Phosphor Icons"}
                 </span>
-              </span>
+              </div>
               <button
+                type="button"
                 onClick={() => setShowKeylines(!showKeylines)}
-                className="font-mono text-[11px] px-2 py-0.5 rounded bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] cursor-pointer"
+                aria-pressed={showKeylines}
+                className={cn(
+                  "h-7 px-2.5 rounded-lg border font-mono text-[11px] whitespace-nowrap shrink-0 inline-flex items-center gap-1.5 transition-colors cursor-pointer",
+                  showKeylines
+                    ? "bg-[var(--sys-surface-high)] border-[var(--sys-outline)] text-[var(--sys-on-surface)]"
+                    : "bg-[var(--sys-surface-lowest)] border-[var(--sys-outline-variant)] text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-on-surface)]"
+                )}
               >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full transition-colors",
+                    showKeylines ? "bg-[var(--sys-primary)]" : "bg-[var(--sys-outline)]"
+                  )}
+                />
                 Guides: {showKeylines ? "ON" : "OFF"}
               </button>
             </div>

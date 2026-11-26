@@ -324,3 +324,40 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================================
+   LIVE ACCESSIBILITY PREFERENCES (Auto-Adjust Contrast & Reduce Transparency)
+   ============================================================================ */
+:root[data-contrast="high"],
+[data-theme="dark"][data-contrast="high"] {
+  --sys-on-surface: oklch(0.99 0.002 var(--seed-hue));
+  --sys-on-surface-secondary: oklch(0.88 0.008 var(--seed-hue));
+  --sys-on-surface-tertiary: oklch(0.76 0.010 var(--seed-hue));
+  --sys-on-surface-quaternary: oklch(0.62 0.010 var(--seed-hue));
+  --sys-outline: oklch(1 0 0 / 0.34);
+  --sys-outline-variant: oklch(1 0 0 / 0.22);
+}
+
+[data-theme="light"][data-contrast="high"] {
+  --sys-on-surface: oklch(0.08 0.008 var(--seed-hue));
+  --sys-on-surface-secondary: oklch(0.22 0.012 var(--seed-hue));
+  --sys-on-surface-tertiary: oklch(0.34 0.012 var(--seed-hue));
+  --sys-on-surface-quaternary: oklch(0.46 0.010 var(--seed-hue));
+  --sys-outline: oklch(0.12 0.02 var(--seed-hue) / 0.38);
+  --sys-outline-variant: oklch(0.12 0.02 var(--seed-hue) / 0.24);
+}
+
+[data-reduce-transparency="true"] .liquid-glass-regular,
+[data-reduce-transparency="true"] .liquid-glass-clear,
+[data-reduce-transparency="true"] .glass-mist {
+  background: var(--sys-surface-container) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--sys-outline) !important;
+}
+
+[data-reduce-transparency="true"] header {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: var(--sys-surface-canvas) !important;
+}
