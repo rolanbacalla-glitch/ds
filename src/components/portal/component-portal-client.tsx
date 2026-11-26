@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useId } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 import {
   COMPONENT_REGISTRY,
   COMPONENT_SLUGS,
@@ -396,10 +397,11 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
               </div>
 
               {/* Preview vs Code View Toggle */}
-              <div
-                role="tablist"
-                aria-label="Specimen View Mode"
+              <SlidingTabList
+                activeKey={viewMode}
+                ariaLabel="Specimen View Mode"
                 className="inline-flex p-1 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]"
+                indicatorClassName="rounded-md bg-[var(--sys-primary)] shadow-xs"
               >
                 <button
                   role="tab"
@@ -407,9 +409,9 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   aria-selected={viewMode === "preview"}
                   onClick={() => setViewMode("preview")}
                   className={cn(
-                    "px-3 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-all",
+                    "relative z-10 px-3 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors duration-200",
                     viewMode === "preview"
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold"
+                      ? "text-[var(--sys-on-primary)] font-semibold"
                       : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
@@ -422,16 +424,16 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
                   aria-selected={viewMode === "code"}
                   onClick={() => setViewMode("code")}
                   className={cn(
-                    "px-3 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-all",
+                    "relative z-10 px-3 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors duration-200",
                     viewMode === "code"
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold"
+                      ? "text-[var(--sys-on-primary)] font-semibold"
                       : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
                   <Code size={14} />
                   <span>React / TS Source</span>
                 </button>
-              </div>
+              </SlidingTabList>
             </div>
 
             {/* State Matrix Selector Bar */}

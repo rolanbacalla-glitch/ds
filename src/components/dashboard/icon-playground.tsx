@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 import * as Icons from "phosphor-react";
 import {
   SpotifyIcon,
@@ -531,7 +532,12 @@ export const IconPlayground: React.FC = () => {
             </div>
 
             {/* Filter by Database Set */}
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-xs font-medium">
+            <SlidingTabList
+              activeKey={activeSet}
+              ariaLabel="Icon Library Filter"
+              className="inline-flex items-center gap-1 p-1 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-xs font-medium"
+              indicatorClassName="rounded-lg bg-[var(--sys-primary)] shadow-xs"
+            >
               {(
                 [
                   { id: "all", label: "All Icons" },
@@ -541,18 +547,21 @@ export const IconPlayground: React.FC = () => {
               ).map((tab) => (
                 <button
                   key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeSet === tab.id}
                   onClick={() => setActiveSet(tab.id)}
                   className={cn(
-                    "px-2.5 py-1 rounded-lg transition-colors cursor-pointer text-xs",
+                    "relative z-10 px-2.5 py-1 rounded-lg transition-colors duration-200 cursor-pointer text-xs whitespace-nowrap",
                     activeSet === tab.id
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold"
+                      ? "text-[var(--sys-on-primary)] font-semibold"
                       : "text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
                   {tab.label}
                 </button>
               ))}
-            </div>
+            </SlidingTabList>
           </div>
 
           {/* Search Box */}

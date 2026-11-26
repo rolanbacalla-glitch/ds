@@ -19,6 +19,7 @@ import {
   Gauge,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 
 interface UsabilityChecksSectionProps {
   theme: "dark" | "light";
@@ -598,10 +599,11 @@ export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ 
       </div>
 
       {/* Mode Switcher Tabs */}
-      <div
-        role="tablist"
-        aria-label="Usability, compatibility and checks views"
-        className="flex flex-wrap items-center gap-2"
+      <SlidingTabList
+        activeKey={activeTab}
+        ariaLabel="Usability, compatibility and checks views"
+        className="inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]"
+        indicatorClassName="rounded-[var(--sys-radius-md)] bg-[var(--sys-primary)] shadow-sm"
       >
         {(
           [
@@ -620,10 +622,10 @@ export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ 
               aria-selected={active}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "min-h-[40px] px-4 py-2 rounded-[var(--sys-radius-md)] text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer",
+                "relative z-10 min-h-[38px] px-3.5 py-2 rounded-[var(--sys-radius-md)] text-xs font-semibold inline-flex items-center gap-2 transition-colors duration-200 cursor-pointer",
                 active
-                  ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] shadow-sm"
-                  : "bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)]"
+                  ? "text-[var(--sys-on-primary)]"
+                  : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
               )}
             >
               <Icon className="w-4 h-4" />
@@ -631,7 +633,7 @@ export const UsabilityChecksSection: React.FC<UsabilityChecksSectionProps> = ({ 
             </button>
           );
         })}
-      </div>
+      </SlidingTabList>
 
       {/* TAB 1: LIVE AUTOMATED CHECKS */}
       {activeTab === "checks" && (

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 import {
   generateTailwindV4Export,
   generateW3CTokensJSON,
@@ -170,7 +171,12 @@ alwaysApply: true
       <div className="tonal-card overflow-hidden">
         {/* Platform Target Tabs */}
         <div className="p-4 bg-[var(--sys-surface-container)] border-b border-[var(--sys-outline-variant)] flex flex-wrap items-center justify-between gap-3">
-          <div role="tablist" aria-label="Export Platform Target" className="flex flex-wrap gap-2">
+          <SlidingTabList
+            activeKey={activeTarget}
+            ariaLabel="Export Platform Target"
+            className="inline-flex flex-wrap gap-1 p-1 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)]"
+            indicatorClassName="rounded-lg bg-[var(--sys-primary)] shadow-sm"
+          >
             {[
               { id: "tailwind" as const, label: "Tailwind v4 CSS", icon: FileCode },
               { id: "figma" as const, label: "Figma Variables (DTCG)", icon: FigmaLogo },
@@ -187,10 +193,10 @@ alwaysApply: true
                   aria-selected={active}
                   onClick={() => setActiveTarget(tab.id)}
                   className={cn(
-                    "min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-2 cursor-pointer transition-all",
+                    "relative z-10 min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200",
                     active
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-sm"
-                      : "bg-[var(--sys-surface-low)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)]"
+                      ? "text-[var(--sys-on-primary)] font-semibold"
+                      : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
                   <Icon size={15} />
@@ -198,7 +204,7 @@ alwaysApply: true
                 </button>
               );
             })}
-          </div>
+          </SlidingTabList>
 
           <div className="flex items-center gap-2">
             <button

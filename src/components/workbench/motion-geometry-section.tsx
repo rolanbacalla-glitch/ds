@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Waves, Play, ArrowsOutCardinal, CheckCircle } from "phosphor-react";
+import { Waves, Play, ArrowCounterClockwise, ArrowsOutCardinal, CheckCircle } from "phosphor-react";
 
 export const MotionGeometrySection: React.FC = () => {
   const [innerRadius, setInnerRadius] = useState(12);
@@ -149,10 +149,26 @@ export const MotionGeometrySection: React.FC = () => {
             <button
               type="button"
               onClick={() => setPulseActive((prev) => !prev)}
-              className="min-h-[34px] px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] inline-flex items-center gap-1.5 cursor-pointer"
+              aria-pressed={pulseActive}
+              style={{
+                transitionTimingFunction: "var(--ease-spatial-spring)",
+              }}
+              className="group min-h-[40px] px-4 py-2 rounded-xl active:rounded-full text-xs font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] shadow-xs hover:brightness-110 hover:shadow-md active:scale-[0.94] active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)] transition-all duration-200 inline-flex items-center gap-1.5 select-none whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <Play size={13} weight="fill" />
-              <span>Play Animation</span>
+              {pulseActive ? (
+                <ArrowCounterClockwise
+                  size={13}
+                  weight="bold"
+                  className="transition-transform duration-200 group-hover:-rotate-45 group-active:-rotate-90"
+                />
+              ) : (
+                <Play
+                  size={13}
+                  weight="fill"
+                  className="transition-transform duration-200 group-hover:translate-x-0.5 group-active:scale-90"
+                />
+              )}
+              <span>{pulseActive ? "Reset Motion" : "Play Animation"}</span>
             </button>
           </div>
 

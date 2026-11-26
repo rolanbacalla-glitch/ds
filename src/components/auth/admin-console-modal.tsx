@@ -40,6 +40,7 @@ import {
 } from "@/lib/tokens";
 import { useToast } from "@/components/ui/toast-provider";
 import { cn } from "@/lib/utils";
+import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 
 type AdminTab = "protection" | "requests" | "users" | "audit";
 
@@ -276,7 +277,12 @@ export const AdminConsoleModal: React.FC = () => {
 
         {/* Navigation Tabs */}
         <div className="px-6 py-3 bg-[var(--sys-surface-container)]/70 border-b border-[var(--sys-outline-variant)] flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <div role="tablist" aria-label="Admin Console Sections" className="flex flex-wrap gap-1.5">
+          <SlidingTabList
+            activeKey={activeTab}
+            ariaLabel="Admin Console Sections"
+            className="inline-flex flex-wrap gap-1 p-1 rounded-xl bg-[var(--sys-surface-lowest)]/80 border border-[var(--sys-outline-variant)]"
+            indicatorClassName="rounded-lg bg-[var(--sys-primary)] shadow-xs"
+          >
             {(
               [
                 { id: "protection", label: "Protection Rules", icon: Sliders },
@@ -299,10 +305,10 @@ export const AdminConsoleModal: React.FC = () => {
                   aria-selected={active}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    "min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-medium inline-flex items-center gap-2 cursor-pointer transition-all whitespace-nowrap",
+                    "relative z-10 min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200 whitespace-nowrap",
                     active
-                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold shadow-xs"
-                      : "bg-[var(--sys-surface-lowest)]/80 text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] border border-[var(--sys-outline-variant)]"
+                      ? "text-[var(--sys-on-primary)] font-semibold"
+                      : "text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)]"
                   )}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -310,7 +316,7 @@ export const AdminConsoleModal: React.FC = () => {
                 </button>
               );
             })}
-          </div>
+          </SlidingTabList>
 
           <button
             type="button"
