@@ -407,23 +407,25 @@ export const MICRO_LOADERS: MicroLoaderSpec[] = [
     tags: ["indeterminate", "bar", "linear", "track"],
     render: () => (
       <>
-        <defs>
-          <clipPath id="ml-clip-indeterminate">
-            <rect x="4" y="20" width="40" height="8" rx="4" />
-          </clipPath>
-        </defs>
         <rect x="4" y="20" width="40" height="8" rx="4" fill="var(--sys-outline)" />
-        <g clipPath="url(#ml-clip-indeterminate)">
+        <svg
+          x="4"
+          y="20"
+          width="40"
+          height="8"
+          viewBox="0 0 40 8"
+          style={{ clipPath: "inset(0 round 4px)" }}
+        >
           <rect
             x="0"
-            y="20"
+            y="0"
             width="18"
             height="8"
             rx="4"
             fill="var(--sys-primary)"
             className="ml-bar-indeterminate"
           />
-        </g>
+        </svg>
       </>
     ),
   },

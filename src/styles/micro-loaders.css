@@ -3,9 +3,38 @@
    Zero hardcoded colours; scales smoothly via --ml-speed (default: 1)
    ============================================================================ */
 
-.ml-svg * {
+/* Scope transform-box per animation type so SVG rotate(a cx cy) attributes
+   on parent <g> or spokes are never shifted off-centre */
+.ml-spin,
+.ml-spin-slow,
+.ml-spin-reverse,
+.ml-square-turn,
+.ml-hex-spin {
+  transform-box: view-box;
+  transform-origin: 24px 24px;
+}
+
+.ml-dot-scale,
+.ml-grid-pulse,
+.ml-fold,
+.ml-ripple {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.ml-bar-fill {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.ml-eq-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.ml-eq-bar-centre {
+  transform-box: fill-box;
+  transform-origin: center center;
 }
 
 .ml-svg[data-ml-paused="true"],
