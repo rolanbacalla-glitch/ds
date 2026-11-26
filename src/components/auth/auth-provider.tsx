@@ -56,6 +56,7 @@ interface AuthContextValue {
   user: User | null;
   authReady: boolean;
   isAdmin: boolean;
+  isPrimaryAdmin: boolean;
   isApprovedForExport: boolean;
   canExport: boolean;
   canCopySnippets: boolean;
@@ -275,18 +276,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [authReady, currentUid]);
 
+  const isPrimaryAdmin = useMemo(() => {
+    if (!user || !currentEmailVerified) return false;
+    return isBootstrappedAdminEmail(user.email);
+  }, [user, currentEmailVerified]);
+
   const isAdmin = useMemo(() => {
     if (!user || !currentEmailVerified) return false;
-    return isBootstrappedAdminEmail(user.email) || hasAdminDoc;
-  }, [user, currentEmailVerified, hasAdminDoc]);
+    return isPrimaryAdmin || hasAdminDoc;
+  }, [user, currentEmailVerified, isPrimaryAdmin, hasAdminDoc]);
 
   const isApprovedForExport = useMemo(() => {
     if (!user || !currentEmailVerified) return false;
     return Boolean(exportApproval);
   }, [user, currentEmailVerified, exportApproval]);
 
-  const canExport = isAdmin || !portfolioSettings.exportLockEnabled || isApprovedForExport;
-  const canCopySnippets = isAdmin || !portfolioSettings.copyLockEnabled || isApprovedForExport;
+  // Temporary hard lock: downloads & exports are restricted exclusively to rolan.bacalla@gmail.com
+  const canExport = isPrimaryAdmin;
+  const canCopySnippets = isPrimaryAdmin;
 
   const openAuthModal = useCallback((reason?: string) => {
     setAuthModalReason(reason ?? null);
@@ -635,6 +642,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       authReady,
       isAdmin,
+      isPrimaryAdmin,
       isApprovedForExport,
       canExport,
       canCopySnippets,
@@ -668,6 +676,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       authReady,
       isAdmin,
+      isPrimaryAdmin,
       isApprovedForExport,
       canExport,
       canCopySnippets,

@@ -10,17 +10,16 @@ import {
   type SeedConfig,
 } from "@/lib/tokens";
 import {
-  Copy,
-  Check,
-  DownloadSimple,
   FigmaLogo,
   Sparkle,
   TerminalWindow,
   FileCode,
   ShieldCheck,
+  LockSimple,
 } from "phosphor-react";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/auth-provider";
+import { ADMIN_EMAIL } from "@/lib/firebase";
 
 interface ExportCompilerSectionProps {
   seed: SeedConfig;
@@ -30,12 +29,12 @@ type ExportTarget = "tailwind" | "figma" | "stitch" | "cursor";
 
 export const ExportCompilerSection: React.FC<ExportCompilerSectionProps> = ({ seed }) => {
   const [activeTarget, setActiveTarget] = useState<ExportTarget>("tailwind");
-  const [copied, setCopied] = useState(false);
 
   const { showToast } = useToast();
   const {
     user,
-    isAdmin,
+    isPrimaryAdmin,
+    openAuthModal,
     openAdminConsole,
     logAuditEvent,
   } = useAuth();
@@ -98,29 +97,18 @@ alwaysApply: true
 
   const current = exportOutputs[activeTarget];
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(current.code);
-    setCopied(true);
-    if (user?.emailVerified) {
-      void logAuditEvent("export_copy", current.label);
+  const handleLockedAttempt = (actionLabel: string) => {
+    if (isPrimaryAdmin) {
+      openAdminConsole();
+      return;
     }
-    showToast(`Copied ${current.label} to clipboard`);
-    setTimeout(() => setCopied(false), 1800);
-  };
-
-  const handleDownload = (targetOverride?: ExportTarget) => {
-    const item = targetOverride ? exportOutputs[targetOverride] : current;
-    const blob = new Blob([item.code], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = item.filename.split("/").pop() || "tokens.txt";
-    a.click();
-    URL.revokeObjectURL(url);
     if (user?.emailVerified) {
-      void logAuditEvent("export_download", item.filename);
+      void logAuditEvent("blocked_export_attempt", `${actionLabel} (${current.label})`);
     }
-    showToast(`Downloaded ${item.filename.split("/").pop()}`);
+    showToast(`Downloads and exports are locked — admin access (${ADMIN_EMAIL}) required.`);
+    openAuthModal(
+      `Downloads and exports are currently locked and only available inside the Admin Console under ${ADMIN_EMAIL}.`
+    );
   };
 
   return (
@@ -130,7 +118,10 @@ alwaysApply: true
           <div className="flex items-center gap-2.5 text-xs font-semibold uppercase tracking-widest text-[var(--sys-primary)]">
             <span>Export &amp; Handoff</span>
             <span className="text-[var(--sys-on-surface-quaternary)]">·</span>
-            <span>Open Access · v3.0</span>
+            <span className="inline-flex items-center gap-1">
+              <LockSimple size={13} weight="bold" />
+              <span>Admin-Only · Locked</span>
+            </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--sys-on-surface)]">
             Export Your Theme for{" "}
@@ -139,32 +130,33 @@ alwaysApply: true
             </span>
           </h2>
           <p className="text-sm text-[var(--sys-on-surface-secondary)] max-w-3xl leading-relaxed">
-            Every colour, typography, and corner adjustment compiles into ready-to-use files for
-            Tailwind CSS v4, Figma Variables (W3C DTCG), Google Stitch{" "}
-            <code className="font-mono">DESIGN.md</code>, and AI coding rules—free to copy or
-            download without sign-in.
+            File downloads and compiled code exports for Tailwind CSS v4, Figma Variables (W3C
+            DTCG), Google Stitch <code className="font-mono">DESIGN.md</code>, and AI rules are
+            currently locked and restricted to the Admin Console under{" "}
+            <code className="font-mono text-[var(--sys-on-surface)]">{ADMIN_EMAIL}</code>.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {isAdmin && (
+          {isPrimaryAdmin ? (
             <button
               type="button"
               onClick={openAdminConsole}
-              className="min-h-[40px] px-4 py-2 rounded-[var(--sys-radius-md)] bg-[var(--sys-primary-container)] text-[var(--sys-on-primary-container)] border border-[var(--sys-primary)]/40 text-xs font-semibold inline-flex items-center gap-2 cursor-pointer"
+              className="min-h-[40px] px-4 py-2 rounded-[var(--sys-radius-md)] bg-[var(--sys-primary)] text-[var(--sys-on-primary)] text-xs font-semibold inline-flex items-center gap-2 cursor-pointer hover:opacity-95 transition-opacity"
             >
               <ShieldCheck size={15} weight="fill" />
-              <span>Manage Access Rules</span>
+              <span>Open Admin Export Centre</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => handleLockedAttempt("Header Export Lock")}
+              className="min-h-[40px] px-4 py-2 rounded-[var(--sys-radius-md)] bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] text-xs font-mono font-semibold inline-flex items-center gap-2 cursor-pointer"
+            >
+              <LockSimple size={15} weight="bold" className="text-[var(--sys-primary)]" />
+              <span>Exports Locked (Admin Only)</span>
             </button>
           )}
-          <button
-            type="button"
-            onClick={() => handleDownload("figma")}
-            className="min-h-[40px] px-4 py-2 rounded-[var(--sys-radius-md)] bg-[var(--sys-surface-high)] hover:bg-[var(--sys-surface-highest)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] text-xs font-mono font-semibold inline-flex items-center gap-2 cursor-pointer"
-          >
-            <DownloadSimple size={15} />
-            <span>Download Figma Tokens</span>
-          </button>
         </div>
       </div>
 
@@ -207,31 +199,25 @@ alwaysApply: true
           </SlidingTabList>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => handleDownload()}
-              className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-mono bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] inline-flex items-center gap-1.5 cursor-pointer"
-            >
-              <DownloadSimple size={14} />
-              <span>Save File</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] inline-flex items-center gap-1.5 cursor-pointer"
-            >
-              {copied ? (
-                <>
-                  <Check size={14} weight="bold" />
-                  <span>Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy size={14} />
-                  <span>Copy Output</span>
-                </>
-              )}
-            </button>
+            {isPrimaryAdmin ? (
+              <button
+                type="button"
+                onClick={openAdminConsole}
+                className="min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] inline-flex items-center gap-1.5 cursor-pointer"
+              >
+                <ShieldCheck size={14} weight="fill" />
+                <span>Download in Admin Console</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => handleLockedAttempt("Locked Toolbar Action")}
+                className="min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-mono bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] border border-[var(--sys-outline)] inline-flex items-center gap-1.5 cursor-pointer"
+              >
+                <LockSimple size={14} />
+                <span>Admin Only</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -245,10 +231,47 @@ alwaysApply: true
           </span>
         </div>
 
-        {/* Open-Access Code Output Well (v3.0) */}
-        <pre className="p-6 bg-[var(--sys-surface-lowest)] text-xs font-mono text-[var(--sys-on-surface)] overflow-x-auto leading-relaxed max-h-[460px]">
-          <code>{current.code}</code>
-        </pre>
+        {/* Locked Output Notice + Safe Summary */}
+        <div className="p-6 bg-[var(--sys-surface-lowest)] space-y-4">
+          <div className="p-4 rounded-xl bg-[var(--sys-surface-low)] border border-[var(--sys-outline)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <span className="w-8 h-8 rounded-lg bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-center text-[var(--sys-primary)] shrink-0">
+                <LockSimple size={16} weight="bold" />
+              </span>
+              <div className="space-y-0.5">
+                <div className="text-xs font-semibold text-[var(--sys-on-surface)]">
+                  Public Downloads &amp; Code Exports Temporarily Locked
+                </div>
+                <p className="text-xs text-[var(--sys-on-surface-secondary)] leading-relaxed">
+                  {isPrimaryAdmin
+                    ? "You are signed in as the portfolio administrator. Open the Admin Console to download or copy compiled bundles."
+                    : `Full compiled exports are restricted to the Admin Console under ${ADMIN_EMAIL}.`}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleLockedAttempt("Locked Well CTA")}
+              className="min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[var(--sys-primary)] text-[var(--sys-on-primary)] inline-flex items-center justify-center gap-1.5 shrink-0 cursor-pointer hover:opacity-95"
+            >
+              {isPrimaryAdmin ? (
+                <>
+                  <ShieldCheck size={14} weight="fill" />
+                  <span>Open Admin Console</span>
+                </>
+              ) : (
+                <>
+                  <LockSimple size={14} weight="bold" />
+                  <span>Admin Sign-In</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <pre className="p-4 rounded-xl bg-[var(--sys-surface-canvas)] border border-[var(--sys-outline-variant)] text-xs font-mono text-[var(--sys-on-surface-secondary)] overflow-x-auto leading-relaxed">
+            <code>{current.safeSummary}</code>
+          </pre>
+        </div>
       </div>
     </section>
   );

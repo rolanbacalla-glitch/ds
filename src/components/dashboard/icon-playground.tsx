@@ -52,7 +52,7 @@ export const IconPlayground: React.FC = () => {
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
-  const { user, logAuditEvent } = useAuth();
+  const { user, isPrimaryAdmin, openAuthModal, openAdminConsole, logAuditEvent } = useAuth();
 
   const CATEGORIES = [
     { id: "all", label: "All" },
@@ -224,6 +224,16 @@ export const IconPlayground: React.FC = () => {
   }, [searchQuery, selectedCategory, ALL_ICONS]);
 
   const handleCopy = (type: string, content: string, label?: string) => {
+    if (!isPrimaryAdmin) {
+      if (user?.emailVerified) {
+        void logAuditEvent("blocked_export_attempt", `Icon (${type}): ${selectedIcon.name}`);
+      }
+      showToast("Exports are locked — available only inside the Admin Console under rolan.bacalla@gmail.com.");
+      openAuthModal(
+        "Icon code exports are temporarily locked and restricted to rolan.bacalla@gmail.com."
+      );
+      return;
+    }
     navigator.clipboard.writeText(content);
     setCopiedType(type);
     if (user?.emailVerified) {
@@ -247,20 +257,8 @@ export const IconPlayground: React.FC = () => {
   };
 
   // Convert weight string to numeric font-variation weight for Material Symbols
-  const materialWeightNumeric = useMemo(() => {
-    switch (weight) {
-      case "thin":
-        return 200;
-      case "light":
-        return 300;
-      case "regular":
-        return 400;
-      case "bold":
-        return 700;
-      default:
-        return 400;
-    }
-  }, [weight]);
+  const materialWeightNumeric =
+    weight === "thin" ? 200 : weight === "light" ? 300 : weight === "bold" ? 700 : 400;
 
   // Effective Phosphor weight (fill toggle overrides stroke weight for Phosphor)
   const effectivePhosphorWeight: Icons.IconWeight = filled ? "fill" : weight;
@@ -472,47 +470,65 @@ export const IconPlayground: React.FC = () => {
             />
           </div>
 
-          {/* Export Buttons (Open Access — v3.0) */}
+          {/* Export Buttons (Locked to Admin) */}
           <div className="space-y-2 pt-2 border-t border-[var(--sys-outline-variant)]">
-            <div className="grid grid-cols-2 gap-2">
+            {isPrimaryAdmin ? (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleCopy("jsx", exports.code, "React JSX")}
+                    className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-primary)] hover:opacity-95 text-[var(--sys-on-primary)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold transition-opacity cursor-pointer"
+                  >
+                    {copiedType === "jsx" ? (
+                      <>
+                        <Icons.Check size={14} weight="bold" />
+                        <span>Copied JSX</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icons.Copy size={14} />
+                        <span>Copy React JSX</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCopySvg}
+                    className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[var(--sys-on-surface)] transition-colors cursor-pointer"
+                  >
+                    {copiedType === "svg" ? (
+                      <>
+                        <Icons.Check size={14} className="text-emerald-400" weight="bold" />
+                        <span>Copied {selectedIcon.source === "material" ? "HTML" : "SVG"}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icons.Code size={14} className="text-[var(--sys-on-surface-tertiary)]" />
+                        <span>{selectedIcon.source === "material" ? "Copy HTML" : "Copy SVG"}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={openAdminConsole}
+                  className="w-full min-h-[34px] px-3 py-1.5 rounded-lg bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] text-[11px] font-mono text-[var(--sys-primary)] flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Icons.ShieldCheck size={13} weight="fill" />
+                  <span>Admin Export Privileges Active</span>
+                </button>
+              </>
+            ) : (
               <button
                 type="button"
                 onClick={() => handleCopy("jsx", exports.code, "React JSX")}
-                className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-primary)] hover:opacity-95 text-[var(--sys-on-primary)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold transition-opacity cursor-pointer"
+                className="w-full min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[var(--sys-on-surface-secondary)] transition-colors cursor-pointer"
               >
-                {copiedType === "jsx" ? (
-                  <>
-                    <Icons.Check size={14} weight="bold" />
-                    <span>Copied JSX</span>
-                  </>
-                ) : (
-                  <>
-                    <Icons.Copy size={14} />
-                    <span>Copy React JSX</span>
-                  </>
-                )}
+                <Icons.LockSimple size={14} weight="bold" className="text-[var(--sys-primary)]" />
+                <span>Exports Locked (Admin Only)</span>
               </button>
-              <button
-                type="button"
-                onClick={handleCopySvg}
-                className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[var(--sys-on-surface)] transition-colors cursor-pointer"
-              >
-                {copiedType === "svg" ? (
-                  <>
-                    <Icons.Check size={14} className="text-emerald-400" weight="bold" />
-                    <span>Copied {selectedIcon.source === "material" ? "HTML" : "SVG"}</span>
-                  </>
-                ) : (
-                  <>
-                    <Icons.Code size={14} className="text-[var(--sys-on-surface-tertiary)]" />
-                    <span>{selectedIcon.source === "material" ? "Copy HTML" : "Copy SVG"}</span>
-                  </>
-                )}
-              </button>
-            </div>
-            <div className="px-3 py-2 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] truncate">
-              {exports.code.replace(/\n\s*/g, " ")}
-            </div>
+            )}
           </div>
         </div>
 

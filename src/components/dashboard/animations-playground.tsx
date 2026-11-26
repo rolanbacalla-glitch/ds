@@ -4,6 +4,8 @@ import React, { useState, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 import { useToast } from "@/components/ui/toast-provider";
+import { useAuth } from "@/components/auth/auth-provider";
+import { ADMIN_EMAIL } from "@/lib/firebase";
 import {
   MICRO_LOADERS,
   MicroLoaderPreview,
@@ -19,6 +21,7 @@ import {
   Check,
   Code,
   Activity,
+  LockSimple,
 } from "phosphor-react";
 
 type FilterCategory = "all" | MicroLoaderCategory;
@@ -47,6 +50,7 @@ export const AnimationsPlayground: React.FC = () => {
   const [copiedType, setCopiedType] = useState<"jsx" | "svg" | null>(null);
   const previewStageRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
+  const { user, isPrimaryAdmin, openAuthModal, logAuditEvent } = useAuth();
 
   const filteredLoaders = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -69,10 +73,27 @@ export const AnimationsPlayground: React.FC = () => {
     [selectedLoader, size, speed]
   );
 
+  const handleLockedAttempt = (kind: string) => {
+    if (user?.emailVerified) {
+      void logAuditEvent("blocked_export_attempt", `Animation (${kind}): ${selectedLoader.name}`);
+    }
+    showToast(`Exports are locked — available only under ${ADMIN_EMAIL}.`);
+    openAuthModal(
+      `Animation code exports are temporarily locked and restricted to ${ADMIN_EMAIL}.`
+    );
+  };
+
   const handleCopyJsx = async () => {
+    if (!isPrimaryAdmin) {
+      handleLockedAttempt("jsx");
+      return;
+    }
     try {
       await navigator.clipboard.writeText(reactSnippet);
       setCopiedType("jsx");
+      if (user?.emailVerified) {
+        void logAuditEvent("export_copy", `Animation (jsx): ${selectedLoader.name}`);
+      }
       showToast(`Copied React JSX for ${selectedLoader.name}`);
       window.setTimeout(() => setCopiedType(null), 1800);
     } catch {
@@ -81,11 +102,18 @@ export const AnimationsPlayground: React.FC = () => {
   };
 
   const handleCopySvg = async () => {
+    if (!isPrimaryAdmin) {
+      handleLockedAttempt("svg");
+      return;
+    }
     const svgEl = previewStageRef.current?.querySelector("svg");
     if (!svgEl) return;
     try {
       await navigator.clipboard.writeText(svgEl.outerHTML);
       setCopiedType("svg");
+      if (user?.emailVerified) {
+        void logAuditEvent("export_copy", `Animation (svg): ${selectedLoader.name}`);
+      }
       showToast(`Copied SVG markup for ${selectedLoader.name}`);
       window.setTimeout(() => setCopiedType(null), 1800);
     } catch {
@@ -276,47 +304,60 @@ export const AnimationsPlayground: React.FC = () => {
             />
           </div>
 
-          {/* Copy Export Buttons */}
+          {/* Copy Export Buttons (Locked to Admin) */}
           <div className="space-y-2 pt-2 border-t border-[var(--sys-outline-variant)]">
-            <div className="grid grid-cols-2 gap-2">
+            {isPrimaryAdmin ? (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCopyJsx}
+                    className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-primary)] hover:opacity-95 text-[var(--sys-on-primary)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold transition-opacity cursor-pointer"
+                  >
+                    {copiedType === "jsx" ? (
+                      <>
+                        <Check size={14} weight="bold" />
+                        <span>Copied JSX</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={14} />
+                        <span>Copy React JSX</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCopySvg}
+                    className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[var(--sys-on-surface)] transition-colors cursor-pointer"
+                  >
+                    {copiedType === "svg" ? (
+                      <>
+                        <Check size={14} className="text-emerald-400" weight="bold" />
+                        <span>Copied SVG</span>
+                      </>
+                    ) : (
+                      <>
+                        <Code size={14} className="text-[var(--sys-on-surface-tertiary)]" />
+                        <span>Copy SVG</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="px-3 py-2 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] truncate">
+                  {`<MicroLoaderPreview loader={${selectedLoader.id}} size={${size}} speed={${speed}} />`}
+                </div>
+              </>
+            ) : (
               <button
                 type="button"
-                onClick={handleCopyJsx}
-                className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-primary)] hover:opacity-95 text-[var(--sys-on-primary)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold transition-opacity cursor-pointer"
+                onClick={() => handleLockedAttempt("inspector")}
+                className="w-full min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[var(--sys-on-surface-secondary)] transition-colors cursor-pointer"
               >
-                {copiedType === "jsx" ? (
-                  <>
-                    <Check size={14} weight="bold" />
-                    <span>Copied JSX</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} />
-                    <span>Copy React JSX</span>
-                  </>
-                )}
+                <LockSimple size={14} weight="bold" className="text-[var(--sys-primary)]" />
+                <span>Exports Locked (Admin Only)</span>
               </button>
-              <button
-                type="button"
-                onClick={handleCopySvg}
-                className="min-h-[40px] py-2 px-3 rounded-xl bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline-variant)] flex items-center justify-center gap-1.5 text-xs font-mono font-semibold text-[var(--sys-on-surface)] transition-colors cursor-pointer"
-              >
-                {copiedType === "svg" ? (
-                  <>
-                    <Check size={14} className="text-emerald-400" weight="bold" />
-                    <span>Copied SVG</span>
-                  </>
-                ) : (
-                  <>
-                    <Code size={14} className="text-[var(--sys-on-surface-tertiary)]" />
-                    <span>Copy SVG</span>
-                  </>
-                )}
-              </button>
-            </div>
-            <div className="px-3 py-2 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] truncate">
-              {`<MicroLoaderPreview loader={${selectedLoader.id}} size={${size}} speed={${speed}} />`}
-            </div>
+            )}
           </div>
         </div>
 

@@ -19,11 +19,14 @@ import {
   Sliders,
   ExternalLink,
   LogOut,
+  Copy,
+  FileCode,
 } from "lucide-react";
 import firebaseConfig from "../../../firebase-applet-config.json";
 import { collection, onSnapshot, orderBy, query, limit } from "firebase/firestore";
 import {
   db,
+  ADMIN_EMAIL,
   handleFirestoreError,
   OperationType,
   type AccessRequest,
@@ -42,12 +45,13 @@ import { useToast } from "@/components/ui/toast-provider";
 import { cn } from "@/lib/utils";
 import { SlidingTabList } from "@/components/ui/sliding-tab-list";
 
-type AdminTab = "protection" | "requests" | "users" | "audit";
+type AdminTab = "protection" | "exports" | "requests" | "users" | "audit";
 
 export const AdminConsoleModal: React.FC = () => {
   const {
     user,
     isAdmin,
+    isPrimaryAdmin,
     adminConsoleOpen,
     closeAdminConsole,
     signOutUser,
@@ -63,6 +67,8 @@ export const AdminConsoleModal: React.FC = () => {
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<AdminTab>("protection");
+  const [exportPresetName, setExportPresetName] = useState<string>(SEED_PRESETS[0].name);
+  const [copiedExportId, setCopiedExportId] = useState<string | null>(null);
   const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [approvals, setApprovals] = useState<ExportApproval[]>([]);
   const [usersList, setUsersList] = useState<UserProfile[]>([]);
@@ -181,8 +187,14 @@ export const AdminConsoleModal: React.FC = () => {
   };
 
   const handleDownloadMasterBundle = async () => {
+    if (!isPrimaryAdmin) {
+      showToast(`Downloads are restricted to ${ADMIN_EMAIL}.`);
+      return;
+    }
     const preset =
-      SEED_PRESETS.find((p) => p.name === defaultPresetName) ?? SEED_PRESETS[0];
+      SEED_PRESETS.find((p) => p.name === exportPresetName) ??
+      SEED_PRESETS.find((p) => p.name === defaultPresetName) ??
+      SEED_PRESETS[0];
     const bundle = {
       exportedAt: new Date().toISOString(),
       exportedBy: user?.email,
@@ -204,6 +216,58 @@ export const AdminConsoleModal: React.FC = () => {
     URL.revokeObjectURL(url);
     await logAuditEvent("export_download", "Admin Master Portfolio Bundle (.json)");
     showToast("Downloaded complete Admin Master Bundle (.json)");
+  };
+
+  const selectedExportPreset =
+    SEED_PRESETS.find((p) => p.name === exportPresetName) ?? SEED_PRESETS[0];
+
+  const adminExportItems = [
+    {
+      id: "tailwind",
+      label: "Tailwind v4 + CSS Variables",
+      filename: "tokens.generated.css",
+      content: generateTailwindV4Export(selectedExportPreset),
+    },
+    {
+      id: "figma",
+      label: "Figma Variables (W3C DTCG)",
+      filename: "figma-variables.tokens.json",
+      content: generateW3CTokensJSON(selectedExportPreset),
+    },
+    {
+      id: "stitch",
+      label: "Google Stitch (DESIGN.md)",
+      filename: "DESIGN.md",
+      content: generateDesignMdExport(selectedExportPreset),
+    },
+  ];
+
+  const handleDownloadAdminFile = async (filename: string, content: string) => {
+    if (!isPrimaryAdmin) {
+      showToast(`Downloads are restricted to ${ADMIN_EMAIL}.`);
+      return;
+    }
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    await logAuditEvent("export_download", `Admin Export: ${filename} (${selectedExportPreset.name})`);
+    showToast(`Downloaded ${filename}`);
+  };
+
+  const handleCopyAdminFile = async (id: string, label: string, content: string) => {
+    if (!isPrimaryAdmin) {
+      showToast(`Exports are restricted to ${ADMIN_EMAIL}.`);
+      return;
+    }
+    await navigator.clipboard.writeText(content);
+    setCopiedExportId(id);
+    await logAuditEvent("export_copy", `Admin Export: ${label} (${selectedExportPreset.name})`);
+    showToast(`Copied ${label} to clipboard`);
+    window.setTimeout(() => setCopiedExportId(null), 1600);
   };
 
   const formatTimestamp = (ts?: { toDate?: () => Date } | null) => {
@@ -286,6 +350,9 @@ export const AdminConsoleModal: React.FC = () => {
             {(
               [
                 { id: "protection", label: "Protection Rules", icon: Sliders },
+                ...(isPrimaryAdmin
+                  ? [{ id: "exports" as const, label: "Exports & Downloads", icon: Download }]
+                  : []),
                 {
                   id: "requests",
                   label: pendingCount > 0 ? `Access Requests (${pendingCount})` : "Access Requests",
@@ -318,14 +385,16 @@ export const AdminConsoleModal: React.FC = () => {
             })}
           </SlidingTabList>
 
-          <button
-            type="button"
-            onClick={handleDownloadMasterBundle}
-            className="min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-          >
-            <Download className="w-3.5 h-3.5 text-[var(--sys-primary)]" />
-            <span>Master Bundle (.json)</span>
-          </button>
+          {isPrimaryAdmin && (
+            <button
+              type="button"
+              onClick={handleDownloadMasterBundle}
+              className="min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[var(--sys-surface-lowest)] hover:bg-[var(--sys-surface-high)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            >
+              <Download className="w-3.5 h-3.5 text-[var(--sys-primary)]" />
+              <span>Master Bundle (.json)</span>
+            </button>
+          )}
         </div>
 
         {/* Scrollable Content Body */}
@@ -516,6 +585,97 @@ export const AdminConsoleModal: React.FC = () => {
                 </button>
               </div>
             </form>
+          )}
+
+          {/* TAB 1B: ADMIN-ONLY EXPORTS & DOWNLOADS (rolan.bacalla@gmail.com ONLY) */}
+          {activeTab === "exports" && isPrimaryAdmin && (
+            <div className="space-y-5">
+              <div className="p-4 rounded-2xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[var(--sys-on-surface)]">
+                    <ShieldCheck className="w-4 h-4 text-[var(--sys-primary)]" />
+                    <span>Exclusive Admin Export Centre</span>
+                  </div>
+                  <p className="text-xs text-[var(--sys-on-surface-secondary)]">
+                    Public downloads and exports are locked. Only{" "}
+                    <span className="font-mono text-[var(--sys-on-surface)]">{ADMIN_EMAIL}</span>{" "}
+                    can download or copy compiled bundles from here.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <label
+                    htmlFor="admin-export-preset"
+                    className="text-[11px] font-mono text-[var(--sys-on-surface-tertiary)]"
+                  >
+                    Preset:
+                  </label>
+                  <select
+                    id="admin-export-preset"
+                    value={exportPresetName}
+                    onChange={(e) => setExportPresetName(e.target.value)}
+                    className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[var(--sys-surface-low)] border border-[var(--sys-outline)] text-xs text-[var(--sys-on-surface)] outline-none focus:border-[var(--sys-primary)]"
+                  >
+                    {SEED_PRESETS.map((preset) => (
+                      <option key={preset.name} value={preset.name}>
+                        {preset.name} ({preset.hue}°)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3">
+                {adminExportItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-4 rounded-2xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="w-9 h-9 rounded-xl bg-[var(--sys-surface-low)] border border-[var(--sys-outline-variant)] flex items-center justify-center text-[var(--sys-primary)] shrink-0">
+                        <FileCode className="w-4 h-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-[var(--sys-on-surface)] truncate">
+                          {item.label}
+                        </div>
+                        <div className="text-[11px] font-mono text-[var(--sys-on-surface-tertiary)] truncate">
+                          {item.filename} · {selectedExportPreset.name}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => void handleCopyAdminFile(item.id, item.label, item.content)}
+                        className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-high)] border border-[var(--sys-outline)] text-xs font-mono text-[var(--sys-on-surface)] inline-flex items-center gap-1.5 cursor-pointer"
+                      >
+                        {copiedExportId === item.id ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void handleDownloadAdminFile(item.filename, item.content)}
+                        className="min-h-[36px] px-3.5 py-1.5 rounded-xl bg-[var(--sys-primary)] hover:opacity-95 text-[var(--sys-on-primary)] text-xs font-mono font-semibold inline-flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* TAB 2: ACCESS REQUESTS QUEUE */}
