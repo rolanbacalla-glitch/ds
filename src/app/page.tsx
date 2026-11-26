@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { SEED_PRESETS, type SeedConfig } from "@/lib/tokens";
-import type { ComponentSlug } from "@/lib/component-registry";
+import { COMPONENT_SLUGS, type ComponentSlug } from "@/lib/component-registry";
 import { TOKEN_BUILD_METADATA } from "@/lib/tokens.generated";
 import { DocsShell, type DocSectionId } from "@/components/workbench/docs-shell";
 import { TokenEngineSection } from "@/components/workbench/token-engine-section";
@@ -55,9 +54,16 @@ export default function Home() {
     SEED_PRESETS.find((p) => p.name === portfolioSettings.defaultPresetName) ??
     SEED_PRESETS[0];
 
-  // Sync URL hash to focused documentation section
+  // Sync URL hash and ?spec= query param to focused documentation section
   useEffect(() => {
     const syncFromHash = () => {
+      const params = new URLSearchParams(window.location.search);
+      const specParam = params.get("spec") as ComponentSlug | null;
+      if (specParam && COMPONENT_SLUGS.includes(specParam)) {
+        setActiveSection("components");
+        setActiveSpecSlug(specParam);
+        return;
+      }
       const hash = window.location.hash.replace("#", "") as DocSectionId;
       if (VALID_SECTIONS.includes(hash)) {
         setActiveSection(hash);
@@ -223,13 +229,14 @@ export default function Home() {
                 <span>Export Tokens</span>
               </button>
 
-              <Link
-                href="/components/form-field"
-                className="h-10 px-3.5 rounded-lg text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-low)] text-sm font-medium inline-flex items-center gap-1.5 transition-colors"
+              <button
+                type="button"
+                onClick={() => handleSelectSpec("form-field")}
+                className="h-10 px-3.5 rounded-lg text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-low)] text-sm font-medium inline-flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>Component Specs</span>
                 <ArrowUpRight size={15} />
-              </Link>
+              </button>
             </div>
           </section>
 

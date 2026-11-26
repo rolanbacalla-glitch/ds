@@ -361,23 +361,25 @@ export const ComponentPortalClient: React.FC<ComponentPortalClientProps> = ({
             </p>
           </div>
 
-          {/* Mobile/Tablet Component Switcher Pills */}
-          <div className="flex flex-wrap gap-1.5 lg:hidden">
-            {COMPONENT_SLUGS.map((slug) => (
-              <Link
-                key={slug}
-                href={`/components/${slug}`}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-mono border",
-                  slug === spec.slug
-                    ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] border-transparent font-semibold"
-                    : "bg-[var(--sys-surface-low)] text-[var(--sys-on-surface-secondary)] border-[var(--sys-outline-variant)]"
-                )}
-              >
-                /components/{slug}
-              </Link>
-            ))}
-          </div>
+          {/* Mobile/Tablet Component Switcher Pills (standalone only) */}
+          {!embedded && (
+            <div className="flex flex-wrap gap-1.5 lg:hidden">
+              {COMPONENT_SLUGS.map((slug) => (
+                <Link
+                  key={slug}
+                  href={`/components/${slug}`}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-mono border",
+                    slug === spec.slug
+                      ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] border-transparent font-semibold"
+                      : "bg-[var(--sys-surface-low)] text-[var(--sys-on-surface-secondary)] border-[var(--sys-outline-variant)]"
+                  )}
+                >
+                  /components/{slug}
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* 2. Interactive Playground & Multi-State Matrix */}
