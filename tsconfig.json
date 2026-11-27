@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@antigravity/icons": ["./packages/icons/src/index.tsx"],
+      "@antigravity/ui": ["./packages/ui/src/index.ts"]
     }
   },
   "include": [

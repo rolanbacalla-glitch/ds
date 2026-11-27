@@ -92,7 +92,7 @@ export const DOC_NAV_ITEMS: NavItem[] = [
   {
     id: "animations",
     label: "Animations",
-    description: "Minimalist geometric micro-loaders and motion primitives",
+    description: "Geometric micro-loaders, touch gestures, and motion primitives",
     group: "Library",
     icon: PlayCircle,
   },

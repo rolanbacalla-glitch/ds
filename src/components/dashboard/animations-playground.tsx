@@ -10,6 +10,7 @@ import {
   MICRO_LOADERS,
   MicroLoaderPreview,
   buildLoaderReactSnippet,
+  type GestureSubgroup,
   type MicroLoaderCategory,
   type MicroLoaderSpec,
 } from "@/components/dashboard/micro-loaders";
@@ -25,6 +26,7 @@ import {
 } from "phosphor-react";
 
 type FilterCategory = "all" | MicroLoaderCategory;
+type GestureGroupFilter = "all" | GestureSubgroup;
 
 const CATEGORIES: Array<{ id: FilterCategory; label: string }> = [
   { id: "all", label: "All" },
@@ -34,6 +36,14 @@ const CATEGORIES: Array<{ id: FilterCategory; label: string }> = [
   { id: "bars", label: "Bars" },
   { id: "geometric", label: "Geometric" },
   { id: "radar", label: "Radar" },
+  { id: "gestures", label: "Gestures" },
+];
+
+const GESTURE_GROUPS: Array<{ id: GestureGroupFilter; label: string }> = [
+  { id: "all", label: "All Gestures" },
+  { id: "action", label: "Discrete Actions" },
+  { id: "navigation", label: "Navigation & Flow" },
+  { id: "transform", label: "Multi-Touch Transforms" },
 ];
 
 const SPEED_OPTIONS = [0.5, 1, 1.5, 2] as const;
@@ -41,6 +51,7 @@ const SPEED_OPTIONS = [0.5, 1, 1.5, 2] as const;
 export const AnimationsPlayground: React.FC = () => {
   const [selectedLoader, setSelectedLoader] = useState<MicroLoaderSpec>(MICRO_LOADERS[0]);
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("all");
+  const [activeGestureGroup, setActiveGestureGroup] = useState<GestureGroupFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [size, setSize] = useState(56);
   const [speed, setSpeed] = useState<number>(1);
@@ -52,10 +63,23 @@ export const AnimationsPlayground: React.FC = () => {
   const { showToast } = useToast();
   const { user, isPrimaryAdmin, openAuthModal, logAuditEvent } = useAuth();
 
+  const gestureCount = useMemo(
+    () => MICRO_LOADERS.filter((item) => item.category === "gestures").length,
+    []
+  );
+  const loaderCount = MICRO_LOADERS.length - gestureCount;
+
   const filteredLoaders = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return MICRO_LOADERS.filter((item) => {
       if (activeCategory !== "all" && item.category !== activeCategory) {
+        return false;
+      }
+      if (
+        activeCategory === "gestures" &&
+        activeGestureGroup !== "all" &&
+        item.gestureGroup !== activeGestureGroup
+      ) {
         return false;
       }
       if (!q) return true;
@@ -66,7 +90,7 @@ export const AnimationsPlayground: React.FC = () => {
         item.tags.some((t) => t.toLowerCase().includes(q))
       );
     });
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, activeGestureGroup, searchQuery]);
 
   const reactSnippet = useMemo(
     () => buildLoaderReactSnippet(selectedLoader, size, speed),
@@ -127,7 +151,7 @@ export const AnimationsPlayground: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-[var(--sys-outline-variant)]">
         <div className="space-y-2">
           <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-widest text-[var(--sys-primary)]">
-            <span>07 // ANIMATIONS &amp; MICRO-LOADERS</span>
+            <span>07 // ANIMATIONS, LOADERS &amp; GESTURES</span>
             <span className="text-[var(--sys-on-surface-quaternary)]">•</span>
             <span>60FPS TOKENISED SVG + CSS</span>
           </div>
@@ -138,9 +162,13 @@ export const AnimationsPlayground: React.FC = () => {
             </span>
           </h2>
           <p className="text-sm text-[var(--sys-on-surface-secondary)] max-w-3xl leading-relaxed">
-            A curated set of{" "}
+            A curated library of{" "}
             <strong className="text-[var(--sys-on-surface)]">
-              {MICRO_LOADERS.length} minimalist geometric loaders
+              {loaderCount} minimalist geometric loaders
+            </strong>{" "}
+            and{" "}
+            <strong className="text-[var(--sys-on-surface)]">
+              {gestureCount} touch &amp; pointer gesture icons
             </strong>{" "}
             built with zero-dependency SVG and GPU-composited CSS keyframes. Every animation
             automatically inherits your live OKLCH brand seed, light/dark polarity, and{" "}
@@ -373,7 +401,7 @@ export const AnimationsPlayground: React.FC = () => {
                   </span>
                 </h3>
                 <p className="text-xs text-[var(--sys-on-surface-tertiary)]">
-                  Select any loader to inspect on the keyline grid, tune speed, or copy production markup.
+                  Select any loader or gesture icon to inspect on the keyline grid, tune speed, or copy production markup.
                 </p>
               </div>
             </div>
@@ -389,7 +417,7 @@ export const AnimationsPlayground: React.FC = () => {
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search animations by name, state, or tag (e.g. radar, dots, upload)…"
+                  placeholder="Search animations by name, gesture, or tag (e.g. swipe, pinch, radar, dots)…"
                   aria-label="Search animations"
                   className="w-full h-10 pl-10 pr-4 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] focus:border-[var(--sys-primary)] focus:outline-none text-xs text-[var(--sys-on-surface)] placeholder:text-[var(--sys-on-surface-tertiary)] transition-colors"
                 />
@@ -408,8 +436,15 @@ export const AnimationsPlayground: React.FC = () => {
                       <button
                         key={cat.id}
                         type="button"
+                        role="tab"
+                        aria-selected={active}
                         data-tab-key={cat.id}
-                        onClick={() => setActiveCategory(cat.id)}
+                        onClick={() => {
+                          setActiveCategory(cat.id);
+                          if (cat.id !== "gestures") {
+                            setActiveGestureGroup("all");
+                          }
+                        }}
                         className={cn(
                           "relative z-10 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer",
                           active
@@ -423,6 +458,41 @@ export const AnimationsPlayground: React.FC = () => {
                   })}
                 </SlidingTabList>
               </div>
+
+              {activeCategory === "gestures" && (
+                <div
+                  role="group"
+                  aria-label="Gesture taxonomy filter"
+                  className="flex flex-wrap items-center gap-1.5 pt-0.5"
+                >
+                  {GESTURE_GROUPS.map((group) => {
+                    const active = activeGestureGroup === group.id;
+                    const count =
+                      group.id === "all"
+                        ? gestureCount
+                        : MICRO_LOADERS.filter(
+                            (item) => item.category === "gestures" && item.gestureGroup === group.id
+                          ).length;
+                    return (
+                      <button
+                        key={group.id}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setActiveGestureGroup(group.id)}
+                        className={cn(
+                          "min-h-[30px] px-2.5 py-1 rounded-lg border text-[11px] font-mono transition-colors cursor-pointer inline-flex items-center gap-1.5",
+                          active
+                            ? "bg-[var(--sys-primary-container)] border-[var(--sys-primary)] text-[var(--sys-on-primary-container)] font-semibold"
+                            : "bg-[var(--sys-surface-lowest)] border-[var(--sys-outline-variant)] text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:border-[var(--sys-outline)]"
+                        )}
+                      >
+                        <span>{group.label}</span>
+                        <span className="tabular-nums opacity-75">{count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 

@@ -474,3 +474,672 @@
 .ml-circle-line {
   animation: ml-circle-line calc(1.3s / var(--ml-speed, 1)) cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
+
+/* 10. Touch & Pointer Gesture Animations (Apple HIG & Material Design Groupset) */
+.ml-gesture-tap-hand,
+.ml-gesture-dtap-hand,
+.ml-gesture-hold-hand {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.ml-gesture-tap-ripple,
+.ml-gesture-dtap-r1,
+.ml-gesture-dtap-r2,
+.ml-gesture-hold-pulse,
+.ml-gesture-pinch-box,
+.ml-gesture-spread-box,
+.ml-gesture-drag-card,
+.ml-gesture-drag-slot,
+.ml-gesture-ptr-spinner {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ml-gesture-rotate-dial {
+  transform-box: view-box;
+  transform-origin: 24px 24px;
+}
+
+.ml-gesture-swipe-x,
+.ml-gesture-swipe-y,
+.ml-gesture-scroll-wheel,
+.ml-gesture-ptr-sheet,
+.ml-gesture-pinch-tr,
+.ml-gesture-pinch-bl,
+.ml-gesture-spread-tr,
+.ml-gesture-spread-bl,
+.ml-gesture-edge-pull {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ml-gesture-swipe-x-trail {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.ml-gesture-swipe-y-trail {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+/* Single Tap */
+@keyframes ml-gesture-tap-hand {
+  0%,
+  16% {
+    transform: translateY(2.5px) scale(1);
+  }
+  32% {
+    transform: translateY(-1px) scale(0.95);
+  }
+  50%,
+  100% {
+    transform: translateY(2.5px) scale(1);
+  }
+}
+
+@keyframes ml-gesture-tap-ripple {
+  0%,
+  26% {
+    transform: scale(0.28);
+    opacity: 0;
+  }
+  34% {
+    transform: scale(0.45);
+    opacity: 0.95;
+  }
+  74% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+}
+
+.ml-gesture-tap-hand {
+  animation: ml-gesture-tap-hand calc(1.65s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-tap-ripple {
+  animation: ml-gesture-tap-ripple calc(1.65s / var(--ml-speed, 1)) cubic-bezier(0.16, 1, 0.3, 1)
+    infinite;
+}
+
+/* Double Tap */
+@keyframes ml-gesture-dtap-hand {
+  0%,
+  10% {
+    transform: translateY(2.5px) scale(1);
+  }
+  20% {
+    transform: translateY(-1px) scale(0.95);
+  }
+  30% {
+    transform: translateY(1.8px) scale(1);
+  }
+  40% {
+    transform: translateY(-1px) scale(0.95);
+  }
+  54%,
+  100% {
+    transform: translateY(2.5px) scale(1);
+  }
+}
+
+@keyframes ml-gesture-dtap-r1 {
+  0%,
+  17% {
+    transform: scale(0.28);
+    opacity: 0;
+  }
+  23% {
+    transform: scale(0.45);
+    opacity: 0.95;
+  }
+  58%,
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes ml-gesture-dtap-r2 {
+  0%,
+  37% {
+    transform: scale(0.28);
+    opacity: 0;
+  }
+  43% {
+    transform: scale(0.45);
+    opacity: 0.95;
+  }
+  82%,
+  100% {
+    transform: scale(1.42);
+    opacity: 0;
+  }
+}
+
+.ml-gesture-dtap-hand {
+  animation: ml-gesture-dtap-hand calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-dtap-r1 {
+  animation: ml-gesture-dtap-r1 calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.16, 1, 0.3, 1)
+    infinite;
+}
+
+.ml-gesture-dtap-r2 {
+  animation: ml-gesture-dtap-r2 calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.16, 1, 0.3, 1)
+    infinite;
+}
+
+/* Long Press */
+@keyframes ml-gesture-hold-hand {
+  0%,
+  10% {
+    transform: translateY(2.5px) scale(1);
+  }
+  18%,
+  72% {
+    transform: translateY(-1px) scale(0.94);
+  }
+  84%,
+  100% {
+    transform: translateY(2.5px) scale(1);
+  }
+}
+
+@keyframes ml-gesture-hold-ring {
+  0%,
+  14% {
+    stroke-dashoffset: 60;
+    opacity: 0;
+  }
+  18% {
+    stroke-dashoffset: 60;
+    opacity: 1;
+  }
+  68% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  82% {
+    stroke-dashoffset: 0;
+    opacity: 0.25;
+  }
+  92%,
+  100% {
+    stroke-dashoffset: 60;
+    opacity: 0;
+  }
+}
+
+@keyframes ml-gesture-hold-pulse {
+  0%,
+  65% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  72% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+  90%,
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+.ml-gesture-hold-hand {
+  animation: ml-gesture-hold-hand calc(2.2s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-hold-ring {
+  stroke-dasharray: 60;
+  animation: ml-gesture-hold-ring calc(2.2s / var(--ml-speed, 1)) cubic-bezier(0.4, 0, 0.2, 1)
+    infinite;
+}
+
+.ml-gesture-hold-pulse {
+  animation: ml-gesture-hold-pulse calc(2.2s / var(--ml-speed, 1)) cubic-bezier(0.16, 1, 0.3, 1)
+    infinite;
+}
+
+/* Swipe Horizontal */
+@keyframes ml-gesture-swipe-x {
+  0%,
+  12% {
+    transform: translateX(-8px) rotate(-6deg);
+    opacity: 0.72;
+  }
+  20% {
+    transform: translateX(-8px) rotate(-6deg) scale(0.96);
+    opacity: 1;
+  }
+  64% {
+    transform: translateX(9px) rotate(6deg) scale(0.96);
+    opacity: 1;
+  }
+  78% {
+    transform: translateX(10px) rotate(6deg);
+    opacity: 0;
+  }
+  86% {
+    transform: translateX(-8px) rotate(-6deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-8px) rotate(-6deg);
+    opacity: 0.72;
+  }
+}
+
+@keyframes ml-gesture-swipe-x-trail {
+  0%,
+  18% {
+    transform: scaleX(0.05);
+    opacity: 0;
+  }
+  26% {
+    transform: scaleX(0.2);
+    opacity: 0.9;
+  }
+  64% {
+    transform: scaleX(1);
+    opacity: 0.95;
+  }
+  80%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+.ml-gesture-swipe-x {
+  animation: ml-gesture-swipe-x calc(1.8s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-swipe-x-trail {
+  animation: ml-gesture-swipe-x-trail calc(1.8s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+/* Swipe Vertical */
+@keyframes ml-gesture-swipe-y {
+  0%,
+  12% {
+    transform: translateY(8px);
+    opacity: 0.72;
+  }
+  20% {
+    transform: translateY(8px) scale(0.96);
+    opacity: 1;
+  }
+  64% {
+    transform: translateY(-8px) scale(0.96);
+    opacity: 1;
+  }
+  78% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  86% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(8px);
+    opacity: 0.72;
+  }
+}
+
+@keyframes ml-gesture-swipe-y-trail {
+  0%,
+  18% {
+    transform: scaleY(0.05);
+    opacity: 0;
+  }
+  26% {
+    transform: scaleY(0.2);
+    opacity: 0.9;
+  }
+  64% {
+    transform: scaleY(1);
+    opacity: 0.95;
+  }
+  80%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+.ml-gesture-swipe-y {
+  animation: ml-gesture-swipe-y calc(1.8s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-swipe-y-trail {
+  animation: ml-gesture-swipe-y-trail calc(1.8s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+/* Scroll Wheel / Track */
+@keyframes ml-gesture-scroll-wheel {
+  0%,
+  12% {
+    transform: translateY(0px);
+    opacity: 0.95;
+  }
+  58% {
+    transform: translateY(9px);
+    opacity: 1;
+  }
+  76% {
+    transform: translateY(11px);
+    opacity: 0;
+  }
+  84% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 0.95;
+  }
+}
+
+.ml-gesture-scroll-wheel {
+  animation: ml-gesture-scroll-wheel calc(1.55s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+/* Pull to Refresh */
+@keyframes ml-gesture-ptr-sheet {
+  0%,
+  12% {
+    transform: translateY(0px);
+  }
+  42%,
+  64% {
+    transform: translateY(9px);
+  }
+  84%,
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes ml-gesture-ptr-spinner {
+  0%,
+  18% {
+    transform: scale(0.45) rotate(0deg);
+    opacity: 0;
+  }
+  38% {
+    transform: scale(1) rotate(90deg);
+    opacity: 1;
+  }
+  68% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+  82%,
+  100% {
+    transform: scale(0.55) rotate(420deg);
+    opacity: 0;
+  }
+}
+
+.ml-gesture-ptr-sheet {
+  animation: ml-gesture-ptr-sheet calc(2.1s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-ptr-spinner {
+  animation: ml-gesture-ptr-spinner calc(2.1s / var(--ml-speed, 1)) cubic-bezier(0.4, 0, 0.2, 1)
+    infinite;
+}
+
+/* Drag & Drop */
+@keyframes ml-gesture-drag-card {
+  0%,
+  14% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  26% {
+    transform: translate(0px, -2.5px) scale(1.08);
+  }
+  60% {
+    transform: translate(21px, -2.5px) scale(1.08);
+  }
+  72% {
+    transform: translate(21px, 0px) scale(1);
+  }
+  86% {
+    transform: translate(21px, 0px) scale(1);
+    opacity: 1;
+  }
+  92% {
+    transform: translate(21px, 0px) scale(0.95);
+    opacity: 0;
+  }
+  96% {
+    transform: translate(0px, 0px) scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ml-gesture-drag-slot {
+  0%,
+  50% {
+    opacity: 0.45;
+  }
+  68%,
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+
+.ml-gesture-drag-card {
+  animation: ml-gesture-drag-card calc(2.2s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-drag-slot {
+  animation: ml-gesture-drag-slot calc(2.2s / var(--ml-speed, 1)) ease-in-out infinite;
+}
+
+/* Pinch In (Zoom Out) */
+@keyframes ml-gesture-pinch-box {
+  0%,
+  16% {
+    transform: scale(1.12);
+  }
+  58%,
+  74% {
+    transform: scale(0.68);
+  }
+  92%,
+  100% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes ml-gesture-pinch-tr {
+  0%,
+  16% {
+    transform: translate(0px, 0px);
+  }
+  58%,
+  74% {
+    transform: translate(-6.5px, 6.5px);
+  }
+  92%,
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes ml-gesture-pinch-bl {
+  0%,
+  16% {
+    transform: translate(0px, 0px);
+  }
+  58%,
+  74% {
+    transform: translate(6.5px, -6.5px);
+  }
+  92%,
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+.ml-gesture-pinch-box {
+  animation: ml-gesture-pinch-box calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-pinch-tr {
+  animation: ml-gesture-pinch-tr calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-pinch-bl {
+  animation: ml-gesture-pinch-bl calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+/* Spread Out (Zoom In) */
+@keyframes ml-gesture-spread-box {
+  0%,
+  16% {
+    transform: scale(0.68);
+  }
+  58%,
+  74% {
+    transform: scale(1.14);
+  }
+  92%,
+  100% {
+    transform: scale(0.68);
+  }
+}
+
+@keyframes ml-gesture-spread-tr {
+  0%,
+  16% {
+    transform: translate(-5.5px, 5.5px);
+  }
+  58%,
+  74% {
+    transform: translate(1.5px, -1.5px);
+  }
+  92%,
+  100% {
+    transform: translate(-5.5px, 5.5px);
+  }
+}
+
+@keyframes ml-gesture-spread-bl {
+  0%,
+  16% {
+    transform: translate(5.5px, -5.5px);
+  }
+  58%,
+  74% {
+    transform: translate(-1.5px, 1.5px);
+  }
+  92%,
+  100% {
+    transform: translate(5.5px, -5.5px);
+  }
+}
+
+.ml-gesture-spread-box {
+  animation: ml-gesture-spread-box calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-spread-tr {
+  animation: ml-gesture-spread-tr calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+.ml-gesture-spread-bl {
+  animation: ml-gesture-spread-bl calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+
+/* Two-Finger Rotate */
+@keyframes ml-gesture-rotate-dial {
+  0%,
+  15% {
+    transform: rotate(0deg);
+  }
+  55%,
+  72% {
+    transform: rotate(90deg);
+  }
+  94%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.ml-gesture-rotate-dial {
+  animation: ml-gesture-rotate-dial calc(2.15s / var(--ml-speed, 1)) cubic-bezier(0.45, 0, 0.25, 1)
+    infinite;
+}
+
+/* Edge Swipe Back */
+@keyframes ml-gesture-edge-pull {
+  0%,
+  14% {
+    transform: translateX(0px);
+    opacity: 0.45;
+  }
+  24% {
+    transform: translateX(1px);
+    opacity: 1;
+  }
+  62% {
+    transform: translateX(13px);
+    opacity: 1;
+  }
+  78% {
+    transform: translateX(15px);
+    opacity: 0;
+  }
+  88% {
+    transform: translateX(0px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0px);
+    opacity: 0.45;
+  }
+}
+
+.ml-gesture-edge-pull {
+  animation: ml-gesture-edge-pull calc(1.9s / var(--ml-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
+}
+

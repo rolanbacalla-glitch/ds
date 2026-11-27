@@ -33,6 +33,40 @@ export function CommandPalette({
   emptyMessage = "No matching commands found.",
   className,
 }: CommandPaletteProps) {
+  React.useEffect(() => {
+    const onGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        onOpenChange(!open);
+      } else if (e.key === "Escape" && open) {
+        e.preventDefault();
+        onOpenChange(false);
+      }
+    };
+    window.addEventListener("keydown", onGlobalKeyDown);
+    return () => window.removeEventListener("keydown", onGlobalKeyDown);
+  }, [open, onOpenChange]);
+
+  if (!open) return null;
+
+  return (
+    <CommandPaletteDialog
+      onOpenChange={onOpenChange}
+      items={items}
+      placeholder={placeholder}
+      emptyMessage={emptyMessage}
+      className={className}
+    />
+  );
+}
+
+function CommandPaletteDialog({
+  onOpenChange,
+  items,
+  placeholder,
+  emptyMessage,
+  className,
+}: Omit<CommandPaletteProps, "open">) {
   const [query, setQuery] = React.useState("");
   const [activeIndex, setActiveIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -49,29 +83,9 @@ export function CommandPalette({
   }, [items, query]);
 
   React.useEffect(() => {
-    if (open) {
-      setQuery("");
-      setActiveIndex(0);
-      const id = window.setTimeout(() => inputRef.current?.focus(), 0);
-      return () => window.clearTimeout(id);
-    }
-  }, [open]);
-
-  React.useEffect(() => {
-    const onGlobalKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        onOpenChange(!open);
-      } else if (e.key === "Escape" && open) {
-        e.preventDefault();
-        onOpenChange(false);
-      }
-    };
-    window.addEventListener("keydown", onGlobalKeyDown);
-    return () => window.removeEventListener("keydown", onGlobalKeyDown);
-  }, [open, onOpenChange]);
-
-  if (!open) return null;
+    const id = window.setTimeout(() => inputRef.current?.focus(), 0);
+    return () => window.clearTimeout(id);
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {

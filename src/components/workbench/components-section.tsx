@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import { ComponentPortalClient } from "@/components/portal/component-portal-client";
 import type { ComponentSlug } from "@/lib/component-registry";
@@ -20,6 +20,33 @@ import {
 } from "phosphor-react";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/auth-provider";
+
+const a11yAttrListeners = new Set<() => void>();
+
+function notifyA11yAttrListeners() {
+  a11yAttrListeners.forEach((listener) => listener());
+}
+
+function subscribeA11yAttrs(listener: () => void) {
+  a11yAttrListeners.add(listener);
+  return () => {
+    a11yAttrListeners.delete(listener);
+  };
+}
+
+function getHighContrastSnapshot() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-contrast") === "high";
+}
+
+function getReduceTransparencySnapshot() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-reduce-transparency") === "true";
+}
+
+function getServerFalse() {
+  return false;
+}
 
 interface ComponentsSectionProps {
   activeSpecSlug?: ComponentSlug | null;
@@ -42,24 +69,24 @@ export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
   // Interactive Specimen State
   const [activeSegment, setActiveSegment] = useState<"production" | "staging" | "canary">("production");
   const [sliderValue, setSliderValue] = useState(72);
-  const [highContrast, setHighContrast] = useState(false);
-  const [reduceTransparency, setReduceTransparency] = useState(false);
+  const highContrast = useSyncExternalStore(
+    subscribeA11yAttrs,
+    getHighContrastSnapshot,
+    getServerFalse
+  );
+  const reduceTransparency = useSyncExternalStore(
+    subscribeA11yAttrs,
+    getReduceTransparencySnapshot,
+    getServerFalse
+  );
   const [morphActive, setMorphActive] = useState(false);
   const [inputVal, setInputVal] = useState("oklch(0.77 0.152 258)");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const { showToast } = useToast();
   const { canCopySnippets, user, openAuthModal, logAuditEvent } = useAuth();
 
-  // Sync live accessibility toggles with <html> attributes on mount
-  useEffect(() => {
-    const root = document.documentElement;
-    setHighContrast(root.getAttribute("data-contrast") === "high");
-    setReduceTransparency(root.getAttribute("data-reduce-transparency") === "true");
-  }, []);
-
   const handleToggleHighContrast = () => {
     const next = !highContrast;
-    setHighContrast(next);
     if (next) {
       document.documentElement.setAttribute("data-contrast", "high");
       showToast("High-contrast mode enabled across the workbench");
@@ -67,11 +94,11 @@ export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
       document.documentElement.removeAttribute("data-contrast");
       showToast("Standard contrast restored");
     }
+    notifyA11yAttrListeners();
   };
 
   const handleToggleReduceTransparency = () => {
     const next = !reduceTransparency;
-    setReduceTransparency(next);
     if (next) {
       document.documentElement.setAttribute("data-reduce-transparency", "true");
       showToast("Reduced transparency enabled — glass surfaces are now solid");
@@ -79,6 +106,7 @@ export const ComponentsSection: React.FC<ComponentsSectionProps> = ({
       document.documentElement.removeAttribute("data-reduce-transparency");
       showToast("Liquid glass transparency restored");
     }
+    notifyA11yAttrListeners();
   };
 
   const copySnippet = (id: string, text: string) => {

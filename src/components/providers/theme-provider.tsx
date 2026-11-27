@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useSyncExternalStore } from "react";
 
 export type ThemePolarity = "light" | "dark";
 
@@ -14,6 +14,48 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+const themeListeners = new Set<() => void>();
+
+function notifyThemeListeners() {
+  themeListeners.forEach((listener) => listener());
+}
+
+function readClientTheme(): ThemePolarity {
+  if (typeof window === "undefined") return "light";
+  try {
+    const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved === "dark" || saved === "light") {
+      return saved;
+    }
+  } catch {
+    // Ignore storage access errors in restricted contexts
+  }
+  const attr = document.documentElement.getAttribute("data-theme");
+  return attr === "dark" ? "dark" : "light";
+}
+
+function subscribeTheme(listener: () => void) {
+  themeListeners.add(listener);
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === THEME_STORAGE_KEY) {
+      listener();
+    }
+  };
+  if (typeof window !== "undefined") {
+    window.addEventListener("storage", onStorage);
+  }
+  return () => {
+    themeListeners.delete(listener);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("storage", onStorage);
+    }
+  };
+}
+
+function getServerTheme(): ThemePolarity {
+  return "light";
+}
+
 function applyThemeToDocument(theme: ThemePolarity) {
   const root = document.documentElement;
   root.setAttribute("data-theme", theme);
@@ -21,61 +63,27 @@ function applyThemeToDocument(theme: ThemePolarity) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemePolarity>("light");
-  const [hydrated, setHydrated] = useState(false);
+  const theme = useSyncExternalStore(subscribeTheme, readClientTheme, getServerTheme);
 
-  // Hydrate persisted theme preference from localStorage (or existing DOM attribute)
+  // Keep DOM attributes synchronised with current theme
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved === "dark" || saved === "light") {
-        setThemeState(saved);
-        applyThemeToDocument(saved);
-      } else {
-        const attr = document.documentElement.getAttribute("data-theme");
-        const initial: ThemePolarity = attr === "dark" ? "dark" : "light";
-        setThemeState(initial);
-        applyThemeToDocument(initial);
-      }
-    } catch {
-      // Ignore storage access errors in restricted contexts
-    }
-    setHydrated(true);
-  }, []);
-
-  // Keep DOM and localStorage synchronised after hydration
-  useEffect(() => {
-    if (!hydrated) return;
     applyThemeToDocument(theme);
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      // Ignore storage access errors
-    }
-  }, [theme, hydrated]);
+  }, [theme]);
 
   const setTheme = useCallback((next: ThemePolarity) => {
-    setThemeState(next);
     applyThemeToDocument(next);
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {
       // Ignore storage access errors
     }
+    notifyThemeListeners();
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setThemeState((prev) => {
-      const next: ThemePolarity = prev === "dark" ? "light" : "dark";
-      applyThemeToDocument(next);
-      try {
-        window.localStorage.setItem(THEME_STORAGE_KEY, next);
-      } catch {
-        // Ignore storage access errors
-      }
-      return next;
-    });
-  }, []);
+    const next: ThemePolarity = readClientTheme() === "dark" ? "light" : "dark";
+    setTheme(next);
+  }, [setTheme]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>

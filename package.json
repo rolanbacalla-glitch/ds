@@ -10,7 +10,7 @@
     "build:packages": "npm run build:tokens && npm --workspace=@antigravity/icons run build && npm --workspace=@antigravity/ui run build",
     "verify:wcag": "node scripts/verify-design-system.mjs",
     "prebuild": "npm run build:packages",
-    "dev": "next dev",
+    "dev": "node scripts/dev.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

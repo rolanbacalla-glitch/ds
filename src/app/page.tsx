@@ -14,6 +14,7 @@ import { ExportCompilerSection } from "@/components/workbench/export-compiler-se
 import { UsabilityChecksSection } from "@/components/workbench/usability-checks-section";
 import { IconPlayground } from "@/components/dashboard/icon-playground";
 import { AnimationsPlayground } from "@/components/dashboard/animations-playground";
+import { MICRO_LOADERS } from "@/components/dashboard/micro-loaders";
 import {
   DownloadSimple,
   Cube,
@@ -164,7 +165,7 @@ export default function Home() {
       id: "animations",
       group: "Library",
       title: "Animations",
-      summary: "35 minimalist 60fps geometric micro-loaders built with tokenised SVG and CSS keyframes.",
+      summary: `${MICRO_LOADERS.length} minimalist 60fps geometric loaders and touch gesture animations built with tokenised SVG and CSS keyframes.`,
       icon: PlayCircle,
     },
     {

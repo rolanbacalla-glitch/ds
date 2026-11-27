@@ -8,17 +8,24 @@ export type MicroLoaderCategory =
   | "linear"
   | "bars"
   | "geometric"
-  | "radar";
+  | "radar"
+  | "gestures";
+
+export type GestureSubgroup = "action" | "navigation" | "transform";
 
 export interface MicroLoaderSpec {
   id: string;
   name: string;
   category: MicroLoaderCategory;
+  gestureGroup?: GestureSubgroup;
   useCase: string;
   description: string;
   tags: string[];
   render: (uid?: string) => React.ReactNode;
 }
+
+const GESTURE_HAND_PATH =
+  "M21 30 V17 A3 3 0 0 1 27 17 V24 A2.4 2.4 0 0 1 31.8 24 V25.5 A2.3 2.3 0 0 1 36.4 25.5 V31.5 C36.4 36.8 32.6 40 27.5 40 H23 C19.2 40 16.2 37.8 14.4 34.4 L11.8 29.5 A2.3 2.3 0 0 1 15.7 27 L21 30 Z";
 
 const RING_8_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
 const BLADE_12_ANGLES = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
@@ -1051,6 +1058,649 @@ export const MICRO_LOADERS: MicroLoaderSpec[] = [
       />
     ),
   },
+
+  /* ===================== TOUCH & POINTER GESTURE ICONS (+12) ===================== */
+  /* Pillar 1: Discrete Action Gestures (Apple HIG & Material Design) */
+  {
+    id: "gesture-tap",
+    name: "Single Tap",
+    category: "gestures",
+    gestureGroup: "action",
+    useCase: "Primary activation",
+    description:
+      "Minimalist pointing silhouette pressing downward onto a focal contact point with an expanding touch ripple.",
+    tags: ["gesture", "tap", "click", "touch", "action", "onboarding", "finger"],
+    render: () => (
+      <>
+        <circle
+          cx="24"
+          cy="14"
+          r="9"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.4"
+          className="ml-gesture-tap-ripple"
+        />
+        <circle cx="24" cy="14" r="2.2" fill="var(--sys-primary)" opacity="0.85" />
+        <g className="ml-gesture-tap-hand">
+          <path
+            d={GESTURE_HAND_PATH}
+            fill="var(--sys-surface-lowest)"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-double-tap",
+    name: "Double Tap",
+    category: "gestures",
+    gestureGroup: "action",
+    useCase: "Quick zoom & like",
+    description:
+      "Two rapid consecutive taps emitting staggered primary and tertiary contact ripples with a calm rest beat.",
+    tags: ["gesture", "double-tap", "zoom", "like", "touch", "action", "onboarding"],
+    render: () => (
+      <>
+        <circle
+          cx="24"
+          cy="14"
+          r="8.5"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.3"
+          className="ml-gesture-dtap-r1"
+        />
+        <circle
+          cx="24"
+          cy="14"
+          r="11"
+          fill="none"
+          stroke="var(--sys-tertiary)"
+          strokeWidth="2"
+          className="ml-gesture-dtap-r2"
+        />
+        <circle cx="24" cy="14" r="2" fill="var(--sys-primary)" />
+        <g className="ml-gesture-dtap-hand">
+          <path
+            d={GESTURE_HAND_PATH}
+            fill="var(--sys-surface-lowest)"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-long-press",
+    name: "Long Press",
+    category: "gestures",
+    gestureGroup: "action",
+    useCase: "Context menu & hold",
+    description:
+      "Sustained touch-and-hold gesture with a radial 360° progress halo filling around the contact point before confirming.",
+    tags: ["gesture", "long-press", "hold", "haptic", "context-menu", "action", "touch"],
+    render: () => (
+      <>
+        <circle
+          cx="24"
+          cy="14"
+          r="9.5"
+          fill="none"
+          stroke="var(--sys-outline)"
+          strokeWidth="2.4"
+        />
+        <circle
+          cx="24"
+          cy="14"
+          r="9.5"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          transform="rotate(-90 24 14)"
+          className="ml-gesture-hold-ring"
+        />
+        <circle
+          cx="24"
+          cy="14"
+          r="9.5"
+          fill="none"
+          stroke="var(--sys-tertiary)"
+          strokeWidth="2"
+          className="ml-gesture-hold-pulse"
+        />
+        <g className="ml-gesture-hold-hand">
+          <path
+            d={GESTURE_HAND_PATH}
+            fill="var(--sys-surface-lowest)"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </>
+    ),
+  },
+
+  /* Pillar 2: Navigation & Continuous Gestures */
+  {
+    id: "gesture-swipe-x",
+    name: "Swipe Horizontal",
+    category: "gestures",
+    gestureGroup: "navigation",
+    useCase: "Carousel & card dismiss",
+    description:
+      "Linear left-to-right swipe along a directional rail with an expanding primary motion trail and natural wrist tilt.",
+    tags: ["gesture", "swipe", "horizontal", "carousel", "dismiss", "navigation", "slide"],
+    render: () => (
+      <>
+        <line
+          x1="9"
+          y1="13"
+          x2="38"
+          y2="13"
+          stroke="var(--sys-outline)"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+        />
+        <line
+          x1="12"
+          y1="13"
+          x2="37"
+          y2="13"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          className="ml-gesture-swipe-x-trail"
+        />
+        <polyline
+          points="34.5,9.5 38.5,13 34.5,16.5"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <g className="ml-gesture-swipe-x">
+          <circle cx="24" cy="13" r="3" fill="var(--sys-primary)" opacity="0.28" />
+          <g transform="translate(24 27) scale(0.76) translate(-24 -27)">
+            <path
+              d={GESTURE_HAND_PATH}
+              fill="var(--sys-surface-lowest)"
+              stroke="var(--sys-on-surface)"
+              strokeWidth="2.9"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </g>
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-swipe-y",
+    name: "Swipe Vertical",
+    category: "gestures",
+    gestureGroup: "navigation",
+    useCase: "Sheet & feed navigation",
+    description:
+      "Upward vertical swipe along a tonal guide rail with a rising contact node and fading velocity trail.",
+    tags: ["gesture", "swipe", "vertical", "sheet", "drawer", "navigation", "flick"],
+    render: () => (
+      <>
+        <line
+          x1="16"
+          y1="39"
+          x2="16"
+          y2="10"
+          stroke="var(--sys-outline)"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+        />
+        <line
+          x1="16"
+          y1="36"
+          x2="16"
+          y2="11"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          className="ml-gesture-swipe-y-trail"
+        />
+        <polyline
+          points="12.5,13.5 16,9.5 19.5,13.5"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <g className="ml-gesture-swipe-y">
+          <circle cx="16" cy="24" r="3.4" fill="var(--sys-primary)" opacity="0.26" />
+          <circle cx="16" cy="24" r="2.2" fill="var(--sys-primary)" />
+          <path
+            d="M19 24 H31 A3 3 0 0 1 31 30 H24 A2.3 2.3 0 0 1 21.7 27.7 V24"
+            fill="var(--sys-surface-lowest)"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <rect
+            x="23"
+            y="29.5"
+            width="9.5"
+            height="5.5"
+            rx="2.75"
+            fill="var(--sys-surface-lowest)"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.2"
+          />
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-scroll",
+    name: "Scroll Track",
+    category: "gestures",
+    gestureGroup: "navigation",
+    useCase: "Long-form reading",
+    description:
+      "Minimalist mouse and trackpad capsule with a gliding primary scroll bead and staggered downward chevrons.",
+    tags: ["gesture", "scroll", "mouse", "trackpad", "reading", "navigation", "onboarding"],
+    render: () => (
+      <>
+        <rect
+          x="15"
+          y="6"
+          width="18"
+          height="26"
+          rx="9"
+          fill="none"
+          stroke="var(--sys-on-surface)"
+          strokeWidth="2.4"
+        />
+        <rect
+          x="22.4"
+          y="11"
+          width="3.2"
+          height="6.2"
+          rx="1.6"
+          fill="var(--sys-primary)"
+          className="ml-gesture-scroll-wheel"
+        />
+        <polyline
+          points="19.5,36 24,40 28.5,36"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="ml-fade"
+        />
+        <polyline
+          points="19.5,40.5 24,44.5 28.5,40.5"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="ml-fade"
+          style={{ animationDelay: "calc(0.24s / var(--ml-speed, 1))" }}
+        />
+      </>
+    ),
+  },
+  {
+    id: "gesture-pull-refresh",
+    name: "Pull to Refresh",
+    category: "gestures",
+    gestureGroup: "navigation",
+    useCase: "Feed & inbox sync",
+    description:
+      "Elastic top-sheet pull gesture that reveals a rotating circular refresh arc before springing cleanly back.",
+    tags: ["gesture", "pull-to-refresh", "refresh", "feed", "sync", "mobile", "navigation"],
+    render: () => (
+      <>
+        <rect
+          x="10"
+          y="6"
+          width="28"
+          height="36"
+          rx="6"
+          fill="none"
+          stroke="var(--sys-outline)"
+          strokeWidth="2.2"
+        />
+        <g className="ml-gesture-ptr-spinner">
+          <circle
+            cx="24"
+            cy="14.5"
+            r="4.2"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeDasharray="17 10"
+          />
+        </g>
+        <g className="ml-gesture-ptr-sheet">
+          <rect
+            x="13.5"
+            y="14"
+            width="21"
+            height="17"
+            rx="3.5"
+            fill="var(--sys-surface-lowest)"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.2"
+          />
+          <line
+            x1="19.5"
+            y1="18.5"
+            x2="28.5"
+            y2="18.5"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
+          <line
+            x1="17.5"
+            y1="23.5"
+            x2="30.5"
+            y2="23.5"
+            stroke="var(--sys-outline)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <line
+            x1="17.5"
+            y1="27.2"
+            x2="26"
+            y2="27.2"
+            stroke="var(--sys-outline)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-drag-drop",
+    name: "Drag & Drop",
+    category: "gestures",
+    gestureGroup: "navigation",
+    useCase: "Reorder & Kanban move",
+    description:
+      "Elevated tile picked up by a touch anchor, carried smoothly across to a dashed target slot, and settled into place.",
+    tags: ["gesture", "drag", "drop", "reorder", "kanban", "move", "navigation"],
+    render: () => (
+      <>
+        <rect
+          x="6.5"
+          y="15"
+          width="14"
+          height="14"
+          rx="3.5"
+          fill="none"
+          stroke="var(--sys-outline)"
+          strokeWidth="2"
+          strokeDasharray="3 2.5"
+        />
+        <rect
+          x="27.5"
+          y="15"
+          width="14"
+          height="14"
+          rx="3.5"
+          fill="none"
+          stroke="var(--sys-primary)"
+          strokeWidth="2"
+          strokeDasharray="3 2.5"
+          className="ml-gesture-drag-slot"
+        />
+        <line
+          x1="21.5"
+          y1="22"
+          x2="26.5"
+          y2="22"
+          stroke="var(--sys-outline)"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+        <g className="ml-gesture-drag-card">
+          <rect
+            x="6.5"
+            y="15"
+            width="14"
+            height="14"
+            rx="3.5"
+            fill="var(--sys-surface-lowest)"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.3"
+          />
+          <circle cx="11.5" cy="20" r="1.1" fill="var(--sys-on-surface)" />
+          <circle cx="15.5" cy="20" r="1.1" fill="var(--sys-on-surface)" />
+          <circle cx="11.5" cy="24" r="1.1" fill="var(--sys-on-surface)" />
+          <circle cx="15.5" cy="24" r="1.1" fill="var(--sys-on-surface)" />
+          <circle cx="13.5" cy="31.5" r="3.4" fill="var(--sys-primary)" opacity="0.24" />
+          <circle cx="13.5" cy="31.5" r="2.1" fill="var(--sys-primary)" />
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-edge-swipe",
+    name: "Edge Swipe Back",
+    category: "gestures",
+    gestureGroup: "navigation",
+    useCase: "Mobile back navigation",
+    description:
+      "Left screen-edge rail with a touch node sweeping inward to reveal a crisp directional back chevron.",
+    tags: ["gesture", "edge-swipe", "back", "ios", "android", "navigation", "mobile"],
+    render: () => (
+      <>
+        <rect x="8" y="8" width="3" height="32" rx="1.5" fill="var(--sys-on-surface)" />
+        <path
+          d="M11 9.5 H35 A4 4 0 0 1 39 13.5 V34.5 A4 4 0 0 1 35 38.5 H11"
+          fill="none"
+          stroke="var(--sys-outline)"
+          strokeWidth="2.1"
+          strokeLinecap="round"
+        />
+        <g className="ml-gesture-edge-pull">
+          <path
+            d="M11 16 C17 17.5 19.5 20.5 19.5 24 C19.5 27.5 17 30.5 11 32"
+            fill="var(--sys-primary)"
+            opacity="0.18"
+          />
+          <line
+            x1="11.5"
+            y1="24"
+            x2="23"
+            y2="24"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
+          <polyline
+            points="18.5,19.5 14,24 18.5,28.5"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="24" cy="24" r="2.6" fill="var(--sys-primary)" />
+        </g>
+      </>
+    ),
+  },
+
+  /* Pillar 3: Multi-Touch & Spatial Transform Gestures */
+  {
+    id: "gesture-pinch-in",
+    name: "Pinch In",
+    category: "gestures",
+    gestureGroup: "transform",
+    useCase: "Map & canvas zoom out",
+    description:
+      "Two opposing diagonal touch points converging inward with corner arrows as the focal frame scales down.",
+    tags: ["gesture", "pinch", "zoom-out", "multi-touch", "transform", "scale", "map"],
+    render: () => (
+      <>
+        <rect
+          x="16.5"
+          y="16.5"
+          width="15"
+          height="15"
+          rx="3.2"
+          fill="none"
+          stroke="var(--sys-on-surface)"
+          strokeWidth="2.3"
+          className="ml-gesture-pinch-box"
+        />
+        <g className="ml-gesture-pinch-tr">
+          <circle cx="37.5" cy="10.5" r="4.2" fill="var(--sys-primary)" opacity="0.22" />
+          <circle cx="37.5" cy="10.5" r="2.4" fill="var(--sys-primary)" />
+          <polyline
+            points="31.5,12 31.5,16.5 36,16.5"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+        <g className="ml-gesture-pinch-bl">
+          <circle cx="10.5" cy="37.5" r="4.2" fill="var(--sys-primary)" opacity="0.22" />
+          <circle cx="10.5" cy="37.5" r="2.4" fill="var(--sys-primary)" />
+          <polyline
+            points="16.5,36 16.5,31.5 12,31.5"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-pinch-out",
+    name: "Spread Out",
+    category: "gestures",
+    gestureGroup: "transform",
+    useCase: "Photo & map zoom in",
+    description:
+      "Two diagonal touch points spreading outward from the centre while a viewport frame smoothly scales up.",
+    tags: ["gesture", "spread", "pinch-out", "zoom-in", "multi-touch", "transform", "photo"],
+    render: () => (
+      <>
+        <rect
+          x="16.5"
+          y="16.5"
+          width="15"
+          height="15"
+          rx="3.2"
+          fill="none"
+          stroke="var(--sys-on-surface)"
+          strokeWidth="2.3"
+          className="ml-gesture-spread-box"
+        />
+        <g className="ml-gesture-spread-tr">
+          <circle cx="36.5" cy="11.5" r="4.2" fill="var(--sys-primary)" opacity="0.22" />
+          <circle cx="36.5" cy="11.5" r="2.4" fill="var(--sys-primary)" />
+          <polyline
+            points="32,8 37.5,8 37.5,13.5"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+        <g className="ml-gesture-spread-bl">
+          <circle cx="11.5" cy="36.5" r="4.2" fill="var(--sys-primary)" opacity="0.22" />
+          <circle cx="11.5" cy="36.5" r="2.4" fill="var(--sys-primary)" />
+          <polyline
+            points="16,40 10.5,40 10.5,34.5"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </>
+    ),
+  },
+  {
+    id: "gesture-rotate",
+    name: "Two-Finger Rotate",
+    category: "gestures",
+    gestureGroup: "transform",
+    useCase: "Canvas & 3D orientation",
+    description:
+      "Two opposing touch points pivoting 90° along a circular orbital track to rotate a centred geometric frame.",
+    tags: ["gesture", "rotate", "pivot", "multi-touch", "transform", "canvas", "3d"],
+    render: () => (
+      <>
+        <circle
+          cx="24"
+          cy="24"
+          r="16.5"
+          fill="none"
+          stroke="var(--sys-outline)"
+          strokeWidth="2"
+          strokeDasharray="3.5 3.5"
+        />
+        <g className="ml-gesture-rotate-dial">
+          <rect
+            x="17.5"
+            y="17.5"
+            width="13"
+            height="13"
+            rx="3"
+            fill="none"
+            stroke="var(--sys-on-surface)"
+            strokeWidth="2.3"
+          />
+          <circle cx="24" cy="20.5" r="1.2" fill="var(--sys-primary)" />
+          <path
+            d="M27.5 8 A16.5 16.5 0 0 1 36.5 13.5"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M20.5 40 A16.5 16.5 0 0 1 11.5 34.5"
+            fill="none"
+            stroke="var(--sys-primary)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+          />
+          <circle cx="24" cy="7.5" r="4" fill="var(--sys-primary)" opacity="0.22" />
+          <circle cx="24" cy="7.5" r="2.4" fill="var(--sys-primary)" />
+          <circle cx="24" cy="40.5" r="4" fill="var(--sys-primary)" opacity="0.22" />
+          <circle cx="24" cy="40.5" r="2.4" fill="var(--sys-primary)" />
+        </g>
+      </>
+    ),
+  },
 ];
 
 interface MicroLoaderPreviewProps {
@@ -1071,13 +1721,14 @@ export const MicroLoaderPreview: React.FC<MicroLoaderPreviewProps> = ({
   className,
 }) => {
   const uid = useId().replace(/:/g, "");
+  const kindLabel = loader.category === "gestures" ? "gesture animation" : "loading animation";
   return (
     <svg
       viewBox="0 0 48 48"
       width={size}
       height={size}
       role="img"
-      aria-label={`${loader.name} loading animation`}
+      aria-label={`${loader.name} ${kindLabel}`}
       data-ml-paused={paused ? "true" : undefined}
       data-ml-reduced={reducedMotion ? "true" : undefined}
       className={`ml-svg shrink-0 ${className ?? ""}`}
@@ -1089,7 +1740,8 @@ export const MicroLoaderPreview: React.FC<MicroLoaderPreviewProps> = ({
 };
 
 export function buildLoaderReactSnippet(loader: MicroLoaderSpec, size: number, speed: number): string {
-  const componentName = loader.name.replace(/[^a-zA-Z0-9]+/g, "") + "Loader";
+  const suffix = loader.category === "gestures" ? "Gesture" : "Loader";
+  const componentName = loader.name.replace(/[^a-zA-Z0-9]+/g, "") + suffix;
   return `import { MicroLoaderPreview, MICRO_LOADERS } from "@/components/dashboard/micro-loaders";
 
 export function ${componentName}() {

@@ -23,14 +23,14 @@ export const SlidingTabList: React.FC<SlidingTabListProps> = ({
   children,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const hasAnimatedRef = useRef(false);
   const [indicator, setIndicator] = useState<{
     left: number;
     top: number;
     width: number;
     height: number;
     ready: boolean;
-  }>({ left: 0, top: 0, width: 0, height: 0, ready: false });
+    animate: boolean;
+  }>({ left: 0, top: 0, width: 0, height: 0, ready: false, animate: false });
 
   const measure = useCallback(() => {
     const container = containerRef.current;
@@ -38,21 +38,18 @@ export const SlidingTabList: React.FC<SlidingTabListProps> = ({
     const activeEl = container.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
     if (!activeEl) return;
 
-    setIndicator({
+    setIndicator((prev) => ({
       left: activeEl.offsetLeft,
       top: activeEl.offsetTop,
       width: activeEl.offsetWidth,
       height: activeEl.offsetHeight,
       ready: true,
-    });
+      animate: prev.ready,
+    }));
   }, []);
 
   useLayoutEffect(() => {
     measure();
-    const frame = requestAnimationFrame(() => {
-      hasAnimatedRef.current = true;
-    });
-    return () => cancelAnimationFrame(frame);
   }, [activeKey, measure]);
 
   useEffect(() => {
@@ -89,7 +86,7 @@ export const SlidingTabList: React.FC<SlidingTabListProps> = ({
             width: `${indicator.width}px`,
             height: `${indicator.height}px`,
             transform: `translate3d(${indicator.left}px, ${indicator.top}px, 0)`,
-            transition: hasAnimatedRef.current
+            transition: indicator.animate
               ? "transform 280ms var(--ease-spatial-spring), width 280ms var(--ease-spatial-spring), height 280ms var(--ease-spatial-spring)"
               : "none",
           }}
