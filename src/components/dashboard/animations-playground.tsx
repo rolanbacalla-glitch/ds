@@ -23,7 +23,11 @@ import {
   Code,
   Activity,
   LockSimple,
+  CaretDown,
+  CaretUp,
 } from "phosphor-react";
+
+const INITIAL_VISIBLE_COUNT = 16;
 
 type FilterCategory = "all" | MicroLoaderCategory;
 type GestureGroupFilter = "all" | GestureSubgroup;
@@ -53,6 +57,7 @@ export const AnimationsPlayground: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("all");
   const [activeGestureGroup, setActiveGestureGroup] = useState<GestureGroupFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAll, setShowAll] = useState(false);
   const [size, setSize] = useState(56);
   const [speed, setSpeed] = useState<number>(1);
   const [paused, setPaused] = useState(false);
@@ -91,6 +96,13 @@ export const AnimationsPlayground: React.FC = () => {
       );
     });
   }, [activeCategory, activeGestureGroup, searchQuery]);
+
+  const hasMoreLoaders = filteredLoaders.length > INITIAL_VISIBLE_COUNT;
+  const visibleLoaders = useMemo(
+    () => (showAll || !hasMoreLoaders ? filteredLoaders : filteredLoaders.slice(0, INITIAL_VISIBLE_COUNT)),
+    [filteredLoaders, hasMoreLoaders, showAll]
+  );
+  const hiddenCount = Math.max(0, filteredLoaders.length - INITIAL_VISIBLE_COUNT);
 
   const reactSnippet = useMemo(
     () => buildLoaderReactSnippet(selectedLoader, size, speed),
@@ -397,7 +409,9 @@ export const AnimationsPlayground: React.FC = () => {
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--sys-on-surface)] flex items-center gap-2">
                   <span>Browse Animations</span>
                   <span className="text-[11px] font-mono font-normal text-[var(--sys-primary)] tabular-nums">
-                    ({filteredLoaders.length} of {MICRO_LOADERS.length})
+                    {hasMoreLoaders && !showAll
+                      ? `(Showing ${visibleLoaders.length} of ${filteredLoaders.length})`
+                      : `(${filteredLoaders.length} of ${MICRO_LOADERS.length})`}
                   </span>
                 </h3>
                 <p className="text-xs text-[var(--sys-on-surface-tertiary)]">
@@ -416,7 +430,10 @@ export const AnimationsPlayground: React.FC = () => {
                 <input
                   type="search"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowAll(false);
+                  }}
                   placeholder="Search animations by name, gesture, or tag (e.g. swipe, pinch, radar, dots)…"
                   aria-label="Search animations"
                   className="w-full h-10 pl-10 pr-4 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] focus:border-[var(--sys-primary)] focus:outline-none text-xs text-[var(--sys-on-surface)] placeholder:text-[var(--sys-on-surface-tertiary)] transition-colors"
@@ -441,6 +458,7 @@ export const AnimationsPlayground: React.FC = () => {
                         data-tab-key={cat.id}
                         onClick={() => {
                           setActiveCategory(cat.id);
+                          setShowAll(false);
                           if (cat.id !== "gestures") {
                             setActiveGestureGroup("all");
                           }
@@ -478,7 +496,10 @@ export const AnimationsPlayground: React.FC = () => {
                         key={group.id}
                         type="button"
                         aria-pressed={active}
-                        onClick={() => setActiveGestureGroup(group.id)}
+                        onClick={() => {
+                          setActiveGestureGroup(group.id);
+                          setShowAll(false);
+                        }}
                         className={cn(
                           "min-h-[30px] px-2.5 py-1 rounded-lg border text-[11px] font-mono transition-colors cursor-pointer inline-flex items-center gap-1.5",
                           active
@@ -507,49 +528,77 @@ export const AnimationsPlayground: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3.5">
-              {filteredLoaders.map((loader) => {
-                const isSelected = loader.id === selectedLoader.id;
-                return (
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3.5">
+                {visibleLoaders.map((loader) => {
+                  const isSelected = loader.id === selectedLoader.id;
+                  return (
+                    <button
+                      key={loader.id}
+                      type="button"
+                      onClick={() => setSelectedLoader(loader)}
+                      aria-pressed={isSelected}
+                      className={cn(
+                        "group rounded-2xl p-4 text-left flex flex-col items-center justify-between gap-3 border transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]",
+                        isSelected
+                          ? "bg-[var(--sys-surface-low)] border-[var(--sys-primary)] ring-1 ring-[var(--sys-primary)]/30"
+                          : "bg-[var(--sys-surface-lowest)] border-[var(--sys-outline-variant)] hover:border-[var(--sys-outline)] hover:bg-[var(--sys-surface-low)]"
+                      )}
+                    >
+                      <div className="h-20 w-full flex items-center justify-center">
+                        <MicroLoaderPreview
+                          loader={loader}
+                          size={44}
+                          speed={speed}
+                          paused={paused}
+                          reducedMotion={reducedPreview}
+                        />
+                      </div>
+                      <div className="w-full space-y-0.5 text-center">
+                        <div
+                          className={cn(
+                            "text-xs font-semibold truncate transition-colors",
+                            isSelected
+                              ? "text-[var(--sys-primary)]"
+                              : "text-[var(--sys-on-surface)] group-hover:text-[var(--sys-primary)]"
+                          )}
+                        >
+                          {loader.name}
+                        </div>
+                        <div className="text-[10px] font-mono text-[var(--sys-on-surface-tertiary)] truncate">
+                          {loader.useCase}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {hasMoreLoaders && (
+                <div className="flex items-center justify-center pt-2 border-t border-[var(--sys-outline-variant)]">
                   <button
-                    key={loader.id}
                     type="button"
-                    onClick={() => setSelectedLoader(loader)}
-                    aria-pressed={isSelected}
-                    className={cn(
-                      "group rounded-2xl p-4 text-left flex flex-col items-center justify-between gap-3 border transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]",
-                      isSelected
-                        ? "bg-[var(--sys-surface-low)] border-[var(--sys-primary)] ring-1 ring-[var(--sys-primary)]/30"
-                        : "bg-[var(--sys-surface-lowest)] border-[var(--sys-outline-variant)] hover:border-[var(--sys-outline)] hover:bg-[var(--sys-surface-low)]"
-                    )}
+                    aria-expanded={showAll}
+                    onClick={() => setShowAll((prev) => !prev)}
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[var(--sys-outline)] bg-[var(--sys-surface-lowest)] px-5 py-2 text-xs font-semibold text-[var(--sys-on-surface)] transition-colors hover:border-[var(--sys-primary)] hover:bg-[var(--sys-surface-high)] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sys-primary)]"
                   >
-                    <div className="h-20 w-full flex items-center justify-center">
-                      <MicroLoaderPreview
-                        loader={loader}
-                        size={44}
-                        speed={speed}
-                        paused={paused}
-                        reducedMotion={reducedPreview}
-                      />
-                    </div>
-                    <div className="w-full space-y-0.5 text-center">
-                      <div
-                        className={cn(
-                          "text-xs font-semibold truncate transition-colors",
-                          isSelected
-                            ? "text-[var(--sys-primary)]"
-                            : "text-[var(--sys-on-surface)] group-hover:text-[var(--sys-primary)]"
-                        )}
-                      >
-                        {loader.name}
-                      </div>
-                      <div className="text-[10px] font-mono text-[var(--sys-on-surface-tertiary)] truncate">
-                        {loader.useCase}
-                      </div>
-                    </div>
+                    {showAll ? (
+                      <>
+                        <span>Show less</span>
+                        <CaretUp size={14} weight="bold" className="text-[var(--sys-primary)]" aria-hidden="true" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Show more</span>
+                        <span className="rounded-full bg-[var(--sys-primary-container)] px-2 py-0.5 font-mono text-[11px] font-semibold tabular-nums text-[var(--sys-on-primary-container)]">
+                          +{hiddenCount}
+                        </span>
+                        <CaretDown size={14} weight="bold" className="text-[var(--sys-primary)]" aria-hidden="true" />
+                      </>
+                    )}
                   </button>
-                );
-              })}
+                </div>
+              )}
             </div>
           )}
         </div>
