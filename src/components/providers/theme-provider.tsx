@@ -21,7 +21,7 @@ function notifyThemeListeners() {
 }
 
 function readClientTheme(): ThemePolarity {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "dark";
   try {
     const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
     if (saved === "dark" || saved === "light") {
@@ -31,7 +31,7 @@ function readClientTheme(): ThemePolarity {
     // Ignore storage access errors in restricted contexts
   }
   const attr = document.documentElement.getAttribute("data-theme");
-  return attr === "dark" ? "dark" : "light";
+  return attr === "light" ? "light" : "dark";
 }
 
 function subscribeTheme(listener: () => void) {
@@ -53,7 +53,7 @@ function subscribeTheme(listener: () => void) {
 }
 
 function getServerTheme(): ThemePolarity {
-  return "light";
+  return "dark";
 }
 
 function applyThemeToDocument(theme: ThemePolarity) {

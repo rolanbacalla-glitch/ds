@@ -118,7 +118,7 @@ export const DEFAULT_PORTFOLIO_SETTINGS: PortfolioSettings = {
   ownerDisplayName: "Rolan Bacalla",
   lockMessage:
     "This design system workbench is published as a live interactive portfolio showcase. You are welcome to explore every component, token scale, and theme live, whilst file exports and source code downloads remain restricted.",
-  defaultPresetName: "Monochrome Swiss",
+  defaultPresetName: "Cobalt Obsidian",
 };
 
 export interface UserProfile {

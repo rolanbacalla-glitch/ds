@@ -518,7 +518,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             300,
             DEFAULT_PORTFOLIO_SETTINGS.lockMessage
           ),
-          defaultPresetName: clampString(next.defaultPresetName, 60, "Monochrome Swiss"),
+          defaultPresetName: clampString(next.defaultPresetName, 60, "Cobalt Obsidian"),
           updatedAt: serverTimestamp(),
           updatedBy: current.uid,
         });

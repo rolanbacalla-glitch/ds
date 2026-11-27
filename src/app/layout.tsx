@@ -30,8 +30,8 @@ export default function RootLayout({
   return (
     <html
       lang="en-GB"
-      data-theme="light"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      data-theme="dark"
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

@@ -10,15 +10,6 @@ export interface SeedConfig {
 
 export const SEED_PRESETS: SeedConfig[] = [
   {
-    name: "Monochrome Swiss",
-    hue: 250,
-    chroma: 0.02,
-    secondaryHue: 250,
-    tertiaryHue: 160,
-    neutralChroma: 0.003,
-    radiusScale: 0.5,
-  },
-  {
     name: "Cobalt Obsidian",
     hue: 258,
     chroma: 0.19,
@@ -26,6 +17,15 @@ export const SEED_PRESETS: SeedConfig[] = [
     tertiaryHue: 162,
     neutralChroma: 0.012,
     radiusScale: 1,
+  },
+  {
+    name: "Monochrome Swiss",
+    hue: 250,
+    chroma: 0.02,
+    secondaryHue: 250,
+    tertiaryHue: 160,
+    neutralChroma: 0.003,
+    radiusScale: 0.5,
   },
   {
     name: "Emerald Bio-Lab",
