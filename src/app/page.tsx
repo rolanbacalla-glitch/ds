@@ -16,7 +16,6 @@ import { IconPlayground } from "@/components/dashboard/icon-playground";
 import { AnimationsPlayground } from "@/components/dashboard/animations-playground";
 import { MICRO_LOADERS } from "@/components/dashboard/micro-loaders";
 import {
-  DownloadSimple,
   Cube,
   Swatches,
   TextT,
@@ -26,7 +25,6 @@ import {
   ShieldCheck,
   Code,
   ArrowRight,
-  ArrowUpRight,
 } from "phosphor-react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { useTheme } from "@/components/providers/theme-provider";
@@ -210,35 +208,6 @@ export default function Home() {
               </strong>{" "}
               with accessible React 19 primitives and ready-to-use token exports for code and Figma.
             </p>
-
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => handleSelectSection("components")}
-                className="h-10 px-4 rounded-lg bg-[var(--sys-on-surface)] text-[var(--sys-surface-canvas)] text-sm font-medium inline-flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer"
-              >
-                <Cube size={16} />
-                <span>Browse Components</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectSection("export")}
-                className="h-10 px-4 rounded-lg bg-[var(--sys-surface-low)] hover:bg-[var(--sys-surface-container)] text-[var(--sys-on-surface)] border border-[var(--sys-outline)] text-sm font-medium inline-flex items-center gap-2 transition-colors cursor-pointer"
-              >
-                <DownloadSimple size={16} />
-                <span>Export Tokens</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectSpec("form-field")}
-                className="h-10 px-3.5 rounded-lg text-[var(--sys-on-surface-secondary)] hover:text-[var(--sys-on-surface)] hover:bg-[var(--sys-surface-low)] text-sm font-medium inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <span>Component Specs</span>
-                <ArrowUpRight size={15} />
-              </button>
-            </div>
           </section>
 
           {/* Compact Live Theme & Seed Strip */}
