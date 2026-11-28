@@ -183,20 +183,21 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
         </div>
       </div>
 
-      {/* Main Grid: Theme Customiser + How Colours Connect */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Customise Your Brand Theme */}
-        <div className="lg:col-span-5 tonal-card p-6 space-y-6">
-          <div className="flex items-center justify-between border-b border-[var(--sys-outline-variant)] pb-4">
+      {/* Stacked Full-Width Rows: Brand Theme Customiser above Token Pipeline */}
+      <div className="space-y-6">
+        {/* Row 1: Customise Your Brand Theme */}
+        <div className="tonal-card p-6 space-y-6">
+          <div className="flex items-center justify-between gap-4 border-b border-[var(--sys-outline-variant)] pb-4">
             <div className="flex items-center gap-2.5">
-              <Sliders size={18} className="text-[var(--sys-primary)]" />
+              <Sliders size={18} className="text-[var(--sys-primary)] shrink-0" />
               <h3 className="text-sm font-semibold text-[var(--sys-on-surface)]">
                 Customise Your Brand Theme
               </h3>
             </div>
             <button
+              type="button"
               onClick={() => onChangeSeed(SEED_PRESETS[0])}
-              className="text-xs font-medium text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-primary)] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-medium text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-primary)] flex items-center gap-1 cursor-pointer shrink-0"
               title="Reset to default theme"
             >
               <ArrowsClockwise size={13} />
@@ -205,72 +206,75 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
           </div>
 
           <div className="space-y-5">
-            {/* Primary Hue */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="font-medium text-[var(--sys-on-surface-secondary)]">
-                  Primary Brand Colour
-                </span>
-                <span className="font-mono font-semibold text-[var(--sys-primary)] tabular-nums">
-                  {seed.hue}°
-                </span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={360}
-                value={seed.hue}
-                onChange={(e) =>
-                  onChangeSeed({ ...seed, name: "Custom Theme", hue: Number(e.target.value) })
-                }
-                className="precision-slider"
-                aria-label="Primary Brand Colour"
-              />
-              <div className="flex justify-between text-[10px] text-[var(--sys-on-surface-quaternary)] tabular-nums">
-                <span>Red</span>
-                <span>Green</span>
-                <span>Blue</span>
-                <span>Violet</span>
-              </div>
-            </div>
-
-            {/* Primary Chroma */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="font-medium text-[var(--sys-on-surface-secondary)]">
-                  Colour Vibrancy
-                </span>
-                <span className="font-mono font-semibold text-[var(--sys-primary)] tabular-nums">
-                  {Math.round((seed.chroma / 0.28) * 100)}%
-                </span>
-              </div>
-              <input
-                type="range"
-                min={0.01}
-                max={0.28}
-                step={0.01}
-                value={seed.chroma}
-                onChange={(e) =>
-                  onChangeSeed({ ...seed, name: "Custom Theme", chroma: Number(e.target.value) })
-                }
-                className="precision-slider"
-                aria-label="Colour Vibrancy"
-              />
-              <div className="flex justify-between text-[10px] text-[var(--sys-on-surface-quaternary)]">
-                <span>Muted</span>
-                <span>Balanced</span>
-                <span>Vibrant</span>
-              </div>
-            </div>
-
-            {/* Secondary & Tertiary Hue Row */}
-            <div className="grid grid-cols-2 gap-4 pt-1">
+            {/* Primary Hue & Colour Vibrancy */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Primary Hue */}
               <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="font-medium text-[var(--sys-on-surface-secondary)]">
+                    Primary Brand Colour
+                  </span>
+                  <span className="font-mono font-semibold text-[var(--sys-primary)] tabular-nums shrink-0">
+                    {seed.hue}°
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={360}
+                  value={seed.hue}
+                  onChange={(e) =>
+                    onChangeSeed({ ...seed, name: "Custom Theme", hue: Number(e.target.value) })
+                  }
+                  className="precision-slider"
+                  aria-label="Primary Brand Colour"
+                />
+                <div className="flex justify-between text-[10px] text-[var(--sys-on-surface-quaternary)] tabular-nums">
+                  <span>Red</span>
+                  <span>Green</span>
+                  <span>Blue</span>
+                  <span>Violet</span>
+                </div>
+              </div>
+
+              {/* Primary Chroma */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="font-medium text-[var(--sys-on-surface-secondary)]">
+                    Colour Vibrancy
+                  </span>
+                  <span className="font-mono font-semibold text-[var(--sys-primary)] tabular-nums shrink-0">
+                    {Math.round((seed.chroma / 0.28) * 100)}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={0.01}
+                  max={0.28}
+                  step={0.01}
+                  value={seed.chroma}
+                  onChange={(e) =>
+                    onChangeSeed({ ...seed, name: "Custom Theme", chroma: Number(e.target.value) })
+                  }
+                  className="precision-slider"
+                  aria-label="Colour Vibrancy"
+                />
+                <div className="flex justify-between text-[10px] text-[var(--sys-on-surface-quaternary)]">
+                  <span>Muted</span>
+                  <span>Balanced</span>
+                  <span>Vibrant</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Secondary Controls Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 pt-1">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2 text-xs">
                   <span className="font-medium text-[var(--sys-on-surface-secondary)]">
                     Secondary Accent
                   </span>
-                  <span className="font-mono text-[var(--sys-secondary)] tabular-nums">
+                  <span className="font-mono text-[var(--sys-secondary)] tabular-nums shrink-0">
                     {seed.secondaryHue}°
                   </span>
                 </div>
@@ -292,11 +296,11 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+                <div className="flex items-center justify-between gap-2 text-xs">
                   <span className="font-medium text-[var(--sys-on-surface-secondary)]">
                     Highlight Accent
                   </span>
-                  <span className="font-mono text-[var(--sys-tertiary)] tabular-nums">
+                  <span className="font-mono text-[var(--sys-tertiary)] tabular-nums shrink-0">
                     {seed.tertiaryHue}°
                   </span>
                 </div>
@@ -316,16 +320,13 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
                   aria-label="Highlight Accent"
                 />
               </div>
-            </div>
 
-            {/* Neutral Chroma & Corner Radius Scale */}
-            <div className="grid grid-cols-2 gap-4 pt-1">
               <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+                <div className="flex items-center justify-between gap-2 text-xs">
                   <span className="font-medium text-[var(--sys-on-surface-secondary)]">
                     Surface Tint
                   </span>
-                  <span className="font-mono text-[var(--sys-on-surface)] tabular-nums">
+                  <span className="font-mono text-[var(--sys-on-surface)] tabular-nums shrink-0">
                     {seed.neutralChroma.toFixed(3)}
                   </span>
                 </div>
@@ -348,11 +349,11 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+                <div className="flex items-center justify-between gap-2 text-xs">
                   <span className="font-medium text-[var(--sys-on-surface-secondary)]">
                     Corner Roundness
                   </span>
-                  <span className="font-mono text-[var(--sys-on-surface)] tabular-nums">
+                  <span className="font-mono text-[var(--sys-on-surface)] tabular-nums shrink-0">
                     {seed.radiusScale.toFixed(2)}x
                   </span>
                 </div>
@@ -377,37 +378,37 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
           </div>
 
           {/* Live Computed Root Formula Readout */}
-          <div className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] font-mono text-[11px] space-y-1">
-            <div className="text-[var(--sys-on-surface-tertiary)]">
-              {`/* Active Brand Colour (${theme === "dark" ? "Dark Mode" : "Light Mode"}) */`}
-            </div>
-            <div className="text-[var(--sys-on-surface)] flex items-center justify-between">
-              <span>
+          <div className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] font-mono text-[11px] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="text-[var(--sys-on-surface-tertiary)]">
+                {`/* Active Brand Colour (${theme === "dark" ? "Dark Mode" : "Light Mode"}) */`}
+              </span>
+              <span className="text-[var(--sys-on-surface)]">
                 --sys-primary:{" "}
                 <span className="text-[var(--sys-primary)] font-semibold">
                   oklch({theme === "dark" ? "0.77" : "0.49"}{" "}
                   {(seed.chroma * (theme === "dark" ? 0.8 : 1)).toFixed(3)} {seed.hue})
                 </span>
               </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)]">
-                AAA Readable
-              </span>
             </div>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--sys-surface-high)] text-[var(--sys-on-surface-secondary)] shrink-0 self-start sm:self-auto whitespace-nowrap">
+              AAA Readable
+            </span>
           </div>
         </div>
 
-        {/* Right: How Colours Connect to Components */}
-        <div className="lg:col-span-7 tonal-card p-6 flex flex-col justify-between space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--sys-outline-variant)] pb-4">
+        {/* Row 2: How Colours Connect to Components */}
+        <div className="tonal-card p-6 flex flex-col justify-between space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--sys-outline-variant)] pb-4">
             <div>
               <h3 className="text-sm font-semibold text-[var(--sys-on-surface)]">
                 How Colours Connect to Components
               </h3>
               <p className="text-xs text-[var(--sys-on-surface-tertiary)] mt-0.5">
-                Base shades flow into theme roles (`Dark` / `Light`) and then into individual UI components.
+                Base shades flow into theme roles (Dark / Light) and then into individual UI components.
               </p>
             </div>
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-[11px] font-medium">
+            <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] text-[11px] font-medium shrink-0 self-start md:self-auto overflow-x-auto max-w-full">
               {(
                 [
                   { id: "all", label: "All" },
@@ -418,9 +419,10 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
               ).map((t) => (
                 <button
                   key={t.id}
+                  type="button"
                   onClick={() => setSelectedTier(t.id)}
                   className={cn(
-                    "px-2.5 py-1 rounded transition-colors cursor-pointer",
+                    "px-3 py-1.5 rounded whitespace-nowrap transition-colors cursor-pointer",
                     selectedTier === t.id
                       ? "bg-[var(--sys-primary)] text-[var(--sys-on-primary)] font-semibold"
                       : "text-[var(--sys-on-surface-tertiary)] hover:text-[var(--sys-on-surface)]"
@@ -437,37 +439,37 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
             {semanticTokenMappings.map((row) => (
               <div
                 key={row.tier2}
-                className="p-3.5 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] hover:border-[var(--sys-outline)] transition-colors grid grid-cols-1 md:grid-cols-11 gap-3 items-center"
+                className="p-4 rounded-xl bg-[var(--sys-surface-lowest)] border border-[var(--sys-outline-variant)] hover:border-[var(--sys-outline)] transition-colors grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1.15fr)_auto_minmax(0,1.15fr)] gap-3 md:gap-4 items-center"
               >
                 {/* Tier 1 Reference */}
                 <div
                   className={cn(
-                    "md:col-span-3 flex items-center gap-2.5",
+                    "flex items-center gap-3 min-w-0",
                     selectedTier !== "all" && selectedTier !== "reference" && "opacity-35"
                   )}
                 >
                   <span
-                    className="w-5 h-5 rounded-md border border-white/20 shrink-0"
+                    className="w-6 h-6 rounded-md border border-white/20 shrink-0"
                     style={{ backgroundColor: row.tier1Val }}
                   />
                   <div className="min-w-0">
                     <div className="text-[10px] font-medium text-[var(--sys-on-surface-tertiary)]">
                       1. Base Shade
                     </div>
-                    <div className="font-mono text-xs font-medium text-[var(--sys-on-surface)] truncate">
+                    <div className="font-mono text-xs font-medium text-[var(--sys-on-surface)] break-words">
                       {row.tier1}
                     </div>
                   </div>
                 </div>
 
-                <div className="hidden md:flex md:col-span-1 justify-center text-[var(--sys-on-surface-quaternary)]">
-                  <ArrowRight size={14} />
+                <div className="hidden md:flex justify-center text-[var(--sys-on-surface-quaternary)] shrink-0">
+                  <ArrowRight size={15} />
                 </div>
 
                 {/* Tier 2 System */}
                 <div
                   className={cn(
-                    "md:col-span-3",
+                    "min-w-0",
                     selectedTier !== "all" && selectedTier !== "system" && "opacity-35"
                   )}
                 >
@@ -475,35 +477,36 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
                     2. Theme Role ({theme === "dark" ? "Dark" : "Light"})
                   </div>
                   <button
+                    type="button"
                     onClick={() => copyValue(row.tier2, `var(${row.tier2})`)}
-                    className="font-mono text-xs font-semibold text-[var(--sys-on-surface)] hover:text-[var(--sys-primary)] flex items-center gap-1.5 cursor-pointer"
+                    className="font-mono text-xs font-semibold text-[var(--sys-on-surface)] hover:text-[var(--sys-primary)] inline-flex items-center gap-1.5 text-left cursor-pointer break-words"
                   >
                     <span>{row.tier2}</span>
                     {copiedToken === row.tier2 ? (
-                      <Check size={12} className="text-emerald-400" />
+                      <Check size={12} className="text-emerald-400 shrink-0" />
                     ) : !canCopySnippets ? (
-                      <Lock size={12} className="opacity-60 text-[var(--sys-primary)]" />
+                      <Lock size={12} className="opacity-60 text-[var(--sys-primary)] shrink-0" />
                     ) : (
-                      <Copy size={12} className="opacity-40" />
+                      <Copy size={12} className="opacity-40 shrink-0" />
                     )}
                   </button>
                 </div>
 
-                <div className="hidden md:flex md:col-span-1 justify-center text-[var(--sys-on-surface-quaternary)]">
-                  <ArrowRight size={14} />
+                <div className="hidden md:flex justify-center text-[var(--sys-on-surface-quaternary)] shrink-0">
+                  <ArrowRight size={15} />
                 </div>
 
                 {/* Tier 3 Component */}
                 <div
                   className={cn(
-                    "md:col-span-3",
+                    "min-w-0",
                     selectedTier !== "all" && selectedTier !== "component" && "opacity-35"
                   )}
                 >
                   <div className="text-[10px] font-medium text-[var(--sys-on-surface-tertiary)]">
                     3. Component Use
                   </div>
-                  <div className="font-mono text-xs text-[var(--sys-on-surface-secondary)] truncate">
+                  <div className="font-mono text-xs text-[var(--sys-on-surface-secondary)] break-words">
                     {row.tier3}
                   </div>
                 </div>
@@ -511,9 +514,9 @@ export const TokenEngineSection: React.FC<TokenEngineSectionProps> = ({
             ))}
           </div>
 
-          <div className="flex items-center justify-between text-xs text-[var(--sys-on-surface-tertiary)] pt-2 border-t border-[var(--sys-outline-variant)]">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--sys-on-surface-tertiary)] pt-2 border-t border-[var(--sys-outline-variant)]">
             <span className="flex items-center gap-1.5">
-              <Info size={14} className="text-[var(--sys-primary)]" />
+              <Info size={14} className="text-[var(--sys-primary)] shrink-0" />
               Click any token or colour swatch below to copy its value.
             </span>
             <span className="text-[11px] tabular-nums">52 Auto-Generated Shades</span>
